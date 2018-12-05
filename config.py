@@ -16,7 +16,7 @@ class Config(object):
     # SQLALCHEMY_POOL_TIMEOUT = 10
     LISTS_PER_PAGE = 20
     MAX_CONTENT_LENGTH = 1024 * 1024 * 1024
-    UPLOAD_FOLDER = '/nfs/ex5/vendoruploads/'
+    UPLOAD_FOLDER = '/nfs/ex5/'
 
     # Flask-User settings
     USER_APP_NAME = "A Mouse Image Server"  # Shown in and email templates and page footers
