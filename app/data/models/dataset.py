@@ -1,11 +1,12 @@
 from app import db
+from flask import current_app
 
 
 class DataSetModel(db.Model):
     __tablename__ = 'dataset'
 
     id = db.Column(db.Integer, primary_key=True)
-    description = db.Column(db.String(500))
+    description = db.Column(db.String(500), nullable=False)
     date = db.Column(db.DateTime, index=True)
     img_path = db.Column(db.String(500))
     gene_id = db.Column(db.Integer, db.ForeignKey('gene.id'), nullable=True)
@@ -16,10 +17,14 @@ class DataSetModel(db.Model):
     organ = db.relationship("OrganModel", back_populates="datasets")
     op_id = db.Column(db.Integer, db.ForeignKey('operator.id'), nullable=True)
     operator = db.relationship("OperatorModel", back_populates="datasets")
-    sample_id = db.Column(db.Interval, db.ForeignKey('sample.id'), nullable=True)
+    sample_id = db.Column(db.Integer, db.ForeignKey('sample.id'), nullable=True)
     sample = db.relationship("SampleModel", back_populates="datasets")
-    scan_id = db.Column(db.Interval, db.ForeignKey('scan.id'), nullable=True)
+    scan_id = db.Column(db.Integer, db.ForeignKey('scan.id'), nullable=True)
     scan = db.relationship("ScanModel", back_populates="datasets")
+
+    @property
+    def url(self):
+        return current_app.config['IMG_UPLOAD_FOLDER_URL'] + self.img_path
 
     @classmethod
     def find_all(cls):

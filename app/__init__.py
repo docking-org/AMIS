@@ -7,16 +7,17 @@ from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bootstrap import Bootstrap
-from flask_user import UserManager, SQLAlchemyAdapter
-# from flask_moment import Moment
 import flask_admin
-from flask_admin.contrib.sqla import ModelView
-from app.data.views.model_views import DataSetView
+from app.data.views.model_views \
+    import DataSetView, GeneView, OperatorView, OrganView, SampleView, ScanView, CompoundView
+from flask_restful import Api
+
 
 
 db = SQLAlchemy()
 migrate = Migrate()
 bootstrap = Bootstrap()
+api = Api()
 
 
 def create_app(config_class=Config):
@@ -24,8 +25,28 @@ def create_app(config_class=Config):
     # Menu(app=app)
     app.config.from_object(config_class)
 
+    from app.data.resources.compound import CompoundList, Compound
+    from app.data.resources.gene import GeneList, Gene
+    from app.data.resources.operator import OperatorList, Operator
+    from app.data.resources.organ import OrganList, Organ
+    from app.data.resources.sample import SampleList, Sample
+    from app.data.resources.scan import ScanList, Scan
+    api.add_resource(Gene, '/gene/<string:name>')
+    api.add_resource(Compound, '/compound/<string:name>')
+    api.add_resource(Operator, '/operator/<string:name>')
+    api.add_resource(Organ, '/organ/<string:name>')
+    api.add_resource(Sample, '/sample/<string:name>')
+    api.add_resource(Scan, '/scan/<string:name>')
+    api.add_resource(GeneList, '/genes')
+    api.add_resource(CompoundList, '/compounds')
+    api.add_resource(OperatorList, '/operators')
+    api.add_resource(OrganList, '/organs')
+    api.add_resource(SampleList, '/samples')
+    api.add_resource(ScanList, '/scans')
+
     db.init_app(app)
     migrate.init_app(app, db)
+    api.init_app(app)
     bootstrap.init_app(app)
 
 
@@ -46,15 +67,20 @@ def create_app(config_class=Config):
     #     template_mode='bootstrap3',
     # )
 
-    admin = flask_admin.Admin(app, name='AMIS', template_mode='bootstrap3')
-    # admin.add_view(DataSetView(DataSetModel, db.session, "Dataset"))
-    admin.add_view(ModelView(DataSetModel, db.session, "Dataset"))
-    admin.add_view(ModelView(CompoundModel, db.session, "Compound"))
-    admin.add_view(ModelView(GeneModel, db.session, "Gene"))
-    admin.add_view(ModelView(OperatorModel, db.session, "Operator"))
-    admin.add_view(ModelView(OrganModel, db.session, "Organ"))
-    admin.add_view(ModelView(SampleModel, db.session, "Sample"))
-    admin.add_view(ModelView(ScanModel, db.session, "Scan"))
+    admin = flask_admin.Admin(
+        app,
+        'AMIS',
+        base_template='master.html',
+        template_mode='bootstrap3'
+    )
+    admin.add_view(DataSetView(DataSetModel, db.session, "Dataset"))
+    # admin.add_view(ModelView(DataSetModel, db.session, "Dataset"))
+    admin.add_view(CompoundView(CompoundModel, db.session, "Compound"))
+    admin.add_view(GeneView(GeneModel, db.session, "Gene"))
+    admin.add_view(OperatorView(OperatorModel, db.session, "Operator"))
+    admin.add_view(OrganView(OrganModel, db.session, "Organ"))
+    admin.add_view(SampleView(SampleModel, db.session, "Sample"))
+    admin.add_view(ScanView(ScanModel, db.session, "Scan"))
 
     # # Add model views
     # admin.add_view(HistoryView(UploadHistoryModel, db.session, "History"))

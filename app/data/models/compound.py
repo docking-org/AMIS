@@ -9,6 +9,13 @@ class CompoundModel(db.Model):
     zinc_id = db.Column(db.String(200))
     datasets = db.relationship("DataSetModel", back_populates='compound')
 
+    def json(self):
+        return {'id': self.id, 'zinc_id': self.zinc_id}
+
+    @classmethod
+    def find_by_name(cls, zinc_id):
+        return cls.query.filter_by(name=zinc_id).first()
+
     @classmethod
     def find_all(cls):
         return cls.query.all()

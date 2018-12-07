@@ -9,6 +9,13 @@ class OrganModel(db.Model):
     description = db.Column(db.String(500))
     datasets = db.relationship("DataSetModel", back_populates='organ')
 
+    def json(self):
+        return {'id': self.id, 'name': self.name, 'description': self.description}
+
+    @classmethod
+    def find_by_name(cls, name):
+        return cls.query.filter_by(name=name).first()
+
     @classmethod
     def find_all(cls):
         return cls.query.all()

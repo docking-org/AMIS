@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: cdfe7b43005c
+Revision ID: ee92c00fe633
 Revises: 
-Create Date: 2018-12-05 12:40:01.247358
+Create Date: 2018-12-06 13:40:52.322483
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'cdfe7b43005c'
+revision = 'ee92c00fe633'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -58,12 +58,13 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('description', sa.String(length=500), nullable=True),
     sa.Column('date', sa.DateTime(), nullable=True),
+    sa.Column('img_path', sa.String(length=500), nullable=True),
     sa.Column('gene_id', sa.Integer(), nullable=True),
     sa.Column('cmpd_id', sa.Integer(), nullable=True),
     sa.Column('organ_id', sa.Integer(), nullable=True),
     sa.Column('op_id', sa.Integer(), nullable=True),
-    sa.Column('sample_id', sa.Interval(), nullable=True),
-    sa.Column('scan_id', sa.Interval(), nullable=True),
+    sa.Column('sample_id', sa.Integer(), nullable=True),
+    sa.Column('scan_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['cmpd_id'], ['compound.id'], ),
     sa.ForeignKeyConstraint(['gene_id'], ['gene.id'], ),
     sa.ForeignKeyConstraint(['op_id'], ['operator.id'], ),

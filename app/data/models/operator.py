@@ -9,6 +9,13 @@ class OperatorModel(db.Model):
     email = db.Column(db.String(120), unique=True)
     datasets = db.relationship("DataSetModel", back_populates='operator')
 
+    def json(self):
+        return {'id': self.id, 'name': self.name, 'email': self.email}
+
+    @classmethod
+    def find_by_name(cls, name):
+        return cls.query.filter_by(name=name).first()
+
     @classmethod
     def find_all(cls):
         return cls.query.all()

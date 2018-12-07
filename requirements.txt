@@ -1,4 +1,5 @@
 alembic==1.0.5
+aniso8601==4.0.1
 asn1crypto==0.24.0
 Babel==2.6.0
 bcrypt==3.1.4
@@ -14,6 +15,7 @@ Flask-Login==0.4.1
 Flask-Mail==0.9.1
 Flask-Migrate==2.3.1
 Flask-Principal==0.4.0
+Flask-RESTful==0.3.6
 Flask-SQLAlchemy==2.3.2
 Flask-User==1.0.1.5
 Flask-WTF==0.14.2
@@ -23,6 +25,7 @@ Jinja2==2.10
 Mako==1.0.7
 MarkupSafe==1.1.0
 passlib==1.7.1
+psycopg2==2.7.6.1
 pycparser==2.19
 python-dateutil==2.7.5
 python-editor==1.0.3

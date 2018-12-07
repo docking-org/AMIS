@@ -8,6 +8,13 @@ class SampleModel(db.Model):
     description = db.Column(db.String(500))
     datasets = db.relationship("DataSetModel", back_populates='sample')
 
+    def json(self):
+        return {'id': self.id, 'description': self.description}
+
+    @classmethod
+    def find_by_name(cls, description):
+        return cls.query.filter_by(name=description).first()
+
     @classmethod
     def find_all(cls):
         return cls.query.all()

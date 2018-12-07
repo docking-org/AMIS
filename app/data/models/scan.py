@@ -9,6 +9,13 @@ class ScanModel(db.Model):
     date = db.Column(db.DateTime, index=True)
     datasets = db.relationship("DataSetModel", back_populates='scan')
 
+    def json(self):
+        return {'id': self.id, 'description': self.description}
+
+    @classmethod
+    def find_by_name(cls, description):
+        return cls.query.filter_by(name=description).first()
+
     @classmethod
     def find_all(cls):
         return cls.query.all()
