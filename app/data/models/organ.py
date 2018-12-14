@@ -4,13 +4,16 @@ from app import db
 class OrganModel(db.Model):
     __tablename__ = 'organ'
 
-    id = db.Column(db.Integer, db.Sequence('organ_id_seq'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200))
-    description = db.Column(db.String(500))
-    datasets = db.relationship("DataSetModel", back_populates='organ')
+    description = db.Column(db.String(200))
+    slices = db.relationship("SliceModel", back_populates='organ')
+
+    def __init__(self, name):
+        self.name = name
 
     def json(self):
-        return {'id': self.id, 'name': self.name, 'description': self.description}
+        return {'id': self.id, 'name': self.name}
 
     @classmethod
     def find_by_name(cls, name):

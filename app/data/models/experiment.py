@@ -1,16 +1,19 @@
 from app import db
 
 
-class OperatorModel(db.Model):
-    __tablename__ = 'operator'
+class ExperimentModel(db.Model):
+    __tablename__ = 'experiment'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(200))
-    email = db.Column(db.String(120), unique=True)
-    datasets = db.relationship("DataSetModel", back_populates='operator')
+    name = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.String(500), nullable=True)
+    slices = db.relationship("SliceModel", back_populates='experiment')
+
+    def __init__(self, name):
+        self.name = name
 
     def json(self):
-        return {'id': self.id, 'name': self.name, 'email': self.email}
+        return {'id': self.id, 'name': self.name}
 
     @classmethod
     def find_by_name(cls, name):
@@ -32,4 +35,4 @@ class OperatorModel(db.Model):
         return self.name
 
     def __repr__(self):
-        return '<Operator {}>'.format(self.name)
+        return '<Experiment {}>'.format(self.name)

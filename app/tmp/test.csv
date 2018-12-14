@@ -1,0 +1,13 @@
+gene,experiment,genotype,mouse_number,sex,age,manipulation_type,organ,slide_number,slice_id,location_index,resolution,instrument,wavelength,probe_id,survey_classification,checksum
+GPR85,xAi9,1,7581,1,p30,reporter gene cross,heart,2,8,survey,4x,Keyence,594,Ai9 reporter,negative,#####
+GPR85,xAi9,1,7581,0,p30,reporter gene cross,heart,2,8,survey,4x,Keyence,461,DAPI,,#####
+GPR85,xAi9,1,7599,1,p30,negative control,heart,1,6,survey,4x,Keyence,594,Ai9 reporter,negative,#####
+GPR85,xAi9,1,7599,1,p30,negative control,heart,1,6,survey,4x,Keyence,461,DAPI,,#####
+GPR85,xAi9,1,8291,0,p30,reporter gene cross,kidney,2,10,survey,4x,Keyence,594,Ai9 reporter,positive,#####
+GPR85,xAi9,1,8291,0,p30,reporter gene cross,kidney,2,10,survey,4x,Keyence,461,DAPI,,#####
+GPR85,xAi9,1,8291,0,p30,reporter gene cross,kidney,2,10,1,20x,FV300RS,594,Ai9 reporter,positive,#####
+GPR85,xAi9,1,8291,0,p30,reporter gene cross,kidney,2,10,1,20x,FV300RS,461,DAPI,,#####
+GPR85,xAi9,1,8291,0,p30,reporter gene cross,kidney,2,10,2,20x,FV300RS,594,Ai9 reporter,positive,#####
+GPR85,xAi9,1,8291,0,p30,reporter gene cross,kidney,2,10,2,20x,FV300RS,461,DAPI,,#####
+GPR85,xAi9,1,8291,0,p30,reporter gene cross,kidney,2,10,3,20x,FV300RS,594,Ai9 reporter,positive,#####
+GPR85,xAi9,1,8291,0,p30,reporter gene cross,kidney,2,10,3,20x,FV300RS,461,DAPI,,#####

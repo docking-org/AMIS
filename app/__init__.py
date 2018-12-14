@@ -8,10 +8,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bootstrap import Bootstrap
 import flask_admin
-from app.data.views.model_views \
-    import DataSetView, GeneView, OperatorView, OrganView, SampleView, ScanView, CompoundView
+from app.data.views.model_views import ExperimentView, SliceView
+#     import DataSetView, GeneView, OperatorView, OrganView, SampleView, ScanView, CompoundView
 from flask_restful import Api
-
+from flask_admin.contrib.sqla import ModelView
 
 
 db = SQLAlchemy()
@@ -25,38 +25,37 @@ def create_app(config_class=Config):
     # Menu(app=app)
     app.config.from_object(config_class)
 
-    from app.data.resources.compound import CompoundList, Compound
+    # from app.data.resources.compound import CompoundList, Compound
     from app.data.resources.gene import GeneList, Gene
-    from app.data.resources.operator import OperatorList, Operator
+    # from app.data.resources.operator import OperatorList, Operator
     from app.data.resources.organ import OrganList, Organ
-    from app.data.resources.sample import SampleList, Sample
-    from app.data.resources.scan import ScanList, Scan
+    # from app.data.resources.sample import SampleList, Sample
+    # from app.data.resources.scan import ScanList, Scan
     api.add_resource(Gene, '/gene/<string:name>')
-    api.add_resource(Compound, '/compound/<string:name>')
-    api.add_resource(Operator, '/operator/<string:name>')
+    # api.add_resource(Compound, '/compound/<string:name>')
+    # api.add_resource(Operator, '/operator/<string:name>')
     api.add_resource(Organ, '/organ/<string:name>')
-    api.add_resource(Sample, '/sample/<string:name>')
-    api.add_resource(Scan, '/scan/<string:name>')
+    # api.add_resource(Sample, '/sample/<string:name>')
+    # api.add_resource(Scan, '/scan/<string:name>')
     api.add_resource(GeneList, '/genes')
-    api.add_resource(CompoundList, '/compounds')
-    api.add_resource(OperatorList, '/operators')
+    # api.add_resource(CompoundList, '/compounds')
+    # api.add_resource(OperatorList, '/operators')
     api.add_resource(OrganList, '/organs')
-    api.add_resource(SampleList, '/samples')
-    api.add_resource(ScanList, '/scans')
-
+    # api.add_resource(SampleList, '/samples')
+    # api.add_resource(ScanList, '/scans')
+    #
     db.init_app(app)
     migrate.init_app(app, db)
     api.init_app(app)
     bootstrap.init_app(app)
 
-
-    from app.data.models.dataset import DataSetModel
-    from app.data.models.compound import CompoundModel
+    from app.data.models.experiment import ExperimentModel
+    from app.data.models.mouse import MouseModel
     from app.data.models.gene import GeneModel
-    from app.data.models.operator import OperatorModel
+    from app.data.models.genotype import GenotypeModel
+    from app.data.models.slice import SliceModel
     from app.data.models.organ import OrganModel
-    from app.data.models.sample import SampleModel
-    from app.data.models.scan import ScanModel
+    from app.data.models.mani_type import ManipulationTypeModel
 
     # Create admin
     # admin = flask_admin.Admin(
@@ -73,14 +72,14 @@ def create_app(config_class=Config):
         base_template='master.html',
         template_mode='bootstrap3'
     )
-    admin.add_view(DataSetView(DataSetModel, db.session, "Dataset"))
-    # admin.add_view(ModelView(DataSetModel, db.session, "Dataset"))
-    admin.add_view(CompoundView(CompoundModel, db.session, "Compound"))
-    admin.add_view(GeneView(GeneModel, db.session, "Gene"))
-    admin.add_view(OperatorView(OperatorModel, db.session, "Operator"))
-    admin.add_view(OrganView(OrganModel, db.session, "Organ"))
-    admin.add_view(SampleView(SampleModel, db.session, "Sample"))
-    admin.add_view(ScanView(ScanModel, db.session, "Scan"))
+
+    admin.add_view(ExperimentView(ExperimentModel, db.session, "Experiment"))
+    admin.add_view(ModelView(MouseModel, db.session, "Mouse"))
+    admin.add_view(ModelView(GeneModel, db.session, "Gene"))
+    admin.add_view(ModelView(GenotypeModel, db.session, "Geno Type"))
+    admin.add_view(SliceView(SliceModel, db.session, "Slice"))
+    admin.add_view(ModelView(OrganModel, db.session, "Organ"))
+    admin.add_view(ModelView(ManipulationTypeModel, db.session, "Manipulation Type"))
 
     # # Add model views
     # admin.add_view(HistoryView(UploadHistoryModel, db.session, "History"))
@@ -98,3 +97,5 @@ def create_app(config_class=Config):
     app.register_blueprint(main_bp)
 
     return app
+
+from app.data import models

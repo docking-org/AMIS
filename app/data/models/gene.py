@@ -6,11 +6,16 @@ class GeneModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200))
-    symbol = db.Column(db.String(200))
-    datasets = db.relationship("DataSetModel", back_populates='gene')
+    genotype_id = db.Column(db.Integer, db.ForeignKey('genotype.id'), nullable=False)
+    genotype = db.relationship("GenotypeModel", back_populates='genes')
+    mice = db.relationship("MouseModel", back_populates='gene')
+
+    def __init__(self, name, genotype_id):
+        self.name = name
+        self.genotype_id = genotype_id
 
     def json(self):
-        return {'name': self.name, 'symbol': self.symbol}
+        return {'id': self.id, 'name': self.name}
 
     @classmethod
     def find_by_name(cls, name):
