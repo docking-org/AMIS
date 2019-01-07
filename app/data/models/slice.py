@@ -7,9 +7,12 @@ class SliceModel(db.Model):
     __tablename__ = 'slice'
 
     id = db.Column(db.Integer, primary_key=True)
-    slide_number = db.Column(db.Integer)
+    slide_number = db.Column(db.Integer, nullable=True)  # Only for Slides
+    sample_number = db.Column(db.Integer, nullable=True)  # Only for Cleared
     slice_id = db.Column(db.Integer)
-    location_index = db.Column(db.String(200))
+    orientation = db.Column(db.String(200), nullable=True)  # Only for Slides
+    location_index = db.Column(db.String(200), nullable=True)  # Only for Slides
+    z_step_size = db.Column(db.Float, nullable=True)  # Only for Cleared
     resolution = db.Column(db.String(200))
     instrument = db.Column(db.String(200))
     wavelength = db.Column(db.Integer)
@@ -25,11 +28,15 @@ class SliceModel(db.Model):
     experiment = db.relationship("ExperimentModel", back_populates="slices")
     combined_data = db.Column(db.String(800), unique=True)
 
-    def __init__(self, slide_number, slice_id, location_index, resolution, instrument, wavelength, probe_id,
-                 survey_classification, checksum, organ, mouse, experiment, combined_data):
+    def __init__(self, slide_number, sample_number, slice_id, orientation, location_index, z_step_size,
+                 resolution, instrument, wavelength, probe_id, survey_classification, checksum, organ,
+                 mouse, experiment, combined_data):
         self.slide_number = slide_number
+        self.sample_number = sample_number
         self.slice_id = slice_id
+        self.orientation = orientation
         self.location_index = location_index
+        self.z_step_size = z_step_size
         self.resolution = resolution
         self.instrument = instrument
         self.wavelength = wavelength
@@ -47,6 +54,14 @@ class SliceModel(db.Model):
     @property
     def url(self):
         return current_app.config['IMG_UPLOAD_FOLDER_URL'] + self.img_path
+
+    # @classmethod
+    # def slides(cls):
+    #     return cls.query.filter_by(cls.slide_number.isnot(None))
+    #
+    # @classmethod
+    # def cleared(cls):
+    #     return cls.query.filter_by(cls.sample_number.isnot(None))
 
     @classmethod
     def find_by_name(cls, number):

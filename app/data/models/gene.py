@@ -6,13 +6,18 @@ class GeneModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200))
-    genotype_id = db.Column(db.Integer, db.ForeignKey('genotype.id'), nullable=False)
-    genotype = db.relationship("GenotypeModel", back_populates='genes')
+    genotype_gene_id = db.Column(db.Integer, db.ForeignKey('genotype.id'), nullable=False)
+    genotype_gene = db.relationship("GenotypeModel",
+                                    foreign_keys='GeneModel.genotype_gene_id')
+    genotype_reporter_id = db.Column(db.Integer, db.ForeignKey('genotype.id'), nullable=False)
+    genotype_reporter = db.relationship("GenotypeModel",
+                                        foreign_keys='GeneModel.genotype_reporter_id')
     mice = db.relationship("MouseModel", back_populates='gene')
 
-    def __init__(self, name, genotype_id):
+    def __init__(self, name, genotype_gene_id, genotype_reporter_id):
         self.name = name
-        self.genotype_id = genotype_id
+        self.genotype_gene_id = genotype_gene_id
+        self.genotype_reporter_id = genotype_reporter_id
 
     def json(self):
         return {'id': self.id, 'name': self.name}

@@ -4,6 +4,8 @@ from flask_admin import AdminIndexView, expose, BaseView
 from flask import Markup
 from datetime import timezone
 from flask_admin.contrib import sqla
+from flask_admin.contrib.sqla.filters import BaseSQLAFilter
+from flask_admin.contrib.sqla.filters import BooleanEqualFilter
 
 
 def _list_thumbnail(view, context, model, name):
@@ -56,17 +58,42 @@ class ExperimentView(sqla.ModelView):
 #     experiment_id = db.Column(db.Integer, db.ForeignKey('experiment.id'), nullable=False)
 #     experiment = db.relationship("ExperimentModel", back_populates="slices")
 
+
 class SliceView(sqla.ModelView):
-    column_list = ['mouse.gene.name', 'experiment.name', 'mouse.gene.genotype.type_id',
-                   'mouse.number', 'mouse.sex', 'mouse.age', 'mouse.mani_type.type',
-                   'slide_number', 'slice_id', 'location_index', 'resolution', 'instrument',
+    def get_query(self):
+        return self.session.query(self.model).filter(self.model.slide_number != None)
+
+    column_list = ['mouse.gene.name', 'experiment.name', 'mouse.gene.genotype_gene.type_id',
+                   'mouse.gene.genotype_reporter.type_id', 'mouse.number', 'mouse.sex',
+                   'mouse.age', 'mouse.mani_type.type', 'organ.name', 'orientation', 'slide_number',
+                   'slice_id', 'location_index', 'resolution', 'instrument',
                    'wavelength', 'probe_id', 'survey_classification', 'checksum']
     column_labels = {'mouse.gene.name': 'Gene', 'experiment.name': 'Experiment',
-                     'mouse.gene.genotype.type_id': 'Genotype',
+                     'mouse.gene.genotype_gene.type_id': 'Genotype Gene',
+                     'mouse.gene.genotype_reporter.type_id': 'Genotype Reporter',
                      'mouse.number': 'Mouse number', 'mouse.sex': 'Sex', 'mouse.age': 'Age',
-                     'mouse.mani_type.type': 'Manip type',
+                     'mouse.mani_type.type': 'Manip type', 'organ.name': 'Organ', 'orientation': 'Orientation',
                      'slide_number': 'Slide number', 'slice_id': 'Slide ID',
                      'location_index': 'Loc index', 'resolution': 'Res', 'instrument': 'Inst',
+                     'wavelength': 'Wave length', 'probe_id': 'Probe ID',
+                     'survey_classification': 'Survey Class', 'checksum': 'Checksum'}
+
+class ClearedView(sqla.ModelView):
+    def get_query(self):
+        return self.session.query(self.model).filter(self.model.sample_number != None)
+
+    column_list = ['mouse.gene.name', 'experiment.name', 'mouse.gene.genotype_gene.type_id',
+                   'mouse.gene.genotype_reporter.type_id', 'mouse.number', 'mouse.sex',
+                   'mouse.age', 'mouse.mani_type.type', 'organ.name', 'sample_number',
+                   'slice_id', 'z_step_size', 'resolution', 'instrument',
+                   'wavelength', 'probe_id', 'survey_classification', 'checksum']
+    column_labels = {'mouse.gene.name': 'Gene', 'experiment.name': 'Experiment',
+                     'mouse.gene.genotype_gene.type_id': 'Genotype Gene',
+                     'mouse.gene.genotype_reporter.type_id': 'Genotype Reporter',
+                     'mouse.number': 'Mouse number', 'mouse.sex': 'Sex', 'mouse.age': 'Age',
+                     'mouse.mani_type.type': 'Manip type', 'organ.name': 'Organ',
+                     'sample_number': 'Sample number', 'slice_id': 'Slide ID',
+                     'z_step_size': 'Z-Step', 'resolution': 'Res', 'instrument': 'Inst',
                      'wavelength': 'Wave length', 'probe_id': 'Probe ID',
                      'survey_classification': 'Survey Class', 'checksum': 'Checksum'}
 

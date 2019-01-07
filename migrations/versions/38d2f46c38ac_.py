@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: a847a4afba9d
+Revision ID: 38d2f46c38ac
 Revises: 
-Create Date: 2018-12-12 13:53:52.379155
+Create Date: 2019-01-07 10:31:03.854451
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'a847a4afba9d'
+revision = '38d2f46c38ac'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -44,15 +44,17 @@ def upgrade():
     op.create_table('gene',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=200), nullable=True),
-    sa.Column('genotype_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['genotype_id'], ['genotype.id'], ),
+    sa.Column('genotype_gene_id', sa.Integer(), nullable=False),
+    sa.Column('genotype_reporter_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['genotype_gene_id'], ['genotype.id'], ),
+    sa.ForeignKeyConstraint(['genotype_reporter_id'], ['genotype.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('mouse',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('number', sa.String(length=200), nullable=True),
     sa.Column('sex', sa.Boolean(), nullable=True),
-    sa.Column('age', sa.Integer(), nullable=True),
+    sa.Column('age', sa.String(length=40), nullable=True),
     sa.Column('gene_id', sa.Integer(), nullable=False),
     sa.Column('mani_type_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['gene_id'], ['gene.id'], ),
@@ -62,8 +64,11 @@ def upgrade():
     op.create_table('slice',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('slide_number', sa.Integer(), nullable=True),
+    sa.Column('sample_number', sa.Integer(), nullable=True),
     sa.Column('slice_id', sa.Integer(), nullable=True),
+    sa.Column('orientation', sa.String(length=200), nullable=True),
     sa.Column('location_index', sa.String(length=200), nullable=True),
+    sa.Column('z_step_size', sa.Float(), nullable=True),
     sa.Column('resolution', sa.String(length=200), nullable=True),
     sa.Column('instrument', sa.String(length=200), nullable=True),
     sa.Column('wavelength', sa.Integer(), nullable=True),

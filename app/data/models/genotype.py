@@ -7,7 +7,9 @@ class GenotypeModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     type_id = db.Column(db.Integer, nullable=False)
     type = db.Column(db.String(200))
-    genes = db.relationship('GeneModel', back_populates='genotype')
+    # genes = db.relationship('GeneModel', back_populates='genotype')
+    # genes = db.relationship('GeneModel', back_populates='genotype_gene')
+    # reporters = db.relationship('GeneModel', back_populates='genotype_reporter')
 
     def json(self):
         return {'id': self.id, 'type': self.type}

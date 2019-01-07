@@ -7,7 +7,7 @@ class MouseModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     number = db.Column(db.String(200))
     sex = db.Column(db.Boolean)
-    age = db.Column(db.Integer)
+    age = db.Column(db.String(40))
     gene_id = db.Column(db.Integer, db.ForeignKey('gene.id'), nullable=False)
     gene = db.relationship("GeneModel", back_populates='mice')
     mani_type_id = db.Column(db.Integer, db.ForeignKey('mani_type.id'), nullable=False)

@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bootstrap import Bootstrap
 import flask_admin
-from app.data.views.model_views import ExperimentView, SliceView
+from app.data.views.model_views import ExperimentView, SliceView, ClearedView
 #     import DataSetView, GeneView, OperatorView, OrganView, SampleView, ScanView, CompoundView
 from flask_restful import Api
 from flask_admin.contrib.sqla import ModelView
@@ -77,7 +77,8 @@ def create_app(config_class=Config):
     admin.add_view(ModelView(MouseModel, db.session, "Mouse"))
     admin.add_view(ModelView(GeneModel, db.session, "Gene"))
     admin.add_view(ModelView(GenotypeModel, db.session, "Geno Type"))
-    admin.add_view(SliceView(SliceModel, db.session, "Slice"))
+    admin.add_view(SliceView(SliceModel, db.session, "Slides"))
+    admin.add_view(ClearedView(SliceModel, db.session, "Cleared", endpoint='cleared'))
     admin.add_view(ModelView(OrganModel, db.session, "Organ"))
     admin.add_view(ModelView(ManipulationTypeModel, db.session, "Manipulation Type"))
 
