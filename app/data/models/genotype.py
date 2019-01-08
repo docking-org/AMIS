@@ -6,10 +6,14 @@ class GenotypeModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     type_id = db.Column(db.Integer, nullable=False)
-    type = db.Column(db.String(200))
+    type = db.Column(db.String(200), nullable=True)
     # genes = db.relationship('GeneModel', back_populates='genotype')
     # genes = db.relationship('GeneModel', back_populates='genotype_gene')
     # reporters = db.relationship('GeneModel', back_populates='genotype_reporter')
+
+    def __init__(self, type_id, type):
+        self.type_id = type_id
+        self.type = type
 
     def json(self):
         return {'id': self.id, 'type': self.type}

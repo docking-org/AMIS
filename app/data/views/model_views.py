@@ -8,15 +8,6 @@ from flask_admin.contrib.sqla.filters import BaseSQLAFilter
 from flask_admin.contrib.sqla.filters import BooleanEqualFilter
 
 
-def _list_thumbnail(view, context, model, name):
-    if not model.img_path:
-        return ''
-
-    return Markup(
-        '<img src="{model.url}" style="height: 40px;">'.format(model=model)
-    )
-
-
 def utc_to_local(utc_dt):
     return utc_dt.replace(tzinfo=timezone.utc).astimezone(tz=None)
 
@@ -41,22 +32,33 @@ class ExperimentView(sqla.ModelView):
     #     'img_path': _list_thumbnail
     # }
 
-# slide_number = db.Column(db.Integer)
-#     slice_id = db.Column(db.Integer)
-#     location_index = db.Column(db.String(200))
-#     resolution = db.Column(db.String(200))
-#     instrument = db.Column(db.String(200))
-#     wavelength = db.Column(db.Integer)
-#     probe_id = db.Column(db.String(200))
-#     survey_classification = db.Column(db.String(200))
-#     checksum = db.Column(db.String(200))
-#     img_path = db.Column(db.String(500), nullable=True)
-#     organ_id = db.Column(db.Integer, db.ForeignKey('organ.id'), nullable=False)
-#     organ = db.relationship("OrganModel", back_populates='slices')
-#     mouse_id = db.Column(db.Integer, db.ForeignKey('mouse.id'))
-#     mouse = db.relationship("MouseModel", back_populates="slices")
-#     experiment_id = db.Column(db.Integer, db.ForeignKey('experiment.id'), nullable=False)
-#     experiment = db.relationship("ExperimentModel", back_populates="slices")
+
+def _file_name_link(view, context, model, name):
+    if not model.slice_id:
+        return ''
+
+    return Markup(
+        '<a href="/details/{model.slice_id}">{model.slice_id}</a>'.format(model=model)
+    )
+
+
+def _list_thumbnail(view, context, model, name):
+    if not model.img:
+        return ''
+
+    return Markup(
+        '<img src="{model.img}" style="height: 70px;">'.format(model=model)
+    )
+
+class SliceViewWithImages(sqla.ModelView):
+    column_list = ['img', 'slice_id', 'slide_number', 'mouse.number',
+                   'mouse.sex', 'mouse.age']
+    page_size = 10
+    column_formatters = {
+        'img': _list_thumbnail,
+        'slice_id': _file_name_link
+    }
+
 
 
 class SliceView(sqla.ModelView):

@@ -25,12 +25,8 @@ class MouseModel(db.Model):
         return {'name': self.number, 'symbol': self.number}
 
     @classmethod
-    def find_by_name(cls, number):
-        return cls.query.filter_by(name=number, ).first()
-
-    @classmethod
-    def find_by_name(cls, number):
-        return cls.query.filter_by(name=number).first()
+    def find_by_number(cls, number):
+        return cls.query.filter_by(number=number).first()
 
     @classmethod
     def find_all(cls):

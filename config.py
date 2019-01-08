@@ -8,8 +8,14 @@ class Config(object):
     # SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://amis_user:amis1@yod.cluster.ucsf.bkslab.org:5432/amis'
     # SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://amis_user:amis1@yod.compbio.ucsf.edu:5432/amis'
     #                               # 'sqlite:///' + os.path.join(basedir, 'app.db')
+
+
+
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
                               'sqlite:///' + os.path.join(basedir, 'app.db')
+    # SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
+    #                           'sqlite:///' + os.path.join('/nfs/soft/www/apps/amis/database/', 'app.db')
+
     print(SQLALCHEMY_DATABASE_URI)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # SQLALCHEMY_POOL_SIZE = 20
@@ -19,6 +25,7 @@ class Config(object):
     MAX_CONTENT_LENGTH = 1024 * 1024 * 1024
     FILE_UPLOAD_FOLDER = 'app/tmp/'
     UPLOAD_FOLDER = '/nfs/ex9/idg-images'
+    IMAGE_LOAD_FOLDER = '/nfs/ex9/idg-images/bob_upload/'
     IMG_UPLOAD_FOLDER_URL = 'http://files.docking.org/idg-images/'
 
     # Flask-User settings

@@ -16,8 +16,8 @@ class SliceModel(db.Model):
     resolution = db.Column(db.String(200))
     instrument = db.Column(db.String(200))
     wavelength = db.Column(db.Integer)
-    probe_id = db.Column(db.String(200))
-    survey_classification = db.Column(db.String(200))
+    probe_id = db.Column(db.String(200), nullable=True)
+    survey_classification = db.Column(db.String(200), nullable=True)
     checksum = db.Column(db.String(200))
     img_path = db.Column(db.String(500), nullable=True)
     organ_id = db.Column(db.Integer, db.ForeignKey('organ.id'), nullable=False)
@@ -52,8 +52,16 @@ class SliceModel(db.Model):
         return {'id': self.id, 'slide_number': self.slide_number}
 
     @property
-    def url(self):
-        return current_app.config['IMG_UPLOAD_FOLDER_URL'] + self.img_path
+    def img(self):
+        return "{}bob_upload/{}.png".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.combined_data)
+
+    @property
+    def tif(self):
+        return "{}bob_upload/{}.tif".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.combined_data)
+
+    # @property
+    # def url(self):
+    #     return current_app.config['IMG_UPLOAD_FOLDER_URL'] + self.img_path
 
     # @classmethod
     # def slides(cls):
@@ -64,8 +72,8 @@ class SliceModel(db.Model):
     #     return cls.query.filter_by(cls.sample_number.isnot(None))
 
     @classmethod
-    def find_by_name(cls, number):
-        return cls.query.filter_by(name=number).first()
+    def find_by_slice_id(cls, slice_id):
+        return cls.query.filter_by(slice_id=slice_id).first()
 
     @classmethod
     def find_all(cls):
@@ -80,7 +88,7 @@ class SliceModel(db.Model):
         db.session.commit()
 
     def __str__(self):
-        return self.slide_number
+        return self.id
 
     def __repr__(self):
-        return '<Slice {}>'.format(self.slide_number)
+        return '<Slice {}>'.format(self.id)

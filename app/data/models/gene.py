@@ -14,10 +14,12 @@ class GeneModel(db.Model):
                                         foreign_keys='GeneModel.genotype_reporter_id')
     mice = db.relationship("MouseModel", back_populates='gene')
 
-    def __init__(self, name, genotype_gene_id, genotype_reporter_id):
+    def __init__(self, name, genotype_gene, genotype_reporter):
         self.name = name
-        self.genotype_gene_id = genotype_gene_id
-        self.genotype_reporter_id = genotype_reporter_id
+        self.genotype_gene_id = genotype_gene.id
+        self.genotype_gene = genotype_gene
+        self.genotype_reporter_id = genotype_reporter.id
+        self.genotype_reporter = genotype_reporter
 
     def json(self):
         return {'id': self.id, 'name': self.name}
@@ -25,6 +27,11 @@ class GeneModel(db.Model):
     @classmethod
     def find_by_name(cls, name):
         return cls.query.filter_by(name=name).first()
+
+    @classmethod
+    def find_by_name_ids(cls, name, genotype_gene, genotype_reporter):
+        return cls.query.filter_by(name=name).\
+            filter_by(genotype_gene=genotype_gene).filter_by(genotype_reporter=genotype_reporter).first()
 
     @classmethod
     def find_all(cls):
