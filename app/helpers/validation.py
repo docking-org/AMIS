@@ -109,9 +109,11 @@ def save_file_list(lst):
                         print("outfile: ".format(outfile))
                         try:
                             im = Image.open(os.path.join(root, name))
-                            print("Generating jpeg for {}".format(name))
-                            im.thumbnail(im.size)
-                            im.convert('RGBA').save(outfile, "PNG", quality=100)
+                            print("Generating png for {}".format(name))
+                            # im.thumbnail(im.size)
+                            # im.convert('RGBA').save(outfile, "PNG", quality=100)
+                            im.mode = 'I'
+                            im.point(lambda i: i * (1. / 256)).convert('L').save(outfile, "PNG", quality=100)
                         except Exception as e:
                             print(e)
             except Exception as e:
