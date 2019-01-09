@@ -16,7 +16,7 @@ class Config(object):
     # SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
     #                           'sqlite:///' + os.path.join('/nfs/soft/www/apps/amis/database/', 'app.db')
 
-    print(SQLALCHEMY_DATABASE_URI)
+    # print(SQLALCHEMY_DATABASE_URI)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # SQLALCHEMY_POOL_SIZE = 20
     # SQLALCHEMY_MAX_OVERFLOW = 5

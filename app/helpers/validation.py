@@ -58,6 +58,8 @@ def save_excel_records(type, records):
 
 
 def save_file_list(lst):
+    skipped = 0
+    new_files = 0
     for name in lst:
         if name[-4:] == '.tif':
             values = name[0:-4].split('_')
@@ -116,7 +118,9 @@ def save_file_list(lst):
                             im.resize((500,500)).point(lambda i: i * (1. / 256)).convert('L').save(outfile, "PNG", quality=100)
                         except Exception as e:
                             print(e)
+                new_files +=1
             except Exception as e:
                 #return "Please check the file name: {}\n Exception {}\n".format(name[0:-4], str(e))
-                print("Skipped the file: ".format(name))
-    return "succeed!"
+                skipped +=1
+                print("Skipped the file: {}".format(name))
+    return "Succeed! skipped old files:{}, added new files:{}".format(skipped, new_files)
