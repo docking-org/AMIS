@@ -113,9 +113,10 @@ def save_file_list(lst):
                             # im.thumbnail(im.size)
                             # im.convert('RGBA').save(outfile, "PNG", quality=100)
                             im.mode = 'I'
-                            im.point(lambda i: i * (1. / 256)).convert('L').save(outfile, "PNG", quality=100)
+                            im.resize((500,500)).point(lambda i: i * (1. / 256)).convert('L').save(outfile, "PNG", quality=100)
                         except Exception as e:
                             print(e)
             except Exception as e:
-                return "Please check the file name: {}\n Exception {}\n".format(name[0:-4], str(e))
+                #return "Please check the file name: {}\n Exception {}\n".format(name[0:-4], str(e))
+                print("Skipped the file: ".format(name))
     return "succeed!"
