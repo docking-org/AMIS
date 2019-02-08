@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 1554b60474c1
+Revision ID: 6d715a62292b
 Revises: 
-Create Date: 2019-01-09 12:24:52.727247
+Create Date: 2019-02-07 16:01:08.471134
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '1554b60474c1'
+revision = '6d715a62292b'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -66,12 +66,13 @@ def upgrade():
     sa.Column('slide_number', sa.Integer(), nullable=True),
     sa.Column('sample_number', sa.Integer(), nullable=True),
     sa.Column('slice_id', sa.Integer(), nullable=True),
+    sa.Column('uberon', sa.String(length=200), nullable=True),
     sa.Column('orientation', sa.String(length=200), nullable=True),
     sa.Column('location_index', sa.String(length=200), nullable=True),
     sa.Column('z_step_size', sa.Float(), nullable=True),
     sa.Column('resolution', sa.String(length=200), nullable=True),
     sa.Column('instrument', sa.String(length=200), nullable=True),
-    sa.Column('wavelength', sa.Integer(), nullable=True),
+    sa.Column('wavelength', sa.String(length=200), nullable=True),
     sa.Column('probe_id', sa.String(length=200), nullable=True),
     sa.Column('survey_classification', sa.String(length=200), nullable=True),
     sa.Column('checksum', sa.String(length=200), nullable=True),

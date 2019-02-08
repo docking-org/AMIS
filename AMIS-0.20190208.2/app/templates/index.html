@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>AMIS</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.18/css/jquery.dataTables.min.css"/>
+  <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+  <script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
+</head>
+<body>
+<h1>Slices</h1>
+<table id="example" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Image</th>
+                <th>Gene</th>
+                <th>Experiment</th>
+                <th>Genotype Gene</th>
+                <th>Genotype Reporter</th>
+                <th>Mouse #</th>
+                <th>Sex</th>
+                <th>Age</th>
+                <th>Mani-type</th>
+                <th>Organ</th>
+                <th>Uberon</th>
+                <th>Orientation</th>
+                <th>Slice ID</th>
+                <th>z_step_size</th>
+                <th>Resolution</th>
+                <th>Instrument</th>
+                <th>Wavelength</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>ID</th>
+                <th>Image</th>
+                <th>Gene</th>
+                <th>Experiment</th>
+                <th>Genotype Gene</th>
+                <th>Genotype Reporter</th>
+                <th>Mouse #</th>
+                <th>Sex</th>
+                <th>Age</th>
+                <th>Mani-type</th>
+                <th>Organ</th>
+                <th>Uberon</th>
+                <th>Orientation</th>
+                <th>Slice ID</th>
+                <th>z_step_size</th>
+                <th>Resolution</th>
+                <th>Instrument</th>
+                <th>Wavelength</th>
+            </tr>
+        </tfoot>
+    </table>
+<script>
+$(document).ready(function() {
+    $('#example').DataTable( {
+        "ajax": {
+            // "url": "static/objects2.txt", // This works for the static file
+            "url": "/slices", // This doesn't work
+            "dataType": "json",
+            "dataSrc": "items",
+            "contentType":"application/json"
+        },
+        "columns": [
+             {
+              "render": function (data, type, JsonResultRow, meta) {
+                return '<a href="/details/'+JsonResultRow.id+'/public">'+JsonResultRow.id+'</a>';
+                }
+            },
+            {
+              "render": function (data, type, JsonResultRow, meta) {
+                    return '<img src="'+JsonResultRow.img_url+'" style="height: 70px;">';
+                }
+            },
+            { "data": "gene" },
+            { "data": "experiment" },
+            { "data": "genotype_gene" },
+            { "data": "genotype_reporter" },
+            { "data": "mouse_number" },
+            { "data": "sex" },
+            { "data": "age" },
+            { "data": "mani_type" },
+            { "data": "organ" },
+            { "data": "uberon" },
+            { "data": "orientation" },
+            { "data": "slice_id" },
+            { "data": "z_step_size" },
+            { "data": "resolution" },
+            { "data": "instrument" },
+            { "data": "wavelength" }
+        ]
+    } );
+} );
+</script>
+</body>
+</html>
