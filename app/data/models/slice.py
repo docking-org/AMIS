@@ -1,9 +1,34 @@
 from app import db
-from flask import current_app
+from flask import current_app, url_for
 from sqlalchemy import Index
+from sqlalchemy.ext.hybrid import hybrid_property
 
 
-class SliceModel(db.Model):
+class PaginatedAPIMixin(object):
+    @staticmethod
+    def to_collection_dict(query, page, per_page, endpoint, **kwargs):
+        resources = query.paginate(page, per_page, False)
+        data = {
+            'items': [item.to_dict() for item in resources.items],
+            '_meta': {
+                'page': page,
+                'per_page': per_page,
+                'total_pages': resources.pages,
+                'total_items': resources.total
+            },
+            '_links': {
+                'self': url_for(endpoint, page=page, per_page=per_page,
+                                **kwargs),
+                'next': url_for(endpoint, page=page + 1, per_page=per_page,
+                                **kwargs) if resources.has_next else None,
+                'prev': url_for(endpoint, page=page - 1, per_page=per_page,
+                                **kwargs) if resources.has_prev else None
+            }
+        }
+        return data
+
+
+class SliceModel(PaginatedAPIMixin, db.Model):
     __tablename__ = 'slice'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -50,16 +75,32 @@ class SliceModel(db.Model):
         self.experiment = experiment
         self.combined_data = combined_data
 
-    def json(self):
-        return {'id': self.id, 'gene': self.mouse.gene.name, 'experiment': self.experiment.name,
-         'genotype_gene': self.mouse.gene.genotype_gene.type_id,
-         'genotype_reporter': self.mouse.gene.genotype_reporter.type_id,
-         'mouse_number': self.mouse.number, 'sex': self.mouse.sex_string, 'age': self.mouse.age,
-         'mani_type': self.mouse.mani_type.type, 'organ': self.organ.name, 'uberon': self.uberon,
-         'orientation': self.orientation, 'slice_id': self.slice_id,'z_step_size': self.z_step_size,
-         'resolution': self.location_index, 'instrument': self.instrument, 'wavelength': self.wavelength,
-         'probe_id': self.probe_id, 'survey_classification': self.survey_classification,
-                'img_url': self.img, 'tif_url': self.tif}
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'gene': self.mouse.gene.name,
+            'experiment': self.experiment.name,
+            'genotype_gene': self.mouse.gene.genotype_gene.type_id,
+            'genotype_reporter': self.mouse.gene.genotype_reporter.type_id,
+            'mouse_number': self.mouse.number,
+            'sex': self.mouse.sex_string,
+            'age': self.mouse.age,
+            'mani_type': self.mouse.mani_type.type,
+            'organ': self.organ.name,
+            'uberon': self.uberon,
+            'orientation': self.orientation,
+            'slice_id': self.slice_id,
+            'z_step_size': self.z_step_size,
+            'resolution': self.resolution,
+            'instrument': self.instrument,
+            'wavelength': self.wavelength,
+            'probe_id': self.probe_id,
+            'survey_classification': self.survey_classification,
+            'img_url': self.img,
+            'tif_url': self.tif
+        }
+        return data
+
 
     @property
     def img(self):
@@ -76,17 +117,9 @@ class SliceModel(db.Model):
         else:
             return False
 
-    # @property
-    # def url(self):
-    #     return current_app.config['IMG_UPLOAD_FOLDER_URL'] + self.img_path
-
-    # @classmethod
-    # def slides(cls):
-    #     return cls.query.filter_by(cls.slide_number.isnot(None))
-    #
-    # @classmethod
-    # def cleared(cls):
-    #     return cls.query.filter_by(cls.sample_number.isnot(None))
+    @classmethod
+    def find_by_kwargs(cls, **kwargs):
+        return cls.query.filter_by(**kwargs)
 
     @classmethod
     def find_by_id(cls, id):

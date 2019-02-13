@@ -11,7 +11,32 @@ from flask_user import roles_required
 
 @application.route('/', methods=['GET'])
 def index():
-    return render_template('index.html', slice=slice)
+    return render_template('index.html')
+
+
+@application.route('/slice', methods=['GET'])
+def slice():
+    return render_template('slice.html')
+
+
+@application.route('/gene', methods=['GET'])
+def gene():
+    return render_template('gene.html')
+
+
+@application.route('/organ', methods=['GET'])
+def organ():
+    return render_template('organ.html')
+
+
+@application.route('/experiment', methods=['GET'])
+def experiment():
+    return render_template('experiment.html')
+
+
+@application.route('/mouse', methods=['GET'])
+def mouse():
+    return render_template('mouse.html')
 
 
 # @application.route('/upload/<type>', methods=['GET', 'POST'])

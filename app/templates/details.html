@@ -1,7 +1,6 @@
-<html>
-    <head>
-    </head>
-    <body>
+{% extends "base.html" %}
+
+{% block app_content %}
         {% if from_url == 'admin' %}
             <a href="../../../admin/slices/">Go back</a>
         {% else %}
@@ -29,6 +28,4 @@
             </tr>
         </table>
         <a href="{{slice.tif}}">Download TIF file</a>
-
-    </body>
-</html>
+{% endblock %}

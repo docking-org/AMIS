@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{super()}}
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.18/css/jquery.dataTables.min.css"/>
+{% endblock %}
+
+
+{% block app_content %}
+    <table id="example" class="display" style="width:85%">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Gene</th>
+                <th>Genotype Gene</th>
+                <th>Genotype Reporter</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>ID</th>
+                <th>Gene</th>
+                <th>Genotype Gene</th>
+                <th>Genotype Reporter</th>
+            </tr>
+        </tfoot>
+    </table>
+
+{% endblock %}
+{% block scripts %}
+{{super()}}
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#example').DataTable( {
+                "ajax": {
+                    "url": "/genes",
+                    "dataType": "json",
+                    "dataSrc": "items",
+                    "contentType":"application/json"
+                },
+                "columns": [
+                    { "data": "id" },
+                    { "data": "name" },
+                    { "data": "genotype_gene" },
+                    { "data": "genotype_reporter" }
+                ]
+            } );
+        } );
+    </script>
+{% endblock %}
+

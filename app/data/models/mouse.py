@@ -29,7 +29,14 @@ class MouseModel(db.Model):
             return "female"
 
     def json(self):
-        return {'name': self.number, 'symbol': self.number}
+        return {
+            'id': self.id,
+            'number': self.number,
+            'sex': self.sex_string,
+            'age': self.age,
+            'gene': self.gene.name,
+            'mani_type': self.mani_type.type,
+        }
 
     @classmethod
     def find_by_number(cls, number):

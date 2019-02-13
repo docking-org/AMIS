@@ -22,7 +22,12 @@ class GeneModel(db.Model):
         self.genotype_reporter = genotype_reporter
 
     def json(self):
-        return {'id': self.id, 'name': self.name}
+        return {
+            'id': self.id,
+            'name': self.name,
+            'genotype_gene':self.genotype_gene.type_id,
+            'genotype_reporter':self.genotype_reporter.type_id
+        }
 
     @classmethod
     def find_by_name(cls, name):

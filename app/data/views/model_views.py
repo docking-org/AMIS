@@ -34,7 +34,7 @@ class ExperimentView(sqla.ModelView):
 
 
 def _file_name_link(view, context, model, name):
-    if not model.slice_id:
+    if not model.id:
         return ''
 
     return Markup(
@@ -52,7 +52,7 @@ def _list_thumbnail(view, context, model, name):
 
 
 class SliceViewWithImages(sqla.ModelView):
-    column_list = ['img', 'slice_id', 'slide_number', 'mouse.number',
+    column_list = ['id', 'img', 'slice_id', 'slide_number', 'mouse.number',
                    'mouse.sex_string', 'mouse.age']
     column_labels = {'img': 'Image', 'slice_id': 'Slice ID', 'mouse.number': 'Mouse #',
                    'mouse.sex_string': 'Sex', 'mouse.age': 'Age'}
@@ -63,7 +63,7 @@ class SliceViewWithImages(sqla.ModelView):
     # can_edit = False
     column_formatters = {
         'img': _list_thumbnail,
-        'slice_id': _file_name_link
+        'id': _file_name_link
     }
 
 

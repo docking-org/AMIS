@@ -1,100 +1,81 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>AMIS</title>
-  <meta charset="utf-8">
-  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.18/css/jquery.dataTables.min.css"/>
-  <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-  <script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
-</head>
-<body>
-<h1>Slices</h1>
-<table id="example" class="display" style="width:100%">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Image</th>
-                <th>Gene</th>
-                <th>Experiment</th>
-                <th>Genotype Gene</th>
-                <th>Genotype Reporter</th>
-                <th>Mouse #</th>
-                <th>Sex</th>
-                <th>Age</th>
-                <th>Mani-type</th>
-                <th>Organ</th>
-                <th>Uberon</th>
-                <th>Orientation</th>
-                <th>Slice ID</th>
-                <th>z_step_size</th>
-                <th>Resolution</th>
-                <th>Instrument</th>
-                <th>Wavelength</th>
-            </tr>
-        </thead>
-        <tfoot>
-            <tr>
-                <th>ID</th>
-                <th>Image</th>
-                <th>Gene</th>
-                <th>Experiment</th>
-                <th>Genotype Gene</th>
-                <th>Genotype Reporter</th>
-                <th>Mouse #</th>
-                <th>Sex</th>
-                <th>Age</th>
-                <th>Mani-type</th>
-                <th>Organ</th>
-                <th>Uberon</th>
-                <th>Orientation</th>
-                <th>Slice ID</th>
-                <th>z_step_size</th>
-                <th>Resolution</th>
-                <th>Instrument</th>
-                <th>Wavelength</th>
-            </tr>
-        </tfoot>
-    </table>
-<script>
-$(document).ready(function() {
-    $('#example').DataTable( {
-        "ajax": {
-            // "url": "static/objects2.txt", // This works for the static file
-            "url": "/slices", // This doesn't work
-            "dataType": "json",
-            "dataSrc": "items",
-            "contentType":"application/json"
-        },
-        "columns": [
-             {
-              "render": function (data, type, JsonResultRow, meta) {
-                return '<a href="/details/'+JsonResultRow.id+'/public">'+JsonResultRow.id+'</a>';
-                }
-            },
-            {
-              "render": function (data, type, JsonResultRow, meta) {
-                    return '<img src="'+JsonResultRow.img_url+'" style="height: 70px;">';
-                }
-            },
-            { "data": "gene" },
-            { "data": "experiment" },
-            { "data": "genotype_gene" },
-            { "data": "genotype_reporter" },
-            { "data": "mouse_number" },
-            { "data": "sex" },
-            { "data": "age" },
-            { "data": "mani_type" },
-            { "data": "organ" },
-            { "data": "uberon" },
-            { "data": "orientation" },
-            { "data": "slice_id" },
-            { "data": "z_step_size" },
-            { "data": "resolution" },
-            { "data": "instrument" },
-            { "data": "wavelength" }
-        ]
-    } );
-} );
-</script>
-</body>
-</html>
+{% extends "base.html" %}
+{% block app_content %}
+    <div role="main" class="container">
+        <!-- Main jumbotron for a primary marketing message or call to action -->
+        <div class="jumbotron row less-jumbo">
+            <div class="col-md-6">
+                <h1>AMIS</h1>
+                <p>
+                   Welcome to AMIS, a freely available image database of gene expression in the mouse.
+                    AMIS contains over 1000 high-resolution images of fluorescently labeled orphan GPCR genes.
+                </p>
+            </div>
+            <div class="col-md-6">
+                <p>
+                   AMIS is provided by the Roth Lab at UNC Chapel Hill and the Shoichet/Irwin labs at the University of California San Francisco (UCSF).
+                </p>
+            </div>
+        </div><!-- /.jumbotron -->
+
+        <div class="body-content">
+            <div class="row">
+                <div class="col-md-4 col-lg-3">
+                    <div class="row">
+                        <div class="col-xs-6 col-md-12">
+                            <h2>Getting Started</h2>
+                            <ul>
+                                <li>
+                                    <a href="#" target="_blank">
+                                        Getting Started
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" target="_blank">
+                                        What's New
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" target="_blank">
+                                        About AMIS Resources
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" target="_blank">
+                                        Current Status / In Progress
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-xs-6 col-md-12">
+                            <h2>Explore Resources</h2>
+                            <dl class="dl-inline">
+                                <dt>Chemistry</dt>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-5">
+                    <h2>Ask Questions</h2>
+                    <p>You can use AMIS for <b>general</b> questions such as</p>
+                    <ul>
+                        <li>
+                            <a target="_blank" href="#">More...</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h2>AMIS News</h2>
+                    <ul>
+                        <li>2019-02-13</li>
+                    </ul>
+                    <div class="well well-sm">
+                        <strong>Caveat Emptor</strong>: We accept no responsibility for errors arising
+                        from the use of AMIS. This website and these images are provided in the hope
+                        that they will be useful, but you must use it them your own risk.
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+        </div>
+    </div>
+{% endblock %}
