@@ -3,6 +3,8 @@ from flask import render_template, flash, redirect, url_for, current_app, app, r
 from app.main import application
 from app.helpers.validation import save_excel_records, save_file_list
 from app.data.models.slice import SliceModel
+from app.data.models.gene import GeneModel
+from app.data.models.organ import OrganModel
 import pyexcel as pe
 import os
 import pathlib
@@ -37,6 +39,13 @@ def experiment():
 @application.route('/mouse', methods=['GET'])
 def mouse():
     return render_template('mouse.html')
+
+
+@application.route('/interest', methods=['GET'])
+def interest():
+    genes = GeneModel.find_unique_names()
+    organs = OrganModel.find_all()
+    return render_template('interest.html', genes=genes, organs=organs)
 
 
 # @application.route('/upload/<type>', methods=['GET', 'POST'])

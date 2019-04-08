@@ -10,64 +10,13 @@ from app.data.models.gene import GeneModel
 
 parser = reqparse.RequestParser()
 
-# slice_fields = {
-#     'id': fields.Integer,
-#     'uberon': fields.String,
-#     # 'experiment': fields.String,
-#     # 'genotype_gene': fields.Integer,
-#     # 'genotype_reporter': fields.Integer,
-#     # 'mouse_number': fields.String,
-#     # 'sex': fields.String,
-#     # 'age': fields.String,
-#     # 'mani_type': fields.String,
-#     # 'organ': fields.String,
-#     # 'uberon': fields.String,
-#     # 'orientation': fields.String,
-#     # 'slice_id': fields.Integer,
-#     # 'z_step_size': fields.String,
-#     # 'resolution': fields.String,
-#     # 'instrument': fields.String,
-#     # 'wavelength': fields.String,
-#     # 'probe_id': fields.String,
-#     # 'survey_classification': fields.String,
-# }
-
-# class Slice(Resource):
-#     parser.add_argument('orientation',
-#                         type=str,
-#                         help="This field cannot be blank"
-#                         )
-#     parser.add_argument('uberon',
-#                         type=str,
-#                         help="This field cannot be blank"
-#                         )
-#
-#     # @marshal_with(slice_fields)
-#     def get(self):
-#         args = parser.parse_args()
-#         new_args = {key:val for key, val in args.items() if val is not None}
-#
-#         print(new_args)
-#         slices = SliceModel.find_by_kwargs(**new_args)
-#         # query = db.session.query(SliceModel)
-#         # if args['id']:
-#         #     query = query.filter(id=args['id'])
-#         # if args['uberon']:
-#         #     query = query.filter(uberon=args['uberon'])
-#
-#         # slices = query.all()
-#         # slices = SliceModel.query.filter_by(**args)
-#         try:
-#             return {'items': [x.to_dict() for x in slices]}
-#         except:
-#             return {'items': slices.to_dict()}
-
 
 class Slices(Resource):
     def get(self, file_type=None):
         parser.add_argument('id', type=int)
         parser.add_argument('mouse_number', type=str)
         parser.add_argument('experiment', type=str)
+        parser.add_argument('gene', type=str)
         parser.add_argument('genotype_gene', type=str)
         parser.add_argument('genotype_reporter', type=str)
         parser.add_argument('sex', type=str)
@@ -110,6 +59,9 @@ class Slices(Resource):
         if new_args.get('experiment'):
             slices = slices.filter(SliceModel.experiment.has(ExperimentModel.name==new_args.get('experiment')))
             new_args.pop('experiment')
+        if new_args.get('gene'):
+            slices = slices.filter(SliceModel.mouse.has(MouseModel.gene.has(GeneModel.name==new_args.get('gene'))))
+            new_args.pop('gene')
         if new_args.get('genotype_gene'):
             slices = slices.filter(SliceModel.mouse.has(MouseModel.gene.has(GeneModel.genotype_gene.has(GenotypeModel.type_id==new_args.get('genotype_gene')))))
             new_args.pop('genotype_gene')
@@ -118,15 +70,15 @@ class Slices(Resource):
             new_args.pop('genotype_reporter')
         data = SliceModel.to_collection_dict(slices.filter_by(**new_args), page, per_page, 'slices')
 
-        if file_type:
+        if file_type == 'json':
             return Response(str(data),
                             mimetype='application/json',
                             headers={'Content-Disposition': 'attachment;filename=slices.json'})
 
         return jsonify(data)
 
-class SliceList(Resource):
-    def get(self):
-        data = {'items': [x.to_dict() for x in SliceModel.query.all()]}
-        return jsonify(data)
+# class SliceList(Resource):
+#     def get(self):
+#         data = {'items': [x.to_dict() for x in SliceModel.query.all()]}
+#         return jsonify(data)
         # return jsonify(SliceModel.query.all().to_dict())

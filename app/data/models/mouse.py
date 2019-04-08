@@ -22,6 +22,10 @@ class MouseModel(db.Model):
         self.mani_type = mani_type
 
     @property
+    def slices_count(self):
+        return len(list(self.slices))
+
+    @property
     def sex_string(self):
         if self.sex:
             return "male"

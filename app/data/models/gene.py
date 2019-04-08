@@ -21,17 +21,22 @@ class GeneModel(db.Model):
         self.genotype_reporter_id = genotype_reporter.id
         self.genotype_reporter = genotype_reporter
 
-    def json(self):
+    def to_dict(self):
         return {
             'id': self.id,
             'name': self.name,
             'genotype_gene':self.genotype_gene.type_id,
-            'genotype_reporter':self.genotype_reporter.type_id
+            'genotype_reporter':self.genotype_reporter.type_id,
+            'slice_count':sum(item.slices_count for item in self.mice)
         }
 
     @classmethod
+    def find_unique_names(cls):
+        return cls.query.distinct(cls.name).all()
+
+    @classmethod
     def find_by_name(cls, name):
-        return cls.query.filter_by(name=name).first()
+        return cls.query.filter_by(name=name).all()
 
     @classmethod
     def find_by_name_ids(cls, name, genotype_gene, genotype_reporter):

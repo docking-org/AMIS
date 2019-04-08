@@ -7,7 +7,10 @@ from sqlalchemy.ext.hybrid import hybrid_property
 class PaginatedAPIMixin(object):
     @staticmethod
     def to_collection_dict(query, page, per_page, endpoint, **kwargs):
-        resources = query.paginate(page, per_page, False)
+        if per_page == -1:
+            return  {'items': [item.to_dict() for item in query.all()]}
+        else:
+            resources = query.paginate(page, per_page, False)
         data = {
             'items': [item.to_dict() for item in resources.items],
             '_meta': {

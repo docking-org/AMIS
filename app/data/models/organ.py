@@ -5,7 +5,7 @@ class OrganModel(db.Model):
     __tablename__ = 'organ'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(200))
+    name = db.Column(db.String(200), unique=True)
     description = db.Column(db.String(200))
     slices = db.relationship("SliceModel", back_populates='organ')
 
