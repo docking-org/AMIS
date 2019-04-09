@@ -93,3 +93,9 @@ def details(id, from_url):
     slice = SliceModel.find_by_id(id)
     return render_template('details.html', slice=slice, from_url=from_url)
 
+
+@application.route('/new_details', methods=['GET', 'POST'])
+def new_details():
+    # slice = SliceModel.find_by_id(id)
+    return render_template('new_details.html')
+
