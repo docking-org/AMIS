@@ -7,7 +7,6 @@ from app.data.models.experiment import ExperimentModel
 from app.data.models.genotype import GenotypeModel
 from app.data.models.gene import GeneModel
 
-
 parser = reqparse.RequestParser()
 
 
@@ -42,6 +41,7 @@ class Slices(Resource):
         # print(new_args)
         page = request.args.get('page', 1, type=int)
         per_page = min(request.args.get('per_page', 10, type=int), 100)
+        order = request.args.get('order_by', 'id', type=str)
         # data = SliceModel.to_collection_dict(SliceModel.query.filter_by(**new_args), page, per_page, 'slices')
         slices = SliceModel.query
         if new_args.get('mouse_number'):
@@ -68,7 +68,7 @@ class Slices(Resource):
         if new_args.get('genotype_reporter'):
             slices = slices.filter(SliceModel.mouse.has(MouseModel.gene.has(GeneModel.genotype_reporter.has(GenotypeModel.type_id==new_args.get('genotype_reporter')))))
             new_args.pop('genotype_reporter')
-        data = SliceModel.to_collection_dict(slices.filter_by(**new_args), page, per_page, 'slices')
+        data = SliceModel.to_collection_dict(slices.filter_by(**new_args).order_by(order), page, per_page, 'slices')
 
         if file_type == 'json':
             return Response(str(data),

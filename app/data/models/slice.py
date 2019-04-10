@@ -93,11 +93,13 @@ class SliceModel(PaginatedAPIMixin, db.Model):
             'uberon': self.uberon,
             'orientation': self.orientation,
             'slice_id': self.slice_id,
+            'slide_number' : self.slide_number,
             'z_step_size': self.z_step_size,
             'resolution': self.resolution,
             'instrument': self.instrument,
             'wavelength': self.wavelength,
             'probe_id': self.probe_id,
+            'checksum': self.checksum,
             'survey_classification': self.survey_classification,
             'img_url': self.img,
             'tif_url': self.tif

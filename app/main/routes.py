@@ -5,6 +5,7 @@ from app.helpers.validation import save_excel_records, save_file_list
 from app.data.models.slice import SliceModel
 from app.data.models.gene import GeneModel
 from app.data.models.organ import OrganModel
+from app.data.models.mouse import MouseModel
 import pyexcel as pe
 import os
 import pathlib
@@ -94,8 +95,9 @@ def details(id, from_url):
     return render_template('details.html', slice=slice, from_url=from_url)
 
 
-@application.route('/new_details', methods=['GET', 'POST'])
-def new_details():
-    # slice = SliceModel.find_by_id(id)
-    return render_template('new_details.html')
+@application.route('/slice_details', methods=['GET', 'POST'])
+def slice_details():
+    genes = GeneModel.find_unique_names()
+    organs = OrganModel.find_all()
+    return render_template('slice_details.html', genes=genes, organs=organs)
 
