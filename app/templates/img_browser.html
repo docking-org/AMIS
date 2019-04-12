@@ -71,7 +71,6 @@
         {#background: #a03232;#}
         }
 
-
         /* Scrollbar */
         .scrollbar {
             margin: 0 0 1em 0;
@@ -93,7 +92,6 @@
             width: 100%;
             height: 20px;
         }
-
 
         /* Controls */
         .controls {
@@ -140,7 +138,7 @@
         <div class="col-sm-3">
             <form>
                 <div class="form-group row">
-                    <label for="gene_dropdown" class="col-sm-3 col-form-label">Gene</label>
+                    <label for="gene_dropdown" class="col-sm-4 col-form-label">Gene</label>
                     <div class="col-sm-6">
                         <select name="gene" class="form-control" id="gene_dropdown">
                             {% for gene in genes %}
@@ -150,7 +148,7 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="organ_dropdown" class="col-sm-3 col-form-label">Organ</label>
+                    <label for="organ_dropdown" class="col-sm-4 col-form-label">Organ</label>
                     <div class="col-sm-6">
                         <select name="organ" class="form-control" id="organ_dropdown">
                             {% for organ in organs %}
@@ -160,7 +158,7 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="organ_dropdown" class="col-sm-3 col-form-label">Experiment</label>
+                    <label for="organ_dropdown" class="col-sm-4 col-form-label">Experiment</label>
                     <div class="col-sm-6">
                         <select name="experiment" class="form-control" id="experiment_dropdown">
                             {% for experiment in experiments %}
@@ -170,7 +168,7 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="organ_dropdown" class="col-sm-3 col-form-label">Sample Type</label>
+                    <label for="organ_dropdown" class="col-sm-4 col-form-label">Sample Type</label>
                     <div class="col-sm-6">
                         <select name="sample_type" class="form-control" id="sample_dropdown">
                             <option value="LSD">Cleared</option>
@@ -180,24 +178,24 @@
                 </div>
             </form>
         </div>
-        <div class="col-sm-6" style="max-height: 500px; min-height: 500px; max-width: 950px; overflow: hidden;">
-            <div class="loader"></div>
-            <div class="row text-center vertical-align">
+        <div class="col-sm-6" style="max-height: 450px; min-height: 450px; max-width: 900px; overflow: hidden;">
+            <div class="row text-center">
                 <div class="btn-group" id="specimen" data-toggle="buttons">
                 </div>
-                <div class="btn-group colors" id="dapi" data-toggle="buttons">
+                <div class="btn-group colors" id="wavelength" data-toggle="buttons">
                     <label class="btn btn-info active">
-                        <input type="radio" name="options" value="red" autocomplete="off" checked> tdTomata
+                        <input type="radio" name="options" value="tdTomato" autocomplete="off" checked> tdTomato
                     </label>
                     <label class="btn btn-info">
-                        <input type="radio" name="options" value="orange" autocomplete="off"> DAPI
+                        <input type="radio" name="options" value="Dapi" autocomplete="off"> Dapi
                     </label>
                 </div>
             </div>
             <div class="row text-center">
                 <br/>
+                <div class="loader"></div>
                 <a href="" data-toggle="lightbox" data-max-width="800" height="600" class="selected_slice_a">
-                    <img src="" class="selected_slice img-fluid" height="500px">
+                    <img src="" class="selected_slice img-fluid" height="450px">
                 </a>
             </div>
         </div>
@@ -209,11 +207,12 @@
             <button class="btn btn-info prev disabled" disabled=""><span
                     class="glyphicon glyphicon-chevron-left"></span>prev
             </button>
+            <span class="" style="font-weight: bold;color: #0aaaf1;font-size: larger">
+                (Slice <span class="current_id"></span> of <span class="total_result"></span>)
+            </span>
             <button class="btn btn-info next">next <span class="glyphicon glyphicon-chevron-right"></span></button>
         </div>
-        <div class="controls center" style="font-weight: bold;color: #0aaaf1;font-size: larger">
-            (Slice <span class="current_id"></span> of <span class="total_result"></span>)
-        </div>
+
         <div class="scrollbar">
             <div class="handle" style="transform: translateZ(0px) translateX(0px); width: 190px;">
                 <div class="mousearea"></div>
@@ -246,6 +245,7 @@
             var bg_color = 1;
             var total_result = 0;
             var mouse_number = -1;
+            var wavelength = "tdTomato";
             var $frame = $('#forcecentered');
             var $wrap = $frame.parent();
 
@@ -268,7 +268,6 @@
                 dynamicHandle: 1,
                 clickBar: 1,
 
-
                 // Buttons
                 prev: $wrap.find('.prev'),
                 next: $wrap.find('.next')
@@ -278,35 +277,48 @@
 
 
             $('#gene_dropdown').change(function () {
+                slyOptions['startAt'] = 0;
                 updateContent();
                 updateSpecimen();
             });
 
             $('#organ_dropdown').change(function () {
+                slyOptions['startAt'] = 0;
                 updateContent();
             });
 
             $('#experiment_dropdown').change(function () {
+                slyOptions['startAt'] = 0;
                 updateContent();
             });
 
             $('#sample_dropdown').change(function () {
+                slyOptions['startAt'] = 0;
                 updateContent();
             });
 
             $("#specimen").on('click', '.btn', function (event) {
+                slyOptions['startAt'] = 0;
                 mouse_number = $(this).find('input').val();
                 console.log(mouse_number);
                 updateContent();
             });
 
-            function updateContent() {
+            $("#wavelength .btn").on('click', function (event) {
+                wavelength = $(this).find('input').val();
+                var current = parseInt($('.current_id').text())-1;
+                slyOptions['startAt'] = current;
+                updateContent();
+            });
+
+            function updateContent(keep_current) {
                 $('.loader').show();
                 $('.selected_slice').hide();
                 var url = "/slices?per_page=-1&order_by=slice_id";
                 url += "&gene=" + $('#gene_dropdown').val() + "&organ=" + $('#organ_dropdown').val();
                 url += "&experiment=" + $('#experiment_dropdown').val() + "&instrument=" + $('#sample_dropdown').val();
-                if(mouse_number > -1){
+                url += "&wavelength=" + wavelength;
+                if (mouse_number > -1) {
                     url += "&mouse_number=" + mouse_number;
                 }
                 $.ajax({
@@ -345,7 +357,7 @@
                         $('.loader').hide();
                         $('.selected_slice').show();
                         if (content.length > 0) {
-                            frameChange(0);
+                            frameChange(slyOptions['startAt']);
                         } else {
                             frameChange(-1);
                         }
