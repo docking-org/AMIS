@@ -35,9 +35,8 @@ class Slices(Resource):
         parser.add_argument('probe_id', type=str)
         parser.add_argument('survey_classification', type=str)
 
-
         args = parser.parse_args()
-        new_args = {key:val for key, val in args.items() if val is not None}
+        new_args = {key: val for key, val in args.items() if val is not None}
         # print(new_args)
         page = request.args.get('page', 1, type=int)
         per_page = min(request.args.get('per_page', 10, type=int), 100)
@@ -45,28 +44,30 @@ class Slices(Resource):
         # data = SliceModel.to_collection_dict(SliceModel.query.filter_by(**new_args), page, per_page, 'slices')
         slices = SliceModel.query
         if new_args.get('mouse_number'):
-            slices = slices.filter(SliceModel.mouse.has(MouseModel.number==new_args.get('mouse_number')))
+            slices = slices.filter(SliceModel.mouse.has(MouseModel.number == new_args.get('mouse_number')))
             new_args.pop('mouse_number')
         if new_args.get('sex'):
-            slices = slices.filter(SliceModel.mouse.has(MouseModel.sex==new_args.get('sex')))
+            slices = slices.filter(SliceModel.mouse.has(MouseModel.sex == new_args.get('sex')))
             new_args.pop('sex')
         if new_args.get('age'):
             slices = slices.filter(SliceModel.mouse.has(MouseModel.age == new_args.get('age')))
             new_args.pop('age')
         if new_args.get('organ'):
-            slices = slices.filter(SliceModel.organ.has(OrganModel.name==new_args.get('organ')))
+            slices = slices.filter(SliceModel.organ.has(OrganModel.name == new_args.get('organ')))
             new_args.pop('organ')
         if new_args.get('experiment'):
-            slices = slices.filter(SliceModel.experiment.has(ExperimentModel.name==new_args.get('experiment')))
+            slices = slices.filter(SliceModel.experiment.has(ExperimentModel.name == new_args.get('experiment')))
             new_args.pop('experiment')
         if new_args.get('gene'):
-            slices = slices.filter(SliceModel.mouse.has(MouseModel.gene.has(GeneModel.name==new_args.get('gene'))))
+            slices = slices.filter(SliceModel.mouse.has(MouseModel.gene.has(GeneModel.name == new_args.get('gene'))))
             new_args.pop('gene')
         if new_args.get('genotype_gene'):
-            slices = slices.filter(SliceModel.mouse.has(MouseModel.gene.has(GeneModel.genotype_gene.has(GenotypeModel.type_id==new_args.get('genotype_gene')))))
+            slices = slices.filter(SliceModel.mouse.has(MouseModel.gene.has(
+                GeneModel.genotype_gene.has(GenotypeModel.type_id == new_args.get('genotype_gene')))))
             new_args.pop('genotype_gene')
         if new_args.get('genotype_reporter'):
-            slices = slices.filter(SliceModel.mouse.has(MouseModel.gene.has(GeneModel.genotype_reporter.has(GenotypeModel.type_id==new_args.get('genotype_reporter')))))
+            slices = slices.filter(SliceModel.mouse.has(MouseModel.gene.has(
+                GeneModel.genotype_reporter.has(GenotypeModel.type_id == new_args.get('genotype_reporter')))))
             new_args.pop('genotype_reporter')
         data = SliceModel.to_collection_dict(slices.filter_by(**new_args).order_by(order), page, per_page, 'slices')
 
@@ -81,4 +82,4 @@ class Slices(Resource):
 #     def get(self):
 #         data = {'items': [x.to_dict() for x in SliceModel.query.all()]}
 #         return jsonify(data)
-        # return jsonify(SliceModel.query.all().to_dict())
+# return jsonify(SliceModel.query.all().to_dict())

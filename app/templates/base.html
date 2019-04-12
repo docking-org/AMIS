@@ -14,18 +14,21 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="">AMIS</a>
+                <a class="navbar-brand" href="/">AMIS</a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li><a href="{{ url_for('main.index')}}">Home</a></li>
-                    <li><a href="{{ url_for('main.slice')}}">Slices</a></li>
-                    <li><a href="{{ url_for('main.gene')}}">Gene</a></li>
-                    <li><a href="{{ url_for('main.experiment')}}">Experiment</a></li>
-                    <li><a href="{{ url_for('main.organ')}}">Organ</a></li>
-                    <li><a href="{{ url_for('main.mouse')}}">Mouse</a></li>
-                    <li><a href="{{ url_for('main.slice_details')}}">Slice Details</a></li>
-                    <li><a href="{{ url_for('main.interest')}}">Interest</a></li>
+{#                    <li><a href="{{ url_for('main.index')}}">Home</a></li>#}
+{#                    <li><a href="{{ url_for('main.slice')}}">Slices</a></li>#}
+{#                    <li><a href="{{ url_for('main.gene')}}">Gene</a></li>#}
+{#                    <li><a href="{{ url_for('main.experiment')}}">Experiment</a></li>#}
+{#                    <li><a href="{{ url_for('main.organ')}}">Organ</a></li>#}
+{#                    <li><a href="{{ url_for('main.mouse')}}">Mouse</a></li>#}
+                    <li><a href="{{ url_for('main.img_browser')}}">Image Browser</a></li>
+                    <li><a href="https://druggablegenome.net/DRGC_GPCR">IDG Program</a></li>
+                    <li><a href="#">Experimental Design</a></li>
+                    <li><a href="#">Glossary</a></li>
+{#                    <li><a href="{{ url_for('main.interest')}}">Interest</a></li>#}
                 </ul>
             </div>
         </div>

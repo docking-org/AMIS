@@ -132,7 +132,7 @@ def save_file_list(lst):
                             print("Generating png for {}".format(name))
                             # im.thumbnail(im.size)
                             # im.convert('RGBA').save(outfile, "PNG", quality=100)
-                            basewidth = 400
+                            basewidth = 800
                             wp = (basewidth / float(im.size[0]))
                             hsize = int(float(im.size[1]) * float(wp))
                             im.mode = 'I'

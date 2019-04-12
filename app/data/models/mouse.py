@@ -1,7 +1,35 @@
 from app import db
+from flask import current_app, url_for
 
 
-class MouseModel(db.Model):
+class PaginatedAPIMixin(object):
+    @staticmethod
+    def to_collection_dict(query, page, per_page, endpoint, **kwargs):
+        if per_page == -1:
+            return  {'items': [item.to_dict() for item in query.all()]}
+        else:
+            resources = query.paginate(page, per_page, False)
+        data = {
+            'items': [item.to_dict() for item in resources.items],
+            '_meta': {
+                'page': page,
+                'per_page': per_page,
+                'total_pages': resources.pages,
+                'total_items': resources.total
+            },
+            '_links': {
+                'self': url_for(endpoint, page=page, per_page=per_page,
+                                **kwargs),
+                'next': url_for(endpoint, page=page + 1, per_page=per_page,
+                                **kwargs) if resources.has_next else None,
+                'prev': url_for(endpoint, page=page - 1, per_page=per_page,
+                                **kwargs) if resources.has_prev else None
+            }
+        }
+        return data
+
+
+class MouseModel(PaginatedAPIMixin, db.Model):
     __tablename__ = 'mouse'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -20,6 +48,18 @@ class MouseModel(db.Model):
         self.age = age
         self.gene = gene
         self.mani_type = mani_type
+
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'number': self.number,
+            'sex': self.sex,
+            'age': self.age,
+            'gene': self.gene.name,
+            'spec': "-" if self.gene.genotype_gene.type_id == 0 or self.gene.genotype_reporter.type_id == 0 else "+",
+            'mani_type': self.mani_type.type
+        }
+        return data
 
     @property
     def slices_count(self):
