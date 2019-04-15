@@ -194,9 +194,6 @@
             <div class="row text-center">
                 <br/>
                 <div class="loader"></div>
-                <div class="no_result controls center"><img
-                        src="{{ url_for('static', filename='images/no_result.png') }}" height="300px">
-                </div>
                 <a href="" data-toggle="lightbox" data-max-width="800" height="600" class="selected_slice_a">
                     <img src="" class="selected_slice img-fluid" height="450px">
                 </a>
@@ -309,7 +306,7 @@
 
             $("#wavelength .btn").on('click', function (event) {
                 wavelength = $(this).find('input').val();
-                var current = parseInt($('.current_id').text()) - 1;
+                var current = parseInt($('.current_id').text())-1;
                 slyOptions['startAt'] = current;
                 updateContent();
             });
@@ -374,7 +371,6 @@
             function frameChange(index) {
                 if (index == -1) {
                     $('.selected_slice_a').hide();
-                    $('.no_result').show();
                     $('.slice_details').hide();
                     $('.current_id').html(0);
                 } else {
@@ -383,7 +379,6 @@
                     } else {
                         $('.current_id').html(index + 1);
                     }
-                    $('.no_result').hide();
                     $('.selected_slice_a').show();
                     $('.slice_details').show();
                     var src = $('._' + index).find("img").attr('src');
@@ -449,13 +444,11 @@
 
             function changeFilter() {
                 if (img_color == 1) {
-                    $(".selected_slice_a").css('-webkit-filter', 'grayscale(1) invert(1)');
-                    $(".frame li img").css('-webkit-filter', 'grayscale(1) invert(1)');
+                    $("img").css('-webkit-filter', 'grayscale(1) invert(1)');
                     $(".frame li").css('background', '#fff');
                     img_color = 2;
                 } else {
-                    $(".selected_slice_a").css('-webkit-filter', '');
-                    $(".frame li  img").css('-webkit-filter', '');
+                    $("img").css('-webkit-filter', '');
                     $(".frame li").css('background', '#000');
                     img_color = 1;
                 }
