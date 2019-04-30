@@ -15,7 +15,9 @@ from flask_user import roles_required
 
 @application.route('/', methods=['GET'])
 def index():
-    return render_template('index.html')
+    genes = GeneModel.find_unique_names()
+    organs = OrganModel.find_all()
+    return render_template('index.html', genes=genes, organs=organs)
 
 
 @application.route('/slice', methods=['GET'])

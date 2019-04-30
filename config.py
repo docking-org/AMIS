@@ -25,8 +25,9 @@ class Config(object):
     MAX_CONTENT_LENGTH = 1024 * 1024 * 1024
     FILE_UPLOAD_FOLDER = 'app/tmp/'
     UPLOAD_FOLDER = '/nfs/ex9/idg-images'
-    IMAGE_LOAD_FOLDER = '/nfs/ex9/idg-images/bob_upload/'
-    IMG_UPLOAD_FOLDER_URL = 'http://files.docking.org/idg-images/'
+    # IMAGE_LOAD_FOLDER = '/nfs/ex9/idg-images/bob_upload/'
+    IMAGE_LOAD_FOLDER = '/nfs/ex9/idg-images/'
+    IMG_UPLOAD_FOLDER_URL = 'http://files.docking.org/idg-images'
 
     # Flask-User settings
     USER_APP_NAME = "A Mouse Image Server"  # Shown in and email templates and page footers

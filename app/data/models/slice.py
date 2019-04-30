@@ -8,7 +8,7 @@ class PaginatedAPIMixin(object):
     @staticmethod
     def to_collection_dict(query, page, per_page, endpoint, **kwargs):
         if per_page == -1:
-            return  {'items': [item.to_dict() for item in query.all()]}
+            return {'items': [item.to_dict() for item in query.all()]}
         else:
             resources = query.paginate(page, per_page, False)
         data = {
@@ -35,18 +35,18 @@ class SliceModel(PaginatedAPIMixin, db.Model):
     __tablename__ = 'slice'
 
     id = db.Column(db.Integer, primary_key=True)
-    slide_number = db.Column(db.Integer, nullable=True)  # Only for Slides
-    sample_number = db.Column(db.Integer, nullable=True)  # Only for Cleared
-    slice_id = db.Column(db.Integer)
     uberon = db.Column(db.String(200), nullable=True)
-    orientation = db.Column(db.String(200), nullable=True)  # Only for Slides
-    location_index = db.Column(db.String(200), nullable=True)  # Only for Slides
-    z_step_size = db.Column(db.Float, nullable=True)  # Only for Cleared
-    resolution = db.Column(db.String(200))
+    orientation = db.Column(db.String(200), nullable=True)
+    slide_number = db.Column(db.Integer, nullable=True)
+    # sample_number = db.Column(db.Integer, nullable=True)
+    slice_id = db.Column(db.Integer)
+    # location_index = db.Column(db.String(200), nullable=True)
+    # z_step_size = db.Column(db.Float, nullable=True)  # Only for Cleared
+    objective = db.Column(db.String(200))
     instrument = db.Column(db.String(200))
     wavelength = db.Column(db.String(200))
-    probe_id = db.Column(db.String(200), nullable=True)
-    survey_classification = db.Column(db.String(200), nullable=True)
+    # probe_id = db.Column(db.String(200), nullable=True)
+    # survey_classification = db.Column(db.String(200), nullable=True)
     checksum = db.Column(db.String(200))
     img_path = db.Column(db.String(500), nullable=True)
     organ_id = db.Column(db.Integer, db.ForeignKey('organ.id'), nullable=False)
@@ -55,23 +55,18 @@ class SliceModel(PaginatedAPIMixin, db.Model):
     mouse = db.relationship("MouseModel", back_populates="slices")
     experiment_id = db.Column(db.Integer, db.ForeignKey('experiment.id'), nullable=False)
     experiment = db.relationship("ExperimentModel", back_populates="slices")
+    orientation = db.Column(db.String(200), nullable=True)
     combined_data = db.Column(db.String(800), unique=True)
 
-    def __init__(self, slide_number, sample_number, slice_id, uberon, orientation, location_index, z_step_size,
-                 resolution, instrument, wavelength, probe_id, survey_classification, checksum, organ,
-                 mouse, experiment, combined_data):
+    def __init__(self, uberon, orientation, slide_number, slice_id, objective, instrument,
+                 wavelength, checksum, organ, mouse, experiment, combined_data):
         self.slide_number = slide_number
-        self.sample_number = sample_number
         self.slice_id = slice_id
         self.uberon = uberon
         self.orientation = orientation
-        self.location_index = location_index
-        self.z_step_size = z_step_size
-        self.resolution = resolution
+        self.objective = objective
         self.instrument = instrument
         self.wavelength = wavelength
-        self.probe_id = probe_id
-        self.survey_classification = survey_classification
         self.checksum = checksum
         self.organ = organ
         self.mouse = mouse
@@ -93,32 +88,31 @@ class SliceModel(PaginatedAPIMixin, db.Model):
             'uberon': self.uberon,
             'orientation': self.orientation,
             'slice_id': self.slice_id,
-            'slide_number' : self.slide_number,
-            'z_step_size': self.z_step_size,
-            'resolution': self.resolution,
+            'slide_number': self.slide_number,
+            # 'z_step_size': self.z_step_size,
+            'objective': self.objective,
             'instrument': self.instrument,
             'wavelength': self.wavelength,
-            'probe_id': self.probe_id,
+            # 'probe_id': self.probe_id,
             'checksum': self.checksum,
-            'survey_classification': self.survey_classification,
+            # 'survey_classification': self.survey_classification,
             'img_url': self.img,
             'tif_url': self.tif
         }
         return data
 
-
     @property
     def img(self):
-        return "{}bob_upload/{}.png".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.combined_data)
+        return "{}/{}.png".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.combined_data)
 
     @property
     def tif(self):
-        return "{}bob_upload/{}.tif".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.combined_data)
+        return "{}/{}.tif".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.combined_data)
 
     @classmethod
     def isRegistered(cls, fileName):
         if cls.query.filter_by(combined_data=fileName).count() > 0:
-           return True
+            return True
         else:
             return False
 

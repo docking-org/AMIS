@@ -74,7 +74,7 @@ class SliceView(sqla.ModelView):
     column_list = ['mouse.gene.name', 'experiment.name', 'mouse.gene.genotype_gene.type_id',
                    'mouse.gene.genotype_reporter.type_id', 'mouse.number', 'mouse.sex_string',
                    'mouse.age', 'mouse.mani_type.type', 'organ.name', 'orientation', 'slide_number',
-                   'slice_id', 'location_index', 'resolution', 'instrument',
+                   'slice_id', 'objective', 'instrument',
                    'wavelength', 'probe_id', 'survey_classification', 'checksum']
     column_labels = {'mouse.gene.name': 'Gene', 'experiment.name': 'Experiment',
                      'mouse.gene.genotype_gene.type_id': 'Genotype Gene',
@@ -82,7 +82,7 @@ class SliceView(sqla.ModelView):
                      'mouse.number': 'Mouse number', 'mouse.sex_string': 'Sex', 'mouse.age': 'Age',
                      'mouse.mani_type.type': 'Manip type', 'organ.name': 'Organ', 'orientation': 'Orientation',
                      'slide_number': 'Slide number', 'slice_id': 'Slide ID',
-                     'location_index': 'Loc index', 'resolution': 'Res', 'instrument': 'Inst',
+                     'objective': 'Res', 'instrument': 'Inst',
                      'wavelength': 'Wave length', 'probe_id': 'Probe ID',
                      'survey_classification': 'Survey Class', 'checksum': 'Checksum'}
 
@@ -94,7 +94,7 @@ class ClearedView(sqla.ModelView):
     column_list = ['mouse.gene.name', 'experiment.name', 'mouse.gene.genotype_gene.type_id',
                    'mouse.gene.genotype_reporter.type_id', 'mouse.number', 'mouse.sex_string',
                    'mouse.age', 'mouse.mani_type.type', 'organ.name', 'sample_number',
-                   'slice_id', 'z_step_size', 'resolution', 'instrument',
+                   'slice_id', 'objective', 'instrument',
                    'wavelength', 'probe_id', 'survey_classification', 'checksum']
     column_labels = {'mouse.gene.name': 'Gene', 'experiment.name': 'Experiment',
                      'mouse.gene.genotype_gene.type_id': 'Genotype Gene',
@@ -102,7 +102,7 @@ class ClearedView(sqla.ModelView):
                      'mouse.number': 'Mouse number', 'mouse.sex_string': 'Sex', 'mouse.age': 'Age',
                      'mouse.mani_type.type': 'Manip type', 'organ.name': 'Organ',
                      'sample_number': 'Sample number', 'slice_id': 'Slide ID',
-                     'z_step_size': 'Z-Step', 'resolution': 'Res', 'instrument': 'Inst',
+                     'objective': 'Res', 'instrument': 'Inst',
                      'wavelength': 'Wave length', 'probe_id': 'Probe ID',
                      'survey_classification': 'Survey Class', 'checksum': 'Checksum'}
 

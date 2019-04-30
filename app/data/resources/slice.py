@@ -28,8 +28,8 @@ class Slices(Resource):
         # parser.add_argument('sample_number', type=str) #excluded from list
         parser.add_argument('slice_id', type=int)
         # parser.add_argument('location_index', type=str) #excluded from list
-        parser.add_argument('z_step_size', type=float)
-        parser.add_argument('resolution', type=str)
+        # parser.add_argument('z_step_size', type=float)
+        parser.add_argument('objective', type=str)
         parser.add_argument('instrument', type=str)
         parser.add_argument('wavelength', type=str)
         parser.add_argument('probe_id', type=str)

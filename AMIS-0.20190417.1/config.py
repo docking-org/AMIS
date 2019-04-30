@@ -25,7 +25,8 @@ class Config(object):
     MAX_CONTENT_LENGTH = 1024 * 1024 * 1024
     FILE_UPLOAD_FOLDER = 'app/tmp/'
     UPLOAD_FOLDER = '/nfs/ex9/idg-images'
-    IMAGE_LOAD_FOLDER = '/nfs/ex9/idg-images/bob_upload/'
+    # IMAGE_LOAD_FOLDER = '/nfs/ex9/idg-images/bob_upload/'
+    IMAGE_LOAD_FOLDER = '/nfs/ex9/idg-images/2019-4-17/'
     IMG_UPLOAD_FOLDER_URL = 'http://files.docking.org/idg-images/'
 
     # Flask-User settings

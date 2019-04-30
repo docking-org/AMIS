@@ -1,4 +1,12 @@
 {% extends "base.html" %}
+
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.18/css/jquery.dataTables.min.css"/>
+    <link href="https://cdn.datatables.net/select/1.0.0/css/select.dataTables.css" rel="stylesheet" type="text/css"/>
+    <link href="https://cdn.datatables.net/scroller/1.3.0/css/scroller.dataTables.css" rel="stylesheet"
+          type="text/css"/>
+{% endblock %}
 {% block app_content %}
     <div role="main" class="container">
         <!-- Main jumbotron for a primary marketing message or call to action -->
@@ -7,7 +15,8 @@
                 <h1>AMIS</h1>
                 <p>
                     Welcome to A Mouse Imaging Server (AMIS), the home for mouse imaging data generated via the NIH
-                    Commonfund Program for Illuminating the Druggable Genome (<a href="https://druggablegenome.net/DRGC_GPCR" target="_blank">IDG</a>). Our
+                    Commonfund Program for Illuminating the Druggable Genome (<a
+                        href="https://druggablegenome.net/DRGC_GPCR" target="_blank">IDG</a>). Our
                     goal is to provide the research community with free, immediate access to the whole body distribution
                     of understudied genes via engineered mouse <a href="#" target="_blank">lines</a>.
                 </p>
@@ -24,91 +33,200 @@
             <div class="row">
                 <div class="col-md-4 col-lg-3">
                     <div class="row">
-{#                        <div class="col-xs-6 col-md-12">#}
-{#                            <h2>Getting Started</h2>#}
-{#                            <ul>#}
-{#                                <li>#}
-{#                                    <a href="#" target="_blank">#}
-{#                                        Getting Started#}
-{#                                    </a>#}
-{#                                </li>#}
-{#                                <li>#}
-{#                                    <a href="#" target="_blank">#}
-{#                                        What's New#}
-{#                                    </a>#}
-{#                                </li>#}
-{#                                <li>#}
-{#                                    <a href="#" target="_blank">#}
-{#                                        About AMIS Resources#}
-{#                                    </a>#}
-{#                                </li>#}
-{#                                <li>#}
-{#                                    <a href="#" target="_blank">#}
-{#                                        Current Status / In Progress#}
-{#                                    </a>#}
-{#                                </li>#}
-{#                            </ul>#}
-{#                        </div>#}
+                        {#                        <div class="col-xs-6 col-md-12">#}
+                        {#                            <h2>Getting Started</h2>#}
+                        {#                            <ul>#}
+                        {#                                <li>#}
+                        {#                                    <a href="#" target="_blank">#}
+                        {#                                        Getting Started#}
+                        {#                                    </a>#}
+                        {#                                </li>#}
+                        {#                                <li>#}
+                        {#                                    <a href="#" target="_blank">#}
+                        {#                                        What's New#}
+                        {#                                    </a>#}
+                        {#                                </li>#}
+                        {#                                <li>#}
+                        {#                                    <a href="#" target="_blank">#}
+                        {#                                        About AMIS Resources#}
+                        {#                                    </a>#}
+                        {#                                </li>#}
+                        {#                                <li>#}
+                        {#                                    <a href="#" target="_blank">#}
+                        {#                                        Current Status / In Progress#}
+                        {#                                    </a>#}
+                        {#                                </li>#}
+                        {#                            </ul>#}
+                        {#                        </div>#}
                         <div class="col-xs-6 col-md-12">
-{#                            <h2>Explore Resources</h2>#}
-{#                            <dl class="dl-inline">#}
-{#                                <dt>Chemistry</dt>#}
-{#                            </dl>#}
-{#                            <dl class="dl-inline">#}
-{#                                <dt>Biology</dt>#}
-{#                            </dl>#}
-{#                            <ul>#}
-{#                                <li>#}
-{#                                    <a href="#" target="_blank">#}
-{#                                        GPCR Dogma#}
-{#                                    </a>#}
-{#                                </li>#}
-{#                                <li>#}
-{#                                    <a href="#" target="_blank">#}
-{#                                        Specific GPCR#}
-{#                                    </a>#}
-{#                                </li>#}
-{#                                <li>#}
-{#                                    <a href="#" target="_blank">#}
-{#                                        Distribution#}
-{#                                    </a>#}
-{#                                </li>#}
-{#                                <li>#}
-{#                                    <a href="#" target="_blank">#}
-{#                                        Known Ligands (if any)#}
-{#                                    </a>#}
-{#                                </li>#}
-{#                                <li>#}
-{#                                    <a href="#" target="_blank">#}
-{#                                        References#}
-{#                                    </a>#}
-{#                                </li>#}
-{#                            </ul>#}
+                            {#                            <h2>Explore Resources</h2>#}
+                            {#                            <dl class="dl-inline">#}
+                            {#                                <dt>Chemistry</dt>#}
+                            {#                            </dl>#}
+                            {#                            <dl class="dl-inline">#}
+                            {#                                <dt>Biology</dt>#}
+                            {#                            </dl>#}
+                            {#                            <ul>#}
+                            {#                                <li>#}
+                            {#                                    <a href="#" target="_blank">#}
+                            {#                                        GPCR Dogma#}
+                            {#                                    </a>#}
+                            {#                                </li>#}
+                            {#                                <li>#}
+                            {#                                    <a href="#" target="_blank">#}
+                            {#                                        Specific GPCR#}
+                            {#                                    </a>#}
+                            {#                                </li>#}
+                            {#                                <li>#}
+                            {#                                    <a href="#" target="_blank">#}
+                            {#                                        Distribution#}
+                            {#                                    </a>#}
+                            {#                                </li>#}
+                            {#                                <li>#}
+                            {#                                    <a href="#" target="_blank">#}
+                            {#                                        Known Ligands (if any)#}
+                            {#                                    </a>#}
+                            {#                                </li>#}
+                            {#                                <li>#}
+                            {#                                    <a href="#" target="_blank">#}
+                            {#                                        References#}
+                            {#                                    </a>#}
+                            {#                                </li>#}
+                            {#                            </ul>#}
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4 col-lg-5">
-{#                    <h2>Ask Questions</h2>#}
-{#                    <p>You can use AMIS for <b>general</b> questions such as</p>#}
-{#                    <ul>#}
-{#                        <li>#}
-{#                            <a target="_blank" href="#">More...</a>#}
-{#                        </li>#}
-{#                    </ul>#}
+                    {#                    <h2>Ask Questions</h2>#}
+                    {#                    <p>You can use AMIS for <b>general</b> questions such as</p>#}
+                    {#                    <ul>#}
+                    {#                        <li>#}
+                    {#                            <a target="_blank" href="#">More...</a>#}
+                    {#                        </li>#}
+                    {#                    </ul>#}
                 </div>
                 <div class="col-md-4">
-{#                    <h2>AMIS News</h2>#}
-{#                    <ul>#}
-{#                        <li>2019-02-13</li>#}
-{#                    </ul>#}
-{#                    <div class="well well-sm">#}
-{#                        <strong>Caveat Emptor</strong>: We accept no responsibility for errors arising#}
-{#                        from the use of AMIS. This website and these images are provided in the hope#}
-{#                        that they will be useful, but you must use it them your own risk.#}
-{#                    </div>#}
+                    {#                    <h2>AMIS News</h2>#}
+                    {#                    <ul>#}
+                    {#                        <li>2019-02-13</li>#}
+                    {#                    </ul>#}
+                    {#                    <div class="well well-sm">#}
+                    {#                        <strong>Caveat Emptor</strong>: We accept no responsibility for errors arising#}
+                    {#                        from the use of AMIS. This website and these images are provided in the hope#}
+                    {#                        that they will be useful, but you must use it them your own risk.#}
+                    {#                    </div>#}
                 </div>
             </div>
             <!-- /.row -->
+            <form>
+                <div class="form-group row">
+                    <label for="search_by_dropdown" class="col-sm-2 col-form-label">Search by:</label>
+                    <div class="col-sm-3">
+                        <select name="search_by_dropdown" class="form-control" id="search_by_dropdown">
+                            <option value="1">Gene</option>
+                            <option value="2">Organ</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row gene">
+                    <label for="gene_dropdown" class="col-sm-2 col-form-label">Gene</label>
+                    <div class="col-sm-3">
+                        <select name="gene" class="form-control" id="gene_dropdown">
+                            <option value=""></option>
+                            {% for gene in genes %}
+                                <option value="{{ gene.name }}">{{ gene.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row organ" style="display: none">
+                    <label for="organ_dropdown" class="col-sm-2 col-form-label">Organ</label>
+                    <div class="col-sm-3">
+                        <select name="organ" class="form-control" id="organ_dropdown">
+                            <option value=""></option>
+                            {% for organ in organs %}
+                                <option value="{{ organ.name }}">{{ organ.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row " style="display: block">
+                    <div class="col-sm-2"></div>
+                    <div class="col-sm-3">
+                        <table id="gene_table" class="display" style="width:100%; display: none">
+                            <thead>
+                            <tr>
+                                <th>Gene</th>
+                                <th>Expression</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="col-sm-5">hi</div>
+                </div>
+            </form>
         </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.0.0/js/dataTables.select.js"></script>
+    <script src="https://cdn.datatables.net/scroller/1.3.0/js/dataTables.scroller.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            GeneFunc();
+            $('#search_by_dropdown').change(function () {
+                if ($(this).val() == 1) {
+                    $('.gene').show();
+                    $('.organ').hide();
+                } else {
+                    $('.gene').hide();
+                    $('.organ').show();
+                }
+                GeneFunc();
+            });
+
+            $('#gene_dropdown').change(function () {
+
+            });
+
+            $('#organ_dropdown').change(function () {
+
+            });
+
+            function GeneFunc() {
+                $('#gene_table').show();
+                var geneTable = $('#gene_table').DataTable({
+                    "ajax": {
+                        "url": "/genes",
+                        "dataType": "json",
+                        "dataSrc": "items"
+                    },
+                    "columns": [
+                        {"data": "name"},
+                        {"data": "expression"}
+                    ],
+                    destroy: true,
+                    searching: false,
+                    paging: false,
+                    info: false,
+                    select: true,
+                    processing: true,
+                });
+
+                geneTable.off('select').on('select', function (e, dt, type, indexes) {
+                    if (type == 'row') {
+                        var gene_name = geneTable.rows(indexes).data().pluck('name');
+                        alert(gene_name[0]);
+                    }
+                });
+            }
+
+
+        });
+    </script>
+
 {% endblock %}

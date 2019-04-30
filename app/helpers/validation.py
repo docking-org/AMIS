@@ -13,48 +13,52 @@ from PIL import Image
 def save_excel_records(type, records):
     line = 1
     for record in records:
-        combined_values = '_'.join('{}'.format(value) for key, value in record.items()).replace(" ", "_")
-        print(combined_values)
-        line += 1
-        # genotype = GenotypeModel.find_by_name(record['genotype'])
-        try:
-            genotype_gene = GenotypeModel.find_by_id(record['genotype_gene'])
-            genotype_reporter = GenotypeModel.find_by_id(record['genotype_reporter'])
-            # print(genotype)
-            gene = GeneModel(record['gene'], genotype_gene, genotype_reporter)
-            mani_type = ManipulationTypeModel.find_by_name(record['manipulation_type'])
-            if mani_type is None:
-                mani_type = ManipulationTypeModel(record['manipulation_type'])
-            sex = 1
-            if record['sex'].upper() == "F":
-                sex = 0
-            mouse = MouseModel(record['mouse_number'], sex, record['age'], gene, mani_type)
-            organ = OrganModel.find_by_name(record['organ'])
-            if organ is None:
-                organ = OrganModel(record['organ'])
-            experiment = ExperimentModel.find_by_name(record['experiment'])
-            if experiment is None:
-                experiment = ExperimentModel(record['experiment'])
-            print("hi you got here")
-            if type == 'slide':
-                # self, slide_number, sample_number, slice_id, orientation, location_index, z_step_size,
-                # resolution, instrument, wavelength, probe_id, survey_classification, checksum, organ,
-                # mouse, experiment, combined_data):
-                slice = SliceModel(record['slide_number'], None, record['slice_id'], record['orientation'],
-                                   record['location_index'], None, record['resolution'], record['instrument'],
-                                   record['wavelength'], record['probe_id'], record['survey_classification'],
-                                   record['checksum'], organ, mouse, experiment, combined_values)
-                slice.save_to_db()
-            elif type == 'cleared':
-                slice = SliceModel(None, record['sample_number'], record['slice_id'], None, None,
-                                   record['z_step_size'], record['resolution'], record['instrument'],
-                                   record['wavelength'], record['probe_id'], record['survey_classification'],
-                                   record['checksum'], organ, mouse, experiment, combined_values)
-                slice.save_to_db()
-            else:
-                return "Please check URL. It must be '/upload/slide' or '/upload/cleared'"
-        except Exception as e:
-            return "Please check line number: {}\n Exception {}\n".format(line, str(e))
+        pass
+        # Upload from file is not working now. If we need this feature, We have to fix below commented codes
+        # combined_values = '_'.join('{}'.format(value) for key, value in record.items()).replace(" ", "_")
+        # print(combined_values)
+        # line += 1
+        # # genotype = GenotypeModel.find_by_name(record['genotype'])
+        # try:
+        #     genotype_gene = GenotypeModel.find_by_id(record['genotype_gene'])
+        #     genotype_reporter = GenotypeModel.find_by_id(record['genotype_reporter'])
+        #     # print(genotype)
+        #     gene = GeneModel(record['gene'], genotype_gene, genotype_reporter)
+        #     mani_type = ManipulationTypeModel.find_by_name(record['manipulation_type'])
+        #     if mani_type is None:
+        #         mani_type = ManipulationTypeModel(record['manipulation_type'])
+        #     sex = 1
+        #     if record['sex'].upper() == "F":
+        #         sex = 0
+        #     mouse = MouseModel(record['mouse_number'], sex, record['age'], gene, mani_type)
+        #     organ = OrganModel.find_by_name(record['organ'])
+        #     if organ is None:
+        #         organ = OrganModel(record['organ'])
+        #     experiment = ExperimentModel.find_by_name(record['experiment'])
+        #     if experiment is None:
+        #         experiment = ExperimentModel(record['experiment'])
+        #     if type == 'slide':
+        #         # self, slide_number, sample_number, slice_id, orientation, location_index, z_step_size,
+        #         # resolution, instrument, wavelength, probe_id, survey_classification, checksum, organ,
+        #         # mouse, experiment, combined_data):
+        #
+        #         # uberon, orientation, slide_number, slice_id, objective, instrument,
+        #         # wavelength, checksum, organ, mouse, experiment, combined_data
+        #         slice = SliceModel(record['slide_number'], None, record['slice_id'], record['orientation'],
+        #                            record['location_index'], None, record['objective'], record['instrument'],
+        #                            record['wavelength'],
+        #                            record['checksum'], organ, mouse, experiment, combined_values)
+        #         slice.save_to_db()
+        #     elif type == 'cleared':
+        #         slice = SliceModel(None, record['sample_number'], record['slice_id'], None, None,
+        #                            record['z_step_size'], record['objective'], record['instrument'],
+        #                            record['wavelength'], record['probe_id'], record['survey_classification'],
+        #                            record['checksum'], organ, mouse, experiment, combined_values)
+        #         slice.save_to_db()
+        #     else:
+        #         return "Please check URL. It must be '/upload/slide' or '/upload/cleared'"
+        # except Exception as e:
+        #     return "Please check line number: {}\n Exception {}\n".format(line, str(e))
 
 
 def save_file_list(lst):
@@ -99,23 +103,20 @@ def save_file_list(lst):
 
                 if len(values) == 17:
                     # values.remove('')
-                    # self, slide_number, sample_number, slice_id, uberon, orientation, location_index, z_step_size,
-                    # resolution, instrument, wavelength, probe_id, survey_classification, checksum, organ,
-                    # mouse, experiment, combined_data):
-                    slice = SliceModel(None, None, values[11], values[9], values[10],
-                                       None, values[12], values[13], values[14],
-                                       values[15], None, None,
-                                       values[16], organ, mouse, experiment, name[0:-4])
+                    # uberon, orientation, slide_number, slice_id, objective, instrument,
+                    # wavelength, checksum, organ, mouse, experiment, combined_data
+                    slice = SliceModel(values[9], values[10], values[11], values[12], values[13], values[14],
+                                       values[15], values[16], organ, mouse, experiment, name[0:-4])
                     slice.save_to_db()
-                elif len(values) == 16:
-                    # self, slide_number, sample_number, slice_id, uberon, orientation, location_index, z_step_size,
-                    # resolution, instrument, wavelength, probe_id, survey_classification, checksum, organ,
-                    # mouse, experiment, combined_data):
-                    slice = SliceModel(values[10], None, values[11], None, values[9],
-                                       None, None, values[12], values[13],
-                                       values[14], None, None,
-                                       values[15], organ, mouse, experiment, name[0:-4])
-                    slice.save_to_db()
+                # elif len(values) == 16:
+                #     # self, slide_number, sample_number, slice_id, uberon, orientation, location_index, z_step_size,
+                #     # objective, instrument, wavelength, probe_id, survey_classification, checksum, organ,
+                #     # mouse, experiment, combined_data):
+                #     slice = SliceModel(values[10], None, values[11], None, values[9],
+                #                        None, None, values[12], values[13],
+                #                        values[14], None, None,
+                #                        values[15], organ, mouse, experiment, name[0:-4])
+                #     slice.save_to_db()
 
 
                 root = current_app.config['IMAGE_LOAD_FOLDER']
@@ -132,7 +133,7 @@ def save_file_list(lst):
                             print("Generating png for {}".format(name))
                             # im.thumbnail(im.size)
                             # im.convert('RGBA').save(outfile, "PNG", quality=100)
-                            basewidth = 800
+                            basewidth = 900
                             wp = (basewidth / float(im.size[0]))
                             hsize = int(float(im.size[1]) * float(wp))
                             im.mode = 'I'

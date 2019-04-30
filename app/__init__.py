@@ -94,10 +94,6 @@ def create_app(config_class=Config):
     admin.add_view(ModelView(OrganModel, db.session, "Organ"))
     admin.add_view(ModelView(ManipulationTypeModel, db.session, "Manipulation Type"))
 
-    # # Add model views
-    # admin.add_view(HistoryView(UploadHistoryModel, db.session, "History"))
-    # admin.add_view(CompanyView(CompanyModel, db.session, "Companies"))
-    # admin.add_view(UserView(UserModel, db.session, "Users"))
     #
     # from app.errors import application as errors_bp
     # app.register_blueprint(errors_bp)

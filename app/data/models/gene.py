@@ -27,7 +27,8 @@ class GeneModel(db.Model):
             'name': self.name,
             'genotype_gene':self.genotype_gene.type_id,
             'genotype_reporter':self.genotype_reporter.type_id,
-            'slice_count':sum(item.slices_count for item in self.mice)
+            'slice_count':sum(item.slices_count for item in self.mice),
+            'expression': "-" if self.genotype_gene.type_id == 0 or self.genotype_reporter.type_id == 0 else "+",
         }
 
     @classmethod
