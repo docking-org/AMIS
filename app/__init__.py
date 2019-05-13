@@ -30,6 +30,7 @@ def create_app(config_class=Config):
     from app.data.resources.experiment import ExperimentList
     from app.data.resources.organ import OrganList
     from app.data.resources.slice import Slices
+    from app.data.resources.lookup import LookupList
     from app.data.resources.mouse import MouseList
     # from app.data.resources.scan import ScanList, Scan
     # api.add_resource(Gene, '/gene/<string:name>')
@@ -40,6 +41,7 @@ def create_app(config_class=Config):
     # api.add_resource(Scan, '/scan/<string:name>')
     api.add_resource(Genes, '/genes')
     # api.add_resource(GeneList, '/genes')
+    api.add_resource(LookupList, '/lookups')
     api.add_resource(MouseList, '/mice')
     # api.add_resource(CompoundList, '/compounds')
     # api.add_resource(OperatorList, '/operators')
@@ -67,6 +69,7 @@ def create_app(config_class=Config):
     from app.data.models.slice import SliceModel
     from app.data.models.organ import OrganModel
     from app.data.models.mani_type import ManipulationTypeModel
+    from app.data.models.lookup import LookupModel
 
     # Create admin
     # admin = flask_admin.Admin(
@@ -93,6 +96,7 @@ def create_app(config_class=Config):
     admin.add_view(ModelView(GenotypeModel, db.session, "Geno Type"))
     admin.add_view(ModelView(OrganModel, db.session, "Organ"))
     admin.add_view(ModelView(ManipulationTypeModel, db.session, "Manipulation Type"))
+    admin.add_view(ModelView(LookupModel, db.session, "Lookup"))
 
     #
     # from app.errors import application as errors_bp

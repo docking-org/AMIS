@@ -2,6 +2,7 @@ from flask_restful import Resource, reqparse
 from flask import request, jsonify, Response
 from app.data.models.mouse import MouseModel
 from app.data.models.gene import GeneModel
+from app.data.models.gene_name import GeneNameModel
 
 
 # class MouseList(Resource):
@@ -22,7 +23,7 @@ class MouseList(Resource):
         # per_page = min(request.args.get('per_page', 10, type=int), 100)
         mice = MouseModel.query
         if new_args.get('gene'):
-            mice = mice.filter(MouseModel.gene.has(GeneModel.name == new_args.get('gene')))
+            mice = mice.filter(MouseModel.gene.has(GeneModel.gene_name.has(GeneNameModel.name == new_args.get('gene'))))
             new_args.pop('gene')
 
         data = {'items': [x.to_dict() for x in mice.filter_by(**new_args).order_by(order)]}

@@ -6,6 +6,7 @@ from app.data.models.organ import OrganModel
 from app.data.models.experiment import ExperimentModel
 from app.data.models.genotype import GenotypeModel
 from app.data.models.gene import GeneModel
+from app.data.models.gene_name import GeneNameModel
 
 parser = reqparse.RequestParser()
 
@@ -59,7 +60,7 @@ class Slices(Resource):
             slices = slices.filter(SliceModel.experiment.has(ExperimentModel.name == new_args.get('experiment')))
             new_args.pop('experiment')
         if new_args.get('gene'):
-            slices = slices.filter(SliceModel.mouse.has(MouseModel.gene.has(GeneModel.name == new_args.get('gene'))))
+            slices = slices.filter(SliceModel.mouse.has(MouseModel.gene.has(GeneModel.gene_name.has(GeneNameModel.name == new_args.get('gene')))))
             new_args.pop('gene')
         if new_args.get('genotype_gene'):
             slices = slices.filter(SliceModel.mouse.has(MouseModel.gene.has(
@@ -69,6 +70,10 @@ class Slices(Resource):
             slices = slices.filter(SliceModel.mouse.has(MouseModel.gene.has(
                 GeneModel.genotype_reporter.has(GenotypeModel.type_id == new_args.get('genotype_reporter')))))
             new_args.pop('genotype_reporter')
+        if new_args.get('instrument'):
+            if new_args.get('instrument') == 'other':
+                slices = slices.filter(SliceModel.instrument != 'LSM')
+                new_args.pop('instrument')
         data = SliceModel.to_collection_dict(slices.filter_by(**new_args).order_by(order), page, per_page, 'slices')
 
         if file_type == 'json':

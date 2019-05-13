@@ -55,7 +55,7 @@ class MouseModel(PaginatedAPIMixin, db.Model):
             'number': self.number,
             'sex': self.sex,
             'age': self.age,
-            'gene': self.gene.name,
+            'gene': self.gene.gene_name.name,
             'spec': "-" if self.gene.genotype_gene.type_id == 0 or self.gene.genotype_reporter.type_id == 0 else "+",
             'mani_type': self.mani_type.type
         }
@@ -78,7 +78,7 @@ class MouseModel(PaginatedAPIMixin, db.Model):
             'number': self.number,
             'sex': self.sex_string,
             'age': self.age,
-            'gene': self.gene.name,
+            'gene': self.gene.gene_name.name,
             'mani_type': self.mani_type.type,
         }
 

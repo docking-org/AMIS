@@ -7,7 +7,8 @@ class Config(object):
     SECURITY_PASSWORD_SALT = os.getenv("SECURITY_PASSWORD_SALT")
     SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://amis_user:amis1@169.230.26.120:5432/amis'
     # SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://amis_user:amis1@yod.compbio.ucsf.edu:5432/amis'
-    #                               # 'sqlite:///' + os.path.join(basedir, 'app.db')
+                                  # 'sqlite:///' + os.path.join(basedir, 'app.db')
+    # SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
 
 
 
@@ -25,7 +26,6 @@ class Config(object):
     MAX_CONTENT_LENGTH = 1024 * 1024 * 1024
     FILE_UPLOAD_FOLDER = 'app/tmp/'
     UPLOAD_FOLDER = '/nfs/ex9/idg-images'
-    # IMAGE_LOAD_FOLDER = '/nfs/ex9/idg-images/bob_upload/'
     IMAGE_LOAD_FOLDER = '/nfs/ex9/idg-images/'
     IMG_UPLOAD_FOLDER_URL = 'http://files.docking.org/idg-images'
 

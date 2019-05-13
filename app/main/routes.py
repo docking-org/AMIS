@@ -1,9 +1,10 @@
 from flask import render_template, flash, redirect, url_for, current_app, app, request, Response
 
 from app.main import application
-from app.helpers.validation import save_excel_records, save_file_list
+from app.helpers.validation import load_images
 from app.data.models.slice import SliceModel
 from app.data.models.gene import GeneModel
+from app.data.models.gene_name import GeneNameModel
 from app.data.models.organ import OrganModel
 from app.data.models.mouse import MouseModel
 from app.data.models.experiment import ExperimentModel
@@ -15,9 +16,9 @@ from flask_user import roles_required
 
 @application.route('/', methods=['GET'])
 def index():
-    genes = GeneModel.find_unique_names()
+    gene_names = GeneNameModel.find_all()
     organs = OrganModel.find_all()
-    return render_template('index.html', genes=genes, organs=organs)
+    return render_template('index.html', gene_names=gene_names, organs=organs)
 
 
 @application.route('/slice', methods=['GET'])
@@ -75,21 +76,13 @@ def interest():
 #         print("print get")
 #         return "GET"
 
-
 @application.route('/loadimages', methods=['GET', 'POST'])
-def reload():
-    ret = "Error!"
-    try:
-        folder = current_app.config['IMAGE_LOAD_FOLDER']
-        file_dir = os.path.realpath(os.path.dirname(folder))
-        lst = os.listdir(file_dir)
-        ret = save_file_list(lst)
-    except OSError:
-        print("error!")
-        pass  # ignore errors
-    else:
-        pass
-    return ret
+def image_load():
+    # folder = current_app.config['IMAGE_LOAD_FOLDER']
+    # file_dir = os.path.realpath(os.path.dirname(folder))
+    # lst = os.listdir(file_dir)
+    # ret = save_file_list(lst)
+    return load_images()
 
 
 @application.route('/details/<id>/<from_url>', methods=['GET', 'POST'])
@@ -100,8 +93,12 @@ def details(id, from_url):
 
 @application.route('/img_browser', methods=['GET', 'POST'])
 def img_browser():
+    gene_name = request.args.get("gene_name")
+    organ_name = request.args.get("organ_name")
+    print(gene_name)
+    print(organ_name)
     genes = GeneModel.find_unique_names()
     organs = OrganModel.find_all()
     experiments = ExperimentModel.find_all()
-    return render_template('img_browser.html', genes=genes, organs=organs, experiments=experiments)
+    return render_template('img_browser.html', genes=genes, organs=organs, experiments=experiments, gene_name=gene_name, organ_name=organ_name)
 

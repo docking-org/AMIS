@@ -142,7 +142,11 @@
                     <div class="col-sm-6">
                         <select name="gene" class="form-control" id="gene_dropdown">
                             {% for gene in genes %}
-                                <option value="{{ gene.name }}">{{ gene.name }}</option>
+                                <option value="{{ gene.gene_name.name }}"
+                                    {% if gene_name == gene.gene_name.name %}
+                                        selected
+                                    {% endif %}
+                                >{{ gene.gene_name.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -152,7 +156,11 @@
                     <div class="col-sm-6">
                         <select name="organ" class="form-control" id="organ_dropdown">
                             {% for organ in organs %}
-                                <option value="{{ organ.name }}">{{ organ.name }}</option>
+                                <option value="{{ organ.name }}"
+                                    {% if organ_name == organ.name%}
+                                        selected
+                                    {% endif %}
+                                >{{ organ.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -171,8 +179,8 @@
                     <label for="organ_dropdown" class="col-sm-4 col-form-label">Sample Type</label>
                     <div class="col-sm-6">
                         <select name="sample_type" class="form-control" id="sample_dropdown">
-                            <option value="LSD">Cleared</option>
-                            <option value="Keyence">Histological</option>
+                            <option value="LSM">Cleared</option>
+                            <option value="other">Histological</option>
                         </select>
                     </div>
                 </div>
@@ -454,8 +462,8 @@
 
             function changeFilter() {
                 if (img_color == 1) {
-                    $(".selected_slice_a").css('-webkit-filter', 'grayscale(1) invert(1)');
-                    $(".frame li img").css('-webkit-filter', 'grayscale(1) invert(1)');
+                    $(".selected_slice_a").css('-webkit-filter', 'brightness(10) invert(1)');
+                    $(".frame li img").css('-webkit-filter', 'brightness(10) invert(1)');
                     $(".frame li").css('background', '#fff');
                     img_color = 2;
                 } else {

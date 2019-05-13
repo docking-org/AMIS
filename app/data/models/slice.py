@@ -41,7 +41,7 @@ class SliceModel(PaginatedAPIMixin, db.Model):
     # sample_number = db.Column(db.Integer, nullable=True)
     slice_id = db.Column(db.Integer)
     # location_index = db.Column(db.String(200), nullable=True)
-    # z_step_size = db.Column(db.Float, nullable=True)  # Only for Cleared
+    z_step_size = db.Column(db.Float, nullable=True)  # Only for Cleared
     objective = db.Column(db.String(200))
     instrument = db.Column(db.String(200))
     wavelength = db.Column(db.String(200))
@@ -58,12 +58,13 @@ class SliceModel(PaginatedAPIMixin, db.Model):
     orientation = db.Column(db.String(200), nullable=True)
     combined_data = db.Column(db.String(800), unique=True)
 
-    def __init__(self, uberon, orientation, slide_number, slice_id, objective, instrument,
-                 wavelength, checksum, organ, mouse, experiment, combined_data):
+    def __init__(self, uberon, orientation, slide_number, slice_id, z_step_size, objective, instrument,
+                 wavelength, checksum, organ, mouse, experiment, combined_data, img_path):
         self.slide_number = slide_number
         self.slice_id = slice_id
         self.uberon = uberon
         self.orientation = orientation
+        self.z_step_size = z_step_size
         self.objective = objective
         self.instrument = instrument
         self.wavelength = wavelength
@@ -72,11 +73,12 @@ class SliceModel(PaginatedAPIMixin, db.Model):
         self.mouse = mouse
         self.experiment = experiment
         self.combined_data = combined_data
+        self.img_path = img_path
 
     def to_dict(self):
         data = {
             'id': self.id,
-            'gene': self.mouse.gene.name,
+            'gene': self.mouse.gene.gene_name.name,
             'experiment': self.experiment.name,
             'genotype_gene': self.mouse.gene.genotype_gene.type_id,
             'genotype_reporter': self.mouse.gene.genotype_reporter.type_id,
@@ -89,7 +91,7 @@ class SliceModel(PaginatedAPIMixin, db.Model):
             'orientation': self.orientation,
             'slice_id': self.slice_id,
             'slide_number': self.slide_number,
-            # 'z_step_size': self.z_step_size,
+            'z_step_size': self.z_step_size,
             'objective': self.objective,
             'instrument': self.instrument,
             'wavelength': self.wavelength,
@@ -103,11 +105,20 @@ class SliceModel(PaginatedAPIMixin, db.Model):
 
     @property
     def img(self):
-        return "{}/{}.png".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.combined_data)
+        return "{}{}/{}.jpg".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
+        # return "{}{}/img/{}.png".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
 
     @property
     def tif(self):
-        return "{}/{}.tif".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.combined_data)
+        return "{}{}/{}.tif".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
+
+    @classmethod
+    def find_img_by_checksum(cls, checksum):
+        slice = cls.query.filter_by(checksum=checksum).first()
+        if slice:
+            return slice.img
+        else:
+            return url_for('static', filename='images/no_result.png')
 
     @classmethod
     def isRegistered(cls, fileName):

@@ -57,7 +57,7 @@
                 <select name="gene" class="form-control" id="gene_dropdown">
                     <option value=""></option>
                     {% for gene in genes %}
-                        <option value="{{ gene.name }}">{{ gene.name }}</option>
+                        <option value="{{ gene.gene_name.name }}">{{ gene.gene_name.name }}</option>
                     {% endfor %}
                 </select>
             </div>

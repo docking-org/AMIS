@@ -71,12 +71,12 @@ class SliceView(sqla.ModelView):
     def get_query(self):
         return self.session.query(self.model).filter(self.model.slide_number != None)
 
-    column_list = ['mouse.gene.name', 'experiment.name', 'mouse.gene.genotype_gene.type_id',
+    column_list = ['mouse.gene.gene_name.name', 'experiment.name', 'mouse.gene.genotype_gene.type_id',
                    'mouse.gene.genotype_reporter.type_id', 'mouse.number', 'mouse.sex_string',
                    'mouse.age', 'mouse.mani_type.type', 'organ.name', 'orientation', 'slide_number',
                    'slice_id', 'objective', 'instrument',
                    'wavelength', 'probe_id', 'survey_classification', 'checksum']
-    column_labels = {'mouse.gene.name': 'Gene', 'experiment.name': 'Experiment',
+    column_labels = {'mouse.gene.gene_name.name': 'Gene', 'experiment.name': 'Experiment',
                      'mouse.gene.genotype_gene.type_id': 'Genotype Gene',
                      'mouse.gene.genotype_reporter.type_id': 'Genotype Reporter',
                      'mouse.number': 'Mouse number', 'mouse.sex_string': 'Sex', 'mouse.age': 'Age',
@@ -91,12 +91,12 @@ class ClearedView(sqla.ModelView):
     def get_query(self):
         return self.session.query(self.model).filter(self.model.sample_number != None)
 
-    column_list = ['mouse.gene.name', 'experiment.name', 'mouse.gene.genotype_gene.type_id',
+    column_list = ['mouse.gene.gene_name.name', 'experiment.name', 'mouse.gene.genotype_gene.type_id',
                    'mouse.gene.genotype_reporter.type_id', 'mouse.number', 'mouse.sex_string',
                    'mouse.age', 'mouse.mani_type.type', 'organ.name', 'sample_number',
                    'slice_id', 'objective', 'instrument',
                    'wavelength', 'probe_id', 'survey_classification', 'checksum']
-    column_labels = {'mouse.gene.name': 'Gene', 'experiment.name': 'Experiment',
+    column_labels = {'mouse.gene.gene_name.name': 'Gene', 'experiment.name': 'Experiment',
                      'mouse.gene.genotype_gene.type_id': 'Genotype Gene',
                      'mouse.gene.genotype_reporter.type_id': 'Genotype Reporter',
                      'mouse.number': 'Mouse number', 'mouse.sex_string': 'Sex', 'mouse.age': 'Age',
@@ -108,17 +108,17 @@ class ClearedView(sqla.ModelView):
 
 
 class GeneView(sqla.ModelView):
-    column_list = ['id', 'name', 'genotype_gene.type_id', 'genotype_reporter.type_id']
+    column_list = ['id', 'gene_name.name', 'genotype_gene.type_id', 'genotype_reporter.type_id']
     # form_columns = ('id', 'name', 'genotype_gene.type_id', 'genotype_reporter.type_id')
     column_labels = {'genotype_gene.type_id': 'Genotype', 'genotype_reporter.type_id': 'Genotype Reporter'}
-    column_searchable_list = ('name',)
+    column_searchable_list = ('gene_name.name',)
     # can_create = False
     # can_delete = False
     # can_edit = False
 
 class MouseView(sqla.ModelView):
-    column_list = ['gene.name', 'mani_type.type', 'number', 'sex_string', 'age']
-    column_labels = {'gene.name':'Gene', 'mani_type.type':'Manipulation Type', 'sex_string':'Sex'}
+    column_list = ['gene.gene_name.name', 'mani_type.type', 'number', 'sex_string', 'age']
+    column_labels = {'gene.gene_name.name':'Gene', 'mani_type.type':'Manipulation Type', 'sex_string':'Sex'}
     page_size = 20
     # can_create = False
     # can_delete = False
