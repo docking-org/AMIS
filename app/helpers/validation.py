@@ -7,7 +7,7 @@ from app.data.models.slice import SliceModel
 from app.data.models.gene_name import GeneNameModel
 from app.data.models.experiment import ExperimentModel
 from flask import current_app
-import os
+import os, shutil
 from PIL import Image
 import glob
 from pathlib import Path
@@ -82,6 +82,23 @@ def load_images():
         # print("File name with extention: {}".format(file_name_with_ext))
         # print("File sub folder: {}".format(file_sub_folder))
         if SliceModel.isRegistered(file_name):
+            destination = "{}{}/".format(path, file_sub_folder)
+            # print("DEST:"+destination)
+            if not os.path.isfile(destination):
+                jpeg_folder = current_app.config['JPEG_FOLDER']
+                jpeg_path = os.path.realpath(os.path.dirname(jpeg_folder))
+                source = "{}/{}.jpg".format(jpeg_path, file_name)
+                # print("SOURCE:"+source)
+                try:
+                    if os.path.isfile(source):
+                        print("HIIIIIIIIIIIIIIIII-----333333333333")
+                        print("DEST:" + destination)
+                        print("SOURCE:" + source)
+                        shutil.move(source, destination)
+                        print("JPEG file has been moved to " + destination)
+                except Exception as e:
+                    print(e)
+
             skipped += 1
             print("_______________Skipped the file: {}".format(file_name_with_ext))
             continue;

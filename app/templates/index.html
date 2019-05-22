@@ -6,13 +6,21 @@
     <link href="https://cdn.datatables.net/select/1.0.0/css/select.dataTables.css" rel="stylesheet" type="text/css"/>
     <link href="https://cdn.datatables.net/scroller/1.3.0/css/scroller.dataTables.css" rel="stylesheet"
           type="text/css"/>
+    <style>
+        img {
+            object-fit: cover;
+            height: 300px;
+            width: 300px;
+            margin-top: 10px;
+        }
+    </style>
 {% endblock %}
 {% block app_content %}
     <div role="main" class="container">
         <!-- Main jumbotron for a primary marketing message or call to action -->
-        <div class="jumbotron row less-jumbo">
-            <div class="col-md-6">
-                <h1>AMIS</h1>
+        <div class="jumbotron row less-jumbo" style="padding: 15px;">
+            <div class="col-sm-pull-9">
+                <h2>AMIS</h2>
                 <p>
                     Welcome to A Mouse Imaging Server (AMIS), the home for mouse imaging data generated via the NIH
                     Commonfund Program for Illuminating the Druggable Genome (<a
@@ -20,8 +28,6 @@
                     goal is to provide the research community with free, immediate access to the whole body distribution
                     of understudied genes via engineered mouse <a href="#" target="_blank">lines</a>.
                 </p>
-            </div>
-            <div class="col-md-6">
                 <p>
                     AMIS is provided by the Roth Lab at UNC Chapel Hill and the Shoichet/Irwin labs at the University of
                     California San Francisco (UCSF).
@@ -33,66 +39,9 @@
             <div class="row">
                 <div class="col-md-4 col-lg-3">
                     <div class="row">
-                        {#                        <div class="col-xs-6 col-md-12">#}
-                        {#                            <h2>Getting Started</h2>#}
-                        {#                            <ul>#}
-                        {#                                <li>#}
-                        {#                                    <a href="#" target="_blank">#}
-                        {#                                        Getting Started#}
-                        {#                                    </a>#}
-                        {#                                </li>#}
-                        {#                                <li>#}
-                        {#                                    <a href="#" target="_blank">#}
-                        {#                                        What's New#}
-                        {#                                    </a>#}
-                        {#                                </li>#}
-                        {#                                <li>#}
-                        {#                                    <a href="#" target="_blank">#}
-                        {#                                        About AMIS Resources#}
-                        {#                                    </a>#}
-                        {#                                </li>#}
-                        {#                                <li>#}
-                        {#                                    <a href="#" target="_blank">#}
-                        {#                                        Current Status / In Progress#}
-                        {#                                    </a>#}
-                        {#                                </li>#}
-                        {#                            </ul>#}
-                        {#                        </div>#}
+
                         <div class="col-xs-6 col-md-12">
-                            {#                            <h2>Explore Resources</h2>#}
-                            {#                            <dl class="dl-inline">#}
-                            {#                                <dt>Chemistry</dt>#}
-                            {#                            </dl>#}
-                            {#                            <dl class="dl-inline">#}
-                            {#                                <dt>Biology</dt>#}
-                            {#                            </dl>#}
-                            {#                            <ul>#}
-                            {#                                <li>#}
-                            {#                                    <a href="#" target="_blank">#}
-                            {#                                        GPCR Dogma#}
-                            {#                                    </a>#}
-                            {#                                </li>#}
-                            {#                                <li>#}
-                            {#                                    <a href="#" target="_blank">#}
-                            {#                                        Specific GPCR#}
-                            {#                                    </a>#}
-                            {#                                </li>#}
-                            {#                                <li>#}
-                            {#                                    <a href="#" target="_blank">#}
-                            {#                                        Distribution#}
-                            {#                                    </a>#}
-                            {#                                </li>#}
-                            {#                                <li>#}
-                            {#                                    <a href="#" target="_blank">#}
-                            {#                                        Known Ligands (if any)#}
-                            {#                                    </a>#}
-                            {#                                </li>#}
-                            {#                                <li>#}
-                            {#                                    <a href="#" target="_blank">#}
-                            {#                                        References#}
-                            {#                                    </a>#}
-                            {#                                </li>#}
-                            {#                            </ul>#}
+
                         </div>
                     </div>
                 </div>
@@ -120,9 +69,9 @@
             <!-- /.row -->
             <form>
                 <div class="form-group row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group row">
-                            <label for="search_by_dropdown" class="col-sm-3 col-form-label">Search by:</label>
+                            <label for="search_by_dropdown" class="col-sm-4 col-form-label">Search by:</label>
                             <div class="col-sm-7">
                                 <select name="search_by_dropdown" class="form-control" id="search_by_dropdown">
                                     <option value="1">Gene</option>
@@ -131,21 +80,23 @@
                             </div>
                         </div>
                         <div class="form-group row gene">
-                            <label for="gene_dropdown" class="col-sm-3 col-form-label">Gene</label>
+                            <label for="gene_dropdown" class="col-sm-4 col-form-label">Gene</label>
                             <div class="col-sm-7">
                                 <select name="gene" class="form-control" id="gene_dropdown">
-                                    <option value=""></option>
-                                    {% for gene_name in gene_names %}
-                                        <option value="{{ gene_name.name }}">{{ gene_name.name }}</option>
+                                    {% for gene in genes %}
+                                        <option value="{{ gene.name }}"
+                                                {% if gene_name == gene.name %}
+                                                selected
+                                                {% endif %}
+                                        >{{ gene.name }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
                         </div>
                         <div class="form-group row organ" style="display: none">
-                            <label for="organ_dropdown" class="col-sm-3 col-form-label">Organ</label>
+                            <label for="organ_dropdown" class="col-sm-4 col-form-label">Organ</label>
                             <div class="col-sm-7">
                                 <select name="organ" class="form-control" id="organ_dropdown">
-                                    <option value=""></option>
                                     {% for organ in organs %}
                                         <option value="{{ organ.name }}">{{ organ.name }}</option>
                                     {% endfor %}
@@ -153,7 +104,7 @@
                             </div>
                         </div>
                         <div class="form-group row " style="display: block">
-                            <div class="col-sm-3"></div>
+                            <div class="col-sm-4"></div>
                             <div class="col-sm-7">
                                 <table id="gene_table" class="display" style="width:100%; display: none">
                                     <thead>
@@ -183,22 +134,43 @@
 
                         </div>
                     </div>
-                    <div class="col-sm-5 img_section" style="display: none">
+                    <div class="col-sm-8 img_section" style="display: none">
                         <div class="row text-center">
-                            <div class="btn-group colors" id="wavelength" data-toggle="buttons">
-                                <label class="btn btn-info active">
-                                    <input type="radio" name="options" value="tdTomato" autocomplete="off"
-                                           checked>
-                                    tdTomato
-                                </label>
-                                <label class="btn btn-info">
-                                    <input type="radio" name="options" value="DAPI" autocomplete="off"> Dapi
-                                </label>
+                            <div class="col-sm-2">
+
+                            </div>
+                            <div class="col-sm-5">
+                                <p id="pos_title"></p>
+                            </div>
+                            <div class="col-sm-5">
+                                <p id="neg_title"></p>
                             </div>
                         </div>
                         <div class="row text-center">
-                            <br/>
-                            <img src="" class="selected_img img-fluid" height="250px">
+                            <div class="col-sm-2">
+                                <br/><br/><br/><br/><br/><br/><br/>
+                                <b>tdTanimoto</b>
+                            </div>
+                            <div class="col-sm-5">
+                                <img src="" class="selected_img1 img-fluid"/>
+                            </div>
+                            <div class="col-sm-5">
+                                <img src="" class="selected_img2 img-fluid"/>
+                            </div>
+                        </div>
+                        <div class="row text-center">
+                            <div class="col-sm-2 ">
+                                <br/><br/><br/><br/><br/><br/><br/>
+                                <b>DAPI</b>
+                            </div>
+                            <div class="col-sm-5">
+                                <img src="" class="selected_img3 img-fluid"/>
+                            </div>
+                            <div class="col-sm-5">
+                                <img src="" class="selected_img4 img-fluid"/>
+                            </div>
+                        </div>
+                        <div class="row text-center">
                             <br/>
                             <p><a href="" id="imgBrowser">Click here to see full dataset</a></p>
                         </div>
@@ -219,43 +191,29 @@
     <script type="text/javascript">
         $(document).ready(function () {
             var table_row_selection_val = ''
+            var firstLoad = 1;
+            OrganFunc();
 
             $('#search_by_dropdown').change(function () {
                 if ($(this).val() == 1) {
                     $('.gene').show();
                     $('.organ').hide();
+                    OrganFunc();
 
                 } else {
                     $('.organ').show();
                     $('.gene').hide();
+                    GeneFunc();
                 }
-                $('#gene_table').hide();
-                $('#organ_table').hide();
-                $('.img_section').hide();
-
             });
 
             $('#gene_dropdown').change(function () {
-                $('#gene_table').hide();
-                $('#gene_table').dataTable().fnClearTable();
-                $('#gene_table').dataTable().fnDestroy();
-                $('.img_section').hide();
                 OrganFunc();
+
             });
 
             $('#organ_dropdown').change(function () {
-                $('#organ_table').hide();
-                $('#organ_table').dataTable().fnClearTable();
-                $('#organ_table').dataTable().fnDestroy();
-                $('.img_section').hide();
                 GeneFunc();
-            });
-
-            $("#wavelength .btn").on('click', function (event) {
-                {#wavelength = $(this).find('input').val();#}
-                {#var current = parseInt($('.current_id').text()) - 1;#}
-                {#slyOptions['startAt'] = current;#}
-                {#updateContent();#}
             });
 
             $('#imgBrowser').click(function () {
@@ -266,14 +224,47 @@
             function ImageBrowser() {
                 var url = "/img_browser?";
                 if ($('#search_by_dropdown').val() == 1) {
-                    url += "gene_name=" + $('#gene_dropdown').val()  + table_row_selection_val;
+                    url += "gene_name=" + $('#gene_dropdown').val() + table_row_selection_val;
                 } else {
                     url += "organ_name=" + $('#organ_dropdown').val() + table_row_selection_val;
                 }
                 window.location.href = url;
             }
 
+            function SelectRow() {
+                var organTable1 = $('#organ_table').DataTable();
+                organTable1.row(':eq(0)').select();
+                console.log("hi");
+                {#organTable1.row(':eq(0)').select();#}
+
+
+                {#var allData = organTable1.rows().data();#}
+                {#alert(allData);#}
+
+                {#var indexes = organTable1.rows().eq(0).filter(function (rowIdx) {#}
+                {#    return organTable1.cell(rowIdx, 1).data().gene_name === 'brain' ? true : false;#}
+
+                {#console.log(indexes);#}
+                {#organTable1.rows(indexes).nodes().to$().addClass('highlight');#}
+                {#organTable1.rows('brain').select();#}
+            }
+
+            function ImageChange(val1, val2, val3, val4) {
+                $('.img_section').show();
+                $('.selected_img1').attr('src', val1);
+                $('.selected_img2').attr('src', val2);
+                $('.selected_img3').attr('src', val3);
+                $('.selected_img4').attr('src', val4);
+
+                $("#pos_title").html("<b>" + $('#gene_dropdown').val() + "+</b>");
+                $("#neg_title").html("<b>" + $('#gene_dropdown').val() + "-</b>");
+            }
+
             function GeneFunc() {
+                $('#organ_table').hide();
+                $('#organ_table').dataTable().fnClearTable();
+                $('#organ_table').dataTable().fnDestroy();
+                $('.img_section').hide();
                 $('#gene_table').show();
                 var geneTable = $('#gene_table').DataTable({
                     "ajax": {
@@ -286,6 +277,8 @@
                         {"data": "status"},
                         {"data": "t_pos"},
                         {"data": "t_neg"},
+                        {"data": "d_pos"},
+                        {"data": "d_neg"},
                     ],
                     "columnDefs": [
                         {
@@ -295,9 +288,21 @@
                         },
                         {
                             "targets": [3],
-                            "visible": false
+                            "visible": false,
+                            "searchable": false
+                        },
+                        {
+                            "targets": [4],
+                            "visible": false,
+                            "searchable": false
+                        },
+                        {
+                            "targets": [5],
+                            "visible": false,
+                            "searchable": false
                         }
                     ],
+                    deferRender: true,
                     destroy: true,
                     searching: false,
                     paging: false,
@@ -309,16 +314,26 @@
 
                 geneTable.off('select').on('select', function (e, dt, type, indexes) {
                     if (type == 'row') {
+                        var d_pos = geneTable.rows(indexes).data().pluck('d_pos');
+                        var d_neg = geneTable.rows(indexes).data().pluck('d_neg');
                         var t_pos = geneTable.rows(indexes).data().pluck('t_pos');
-                        $('.img_section').show();
-                        $('.selected_img').attr('src', t_pos[0]);
+                        var t_neg = geneTable.rows(indexes).data().pluck('t_neg');
+
+                        ImageChange(t_pos[0], t_neg[0], d_pos[0], d_neg[0]);
+
                         var gene_name = geneTable.rows(indexes).data().pluck('gene_name');
                         table_row_selection_val = "&gene_name=" + gene_name[0];
+
                     }
                 });
+
             }
 
             function OrganFunc() {
+                $('#gene_table').hide();
+                $('#gene_table').dataTable().fnClearTable();
+                $('#gene_table').dataTable().fnDestroy();
+                $('.img_section').hide();
                 $('#organ_table').show();
                 var organTable = $('#organ_table').DataTable({
                     "ajax": {
@@ -331,6 +346,8 @@
                         {"data": "status"},
                         {"data": "t_pos"},
                         {"data": "t_neg"},
+                        {"data": "d_pos"},
+                        {"data": "d_neg"},
                     ],
                     "columnDefs": [
                         {
@@ -340,9 +357,37 @@
                         },
                         {
                             "targets": [3],
-                            "visible": false
+                            "visible": false,
+                            "searchable": false
+                        },
+                        {
+                            "targets": [4],
+                            "visible": false,
+                            "searchable": false
+                        },
+                        {
+                            "targets": [5],
+                            "visible": false,
+                            "searchable": false
                         }
                     ],
+                    "initComplete": function () {
+                        if (firstLoad == 1) {
+                            organTable.rows().every(function (rowIdx, tableLoop, rowLoop) {
+                                var data = this.data();
+                                if (data.organ_name == '{{ organ_name }}') {
+                                    ImageChange(data.t_pos, data.t_neg, data.d_pos, data.d_neg);
+                                }
+                                console.log(data.organ_name);
+                                // ... do something with data(), or row.node(), etc
+                            });
+                            {#organTable.row(':eq(0)').select();#}
+                            {#this.api().row(0).select();#}
+                            organTable.row(':eq(0)', { page: 'current' }).select();
+                            firstLoad = 2;
+                        }
+                    },
+                    deferRender: true,
                     destroy: true,
                     searching: false,
                     paging: false,
@@ -353,9 +398,13 @@
 
                 organTable.off('select').on('select', function (e, dt, type, indexes) {
                     if (type == 'row') {
+                        var d_pos = organTable.rows(indexes).data().pluck('d_pos');
+                        var d_neg = organTable.rows(indexes).data().pluck('d_neg');
                         var t_pos = organTable.rows(indexes).data().pluck('t_pos');
-                        $('.img_section').show();
-                        $('.selected_img').attr('src', t_pos[0]);
+                        var t_neg = organTable.rows(indexes).data().pluck('t_neg');
+
+                        ImageChange(t_pos[0], t_neg[0], d_pos[0], d_neg[0]);
+
                         var organ_name = organTable.rows(indexes).data().pluck('organ_name');
                         table_row_selection_val = "&organ_name=" + organ_name[0];
                     }

@@ -14,11 +14,12 @@ import pathlib
 from flask_user import roles_required
 
 
+@application.route('/<gene_name>/<organ_name>', methods=['GET'])
 @application.route('/', methods=['GET'])
-def index():
-    gene_names = GeneNameModel.find_all()
+def index(gene_name=None, organ_name=None):
+    genes = GeneNameModel.find_all()
     organs = OrganModel.find_all()
-    return render_template('index.html', gene_names=gene_names, organs=organs)
+    return render_template('index.html', genes=genes, organs=organs, gene_name=gene_name, organ_name=organ_name)
 
 
 @application.route('/slice', methods=['GET'])

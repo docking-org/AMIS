@@ -143,9 +143,9 @@
                         <select name="gene" class="form-control" id="gene_dropdown">
                             {% for gene in genes %}
                                 <option value="{{ gene.gene_name.name }}"
-                                    {% if gene_name == gene.gene_name.name %}
+                                        {% if gene_name == gene.gene_name.name %}
                                         selected
-                                    {% endif %}
+                                        {% endif %}
                                 >{{ gene.gene_name.name }}</option>
                             {% endfor %}
                         </select>
@@ -157,9 +157,9 @@
                         <select name="organ" class="form-control" id="organ_dropdown">
                             {% for organ in organs %}
                                 <option value="{{ organ.name }}"
-                                    {% if organ_name == organ.name%}
+                                        {% if organ_name == organ.name %}
                                         selected
-                                    {% endif %}
+                                        {% endif %}
                                 >{{ organ.name }}</option>
                             {% endfor %}
                         </select>
@@ -296,16 +296,19 @@
             $('#organ_dropdown').change(function () {
                 slyOptions['startAt'] = 0;
                 updateContent();
+                updateSpecimen();
             });
 
             $('#experiment_dropdown').change(function () {
                 slyOptions['startAt'] = 0;
                 updateContent();
+
             });
 
             $('#sample_dropdown').change(function () {
                 slyOptions['startAt'] = 0;
                 updateContent();
+                updateSpecimen()
             });
 
             $("#specimen").on('click', '.btn', function (event) {
@@ -430,7 +433,7 @@
             function updateSpecimen() {
                 $.ajax({
                     type: 'GET',
-                    url: "/mice?gene=" + $('#gene_dropdown').val(),
+                    url: "/mice?gene=" + $('#gene_dropdown').val() + "&organ=" + $('#organ_dropdown').val() + "&instrument=" + $('#sample_dropdown').val(),
                     "dataType": "json",
                     "dataSrc": "items",
                     success: function (data) {
