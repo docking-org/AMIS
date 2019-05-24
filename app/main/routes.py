@@ -15,6 +15,7 @@ from flask_user import roles_required
 
 
 @application.route('/<gene_name>/<organ_name>', methods=['GET'])
+@application.route('/<gene_name>', methods=['GET'])
 @application.route('/', methods=['GET'])
 def index(gene_name=None, organ_name=None):
     genes = GeneNameModel.find_all()

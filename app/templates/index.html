@@ -231,24 +231,6 @@
                 window.location.href = url;
             }
 
-            function SelectRow() {
-                var organTable1 = $('#organ_table').DataTable();
-                organTable1.row(':eq(0)').select();
-                console.log("hi");
-                {#organTable1.row(':eq(0)').select();#}
-
-
-                {#var allData = organTable1.rows().data();#}
-                {#alert(allData);#}
-
-                {#var indexes = organTable1.rows().eq(0).filter(function (rowIdx) {#}
-                {#    return organTable1.cell(rowIdx, 1).data().gene_name === 'brain' ? true : false;#}
-
-                {#console.log(indexes);#}
-                {#organTable1.rows(indexes).nodes().to$().addClass('highlight');#}
-                {#organTable1.rows('brain').select();#}
-            }
-
             function ImageChange(val1, val2, val3, val4) {
                 $('.img_section').show();
                 $('.selected_img1').attr('src', val1);
@@ -377,16 +359,13 @@
                                 var data = this.data();
                                 if (data.organ_name == '{{ organ_name }}') {
                                     ImageChange(data.t_pos, data.t_neg, data.d_pos, data.d_neg);
+
                                 }
-                                console.log(data.organ_name);
-                                // ... do something with data(), or row.node(), etc
                             });
-                            {#organTable.row(':eq(0)').select();#}
-                            {#this.api().row(0).select();#}
-                            organTable.row(':eq(0)', { page: 'current' }).select();
                             firstLoad = 2;
                         }
                     },
+                    responsive: true,
                     deferRender: true,
                     destroy: true,
                     searching: false,
@@ -397,7 +376,9 @@
                 });
 
                 organTable.off('select').on('select', function (e, dt, type, indexes) {
+
                     if (type == 'row') {
+                        organTable.rows('.default').select();
                         var d_pos = organTable.rows(indexes).data().pluck('d_pos');
                         var d_neg = organTable.rows(indexes).data().pluck('d_neg');
                         var t_pos = organTable.rows(indexes).data().pluck('t_pos');
