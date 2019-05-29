@@ -255,7 +255,7 @@
             var img_color = 1;
             var bg_color = 1;
             var total_result = 0;
-            var mouse_number = 'not_set';
+            var mouse_number = "";
             var wavelength = "tdTomato";
             var $frame = $('#forcecentered');
             var $wrap = $frame.parent();
@@ -284,18 +284,16 @@
                 next: $wrap.find('.next')
             };
 
-            updateContent();
             updateSpecimen();
+
 
             $('#gene_dropdown').change(function () {
                 slyOptions['startAt'] = 0;
-                updateContent();
                 updateSpecimen();
             });
 
             $('#organ_dropdown').change(function () {
                 slyOptions['startAt'] = 0;
-                updateContent();
                 updateSpecimen();
             });
 
@@ -307,8 +305,7 @@
 
             $('#sample_dropdown').change(function () {
                 slyOptions['startAt'] = 0;
-                updateContent();
-                updateSpecimen()
+                updateSpecimen();
             });
 
             $("#specimen").on('click', '.btn', function (event) {
@@ -325,14 +322,14 @@
                 updateContent();
             });
 
-            function updateContent(keep_current) {
+            function updateContent() {
                 $('.loader').show();
                 $('.selected_slice').hide();
                 var url = "/slices?per_page=-1&order_by=slice_id";
                 url += "&gene=" + $('#gene_dropdown').val() + "&organ=" + $('#organ_dropdown').val();
                 url += "&experiment=" + $('#experiment_dropdown').val() + "&instrument=" + $('#sample_dropdown').val();
                 url += "&wavelength=" + wavelength;
-                if (mouse_number != 'not_set') {
+                if (mouse_number != "") {
                     url += "&mouse_number=" + mouse_number;
                 }
                 $.ajax({
@@ -368,13 +365,13 @@
                             img_color = 1;
                         }
                         changeFilter();
-                        $('.loader').hide();
-                        $('.selected_slice').show();
                         if (content.length > 0) {
                             frameChange(slyOptions['startAt']);
                         } else {
                             frameChange(-1);
                         }
+                        $('.loader').hide();
+                        $('.selected_slice').show();
 
                     }, error: function (jqXHR, status, err) {
                         console.log(status);
@@ -443,10 +440,17 @@
                         data.items.sort(compareValues('sex', 'asc'));
                         data.items.sort(compareValues('spec', 'asc'));
                         console.log(data);
+                        mouse_number = "";
                         for (i in data.items) {
                             {#console.log(i);#}
-                            content += "<label class='btn btn2 btn-info'><input type='radio' name='options' ";
+                            content += "<label class='btn btn2 btn-info";
+                            if(mouse_number == ""){
+                                mouse_number = data.items[i].number;
+                                content += " active";
+                            }
+                            content += "'><input type='radio' name='options' ";
                             content += "value='" + data.items[i].number + "'> " + data.items[i].spec;
+
                             if (data.items[i].sex) {
                                 content += " <i class='fas fa-mars'></i> ";
                             } else {
@@ -455,6 +459,7 @@
                             content += data.items[i].age + " " + data.items[i].number + "</label>";
                         }
                         $('#specimen').html(content);
+                        updateContent();
                     }, error: function (jqXHR, status, err) {
                         console.log(status);
                         $('.alert-danger .text').text(err.toLowerCase() + '!');
