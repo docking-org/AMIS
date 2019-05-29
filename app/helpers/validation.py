@@ -68,7 +68,10 @@ def save_excel_records(type, records):
 def load_images():
     skipped = 0
     new_files = 0
+    jpegs = 0
+    moved_jpegs = 0
     p_denied = 0
+    missing_jpegs = []
     folder = current_app.config['IMAGE_LOAD_FOLDER']
     path = os.path.realpath(os.path.dirname(folder))
     print("Path: {}".format(path))
@@ -83,25 +86,31 @@ def load_images():
         # print("File sub folder: {}".format(file_sub_folder))
         if SliceModel.isRegistered(file_name):
             destination = "{}{}/".format(path, file_sub_folder)
-            # print("DEST:"+destination)
-            if not os.path.isfile(destination):
+            dest_file_with_jpeg = "{}{}.jpg".format(destination, file_name)
+            # print("DEST:"+destination+file_name)
+            print("dest_file_with_jpeg:" + dest_file_with_jpeg)
+            if not os.path.isfile(dest_file_with_jpeg):
+                jpegs += 1
                 jpeg_folder = current_app.config['JPEG_FOLDER']
                 jpeg_path = os.path.realpath(os.path.dirname(jpeg_folder))
+                print("jpeg_path:" + jpeg_path)
                 source = "{}/{}.jpg".format(jpeg_path, file_name)
-                # print("SOURCE:"+source)
+                print("SOURCE:" + source)
                 try:
                     if os.path.isfile(source):
+                        moved_jpegs += 1
                         print("HIIIIIIIIIIIIIIIII-----333333333333")
                         print("DEST:" + destination)
                         print("SOURCE:" + source)
                         shutil.move(source, destination)
                         print("JPEG file has been moved to " + destination)
+                    else:
+                        missing_jpegs.append(dest_file_with_jpeg)
                 except Exception as e:
                     print(e)
-
             skipped += 1
             print("_______________Skipped the file: {}".format(file_name_with_ext))
-            continue;
+            continue
         values = file_name.split('_')
         try:
             genotype_gene = GenotypeModel.find_by_id(values[2])
@@ -138,7 +147,8 @@ def load_images():
                 # values.remove('')
                 # uberon, orientation, slide_number, slice_id, z_step_size=None, objective, instrument,
                 # wavelength, checksum, organ, mouse, experiment, combined_data
-                slice = SliceModel(values[9], values[10], re.sub("[^0-9]", "", values[11]), values[12], None, values[13], values[14],
+                slice = SliceModel(values[9], values[10], re.sub("[^0-9]", "", values[11]), values[12], None,
+                                   values[13], values[14],
                                    values[15], values[16], organ, mouse, experiment, file_name, file_sub_folder)
                 slice.save_to_db()
             elif len(values) == 16:
@@ -181,6 +191,11 @@ def load_images():
             print("Skipped the file: {}".format(file_name_with_ext))
             print("Please check the file name: {}\n Exception {}\n".format(file_name, str(e)))
 
+    with open(path+'/missing_jpeg_paths.txt', 'w') as file_handler:
+        for item in missing_jpegs:
+            file_handler.write("{}\n".format(item))
 
-    return "<h1>Status:</h1> <br/> <h3>Skipped old files:{}</h3> <br/><h3>Added new files:{}</h3> <br/> <h3>Permission denied:{}</h3>".format(
-        skipped, new_files, p_denied)
+    return "<h1>Status:</h1> <br/> <h3>Skipped old files:{}</h3> <br/><h3>Added new files:{}</h3> <br/> " \
+           "<h3>Permission denied:{}</h3><br/> <h3>JPEG(s) not found:{}</h3>" \
+           "<br/> <h3>JPEG(s) has been moved to RIGHT directory:{}</h3>".format(
+        skipped, new_files, p_denied, jpegs, moved_jpegs)
