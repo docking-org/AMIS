@@ -6,6 +6,7 @@
           href="{{ url_for('static', filename='scripts/lightbox/ekko-lightbox.css') }}"/>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <link href="{{ url_for('static', filename='scripts/iv-viewer/imageviewer.css') }}"  rel="stylesheet" type="text/css" />
     <style>
         .loader {
             border: 16px solid #f3f3f3;
@@ -205,12 +206,13 @@
                 <div class="no_result controls center"><img
                         src="{{ url_for('static', filename='images/no_result.png') }}" height="300px">
                 </div>
-                <a href="" data-toggle="lightbox" data-max-width="800" height="600" class="selected_slice_a">
-                    <img src="" class="selected_slice img-fluid" height="450px">
-                </a>
+                 <div data-max-width="800" height="600" class="cf">
+                    <img src=""  data-high-res-src=""  class="selected_slice img-fluid gallery-items" height="450px">
+                 </div>
             </div>
         </div>
         <div class="col-sm-3 slice_details">
+
         </div>
     </div>
     <div class="wrap">
@@ -247,9 +249,8 @@
     {{ super() }}
     <script src="{{ url_for('static', filename='scripts/sly/sly.min.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/sly/examples/js/vendor/plugins.js') }}"></script>
-    <script src="{{ url_for('static', filename='scripts/lightbox/ekko-lightbox.js') }}"></script>
-    <script src="{{ url_for('static', filename='scripts/lightbox/ekko-lightbox.js.map') }}"></script>
     {#    <script src="{{ url_for('static', filename='scripts/sly/horizontal.js') }}"></script>#}
+    <script src="{{ url_for('static', filename='scripts/iv-viewer/imageviewerScript.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             var img_color = 1;
@@ -396,7 +397,9 @@
                     $('.slice_details').show();
                     var src = $('._' + index).find("img").attr('src');
                     $('.selected_slice').attr('src', src);
-                    $('.selected_slice_a').attr('href', src);
+                    $('.selected_slice').attr('href', src);
+                    $('.selected_slice').attr('data-high-res-src', src);
+                    {#$('.selected_slice_a').attr('href', src);#}
                     var id = $('._' + index).attr('id');
                     updateSliceDetail(id);
                 }
@@ -416,7 +419,10 @@
                             content += "<p>Probe: " + data.items[i].gene + "</p>";
                             content += "<p>Magnification: <b>" + data.items[i].resolution + "</b></p>";
                             content += "<p>MD5: <b>" + data.items[i].checksum + "</b></p>";
-                            content += "<a href=" + data.items[i].tif_url + ">Download TIF file</a>";
+                            content += "<p><a href=" + data.items[i].tif_url + ">Download TIF file</a></p><br/>";
+                            content += "<a href=" + data.items[i].full_img_url + " ";
+                            content += " data-high-res-src=" + data.items[i].full_img_url + "  class='gallery-items'>";
+                            content += "Click here to see full sized image</a>";
                         }
                         $('.slice_details').html(content);
                     }, error: function (jqXHR, status, err) {
@@ -470,12 +476,12 @@
 
             function changeFilter() {
                 if (img_color == 1) {
-                    $(".selected_slice_a").css('-webkit-filter', 'brightness(10) invert(1)');
+                    {#$(".selected_slice_a").css('-webkit-filter', 'brightness(10) invert(1)');#}
                     $(".frame li img").css('-webkit-filter', 'brightness(10) invert(1)');
                     $(".frame li").css('background', '#fff');
                     img_color = 2;
                 } else {
-                    $(".selected_slice_a").css('-webkit-filter', '');
+                    {#$(".selected_slice_a").css('-webkit-filter', '');#}
                     $(".frame li  img").css('-webkit-filter', '');
                     $(".frame li").css('background', '#000');
                     img_color = 1;
@@ -523,9 +529,19 @@
             }
 
         });
-        $(document).on('click', '[data-toggle="lightbox"]', function (event) {
+        $(document).on('click', '.gallery-items', function (event) {
             event.preventDefault();
-            $(this).ekkoLightbox();
+            var viewer = ImageViewer();
+            var imgSrc = '';
+            if(this.tagName == 'A'){
+                imgSrc = this.href;
+            }else{
+                imgSrc = this.src;
+            }
+            highResolutionImage = $(this).data('high-res-img');
+
+            viewer.show(imgSrc, highResolutionImage);
         });
+
     </script>
 {% endblock %}

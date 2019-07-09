@@ -5,8 +5,8 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config(object):
     SECRET_KEY = os.getenv("SECRET_KEY") or 'secret'
     SECURITY_PASSWORD_SALT = os.getenv("SECURITY_PASSWORD_SALT")
-    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://amis_user:amis1@169.230.26.120:5432/amis'
-    # SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://amis_user:amis1@yod.compbio.ucsf.edu:5432/amis'
+    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://amis_user:amis1@169.230.26.46:5432/amis'
+    # SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://amis_user:amis1@phi:5432/amis'
                                   # 'sqlite:///' + os.path.join(basedir, 'app.db')
     # SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
 

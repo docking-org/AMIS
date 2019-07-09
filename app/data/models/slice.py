@@ -99,6 +99,7 @@ class SliceModel(PaginatedAPIMixin, db.Model):
             'checksum': self.checksum,
             # 'survey_classification': self.survey_classification,
             'img_url': self.img,
+            'full_img_url': self.full_img,
             'tif_url': self.tif
         }
         return data
@@ -107,6 +108,10 @@ class SliceModel(PaginatedAPIMixin, db.Model):
     def img(self):
         return "{}{}/{}.jpg".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
         # return "{}{}/img/{}.png".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
+
+    @property
+    def full_img(self):
+        return "{}{}/{}.jpeg".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
 
     @property
     def tif(self):
