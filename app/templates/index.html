@@ -224,9 +224,9 @@
             function ImageBrowser() {
                 var url = "/img_browser?";
                 if ($('#search_by_dropdown').val() == 1) {
-                    url += "gene_name=" + $('#gene_dropdown').val() + table_row_selection_val;
+                    url += "gene=" + $('#gene_dropdown').val() + table_row_selection_val;
                 } else {
-                    url += "organ_name=" + $('#organ_dropdown').val() + table_row_selection_val;
+                    url += "organ=" + $('#organ_dropdown').val() + table_row_selection_val;
                 }
                 window.location.href = url;
             }
@@ -387,7 +387,7 @@
                         ImageChange(t_pos[0], t_neg[0], d_pos[0], d_neg[0]);
 
                         var organ_name = organTable.rows(indexes).data().pluck('organ_name');
-                        table_row_selection_val = "&organ_name=" + organ_name[0];
+                        table_row_selection_val = "&organ=" + organ_name[0];
                     }
                 });
             }

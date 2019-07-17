@@ -98,20 +98,43 @@ class SliceModel(PaginatedAPIMixin, db.Model):
             # 'probe_id': self.probe_id,
             'checksum': self.checksum,
             # 'survey_classification': self.survey_classification,
-            'img_url': self.img,
-            'full_img_url': self.full_img,
+            # 'img_url': self.img,
+            'img_colored_sm': self.img_colored_sm,
+            'img_colored_big': self.img_colored_big,
+            'img_bw_sm': self.img_bw_sm,
+            'img_bw_big': self.img_bw_big,
             'tif_url': self.tif
         }
         return data
 
-    @property
-    def img(self):
-        return "{}{}/{}.jpg".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
-        # return "{}{}/img/{}.png".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
+    # @property
+    # def img(self):
+    #     return "{}{}/{}.jpg".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
+    #     # return "{}{}/img/{}.png".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
+    #
+    # @property
+    # def colored_full_img(self):
+    #     return "{}{}/{}.png".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
+    #
+    # @property
+    # def full_img(self):
+    #     return "{}{}/{}.jpeg".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
 
     @property
-    def full_img(self):
-        return "{}{}/{}.jpeg".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
+    def img_colored_sm(self):
+        return "{}{}/{}_RI.png".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
+
+    @property
+    def img_colored_big(self):
+        return "{}{}/{}_RI.jpg".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
+
+    @property
+    def img_bw_sm(self):
+        return "{}{}/{}.png".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
+
+    @property
+    def img_bw_big(self):
+        return "{}{}/{}.jpg".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
 
     @property
     def tif(self):

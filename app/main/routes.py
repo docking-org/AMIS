@@ -95,12 +95,17 @@ def details(id, from_url):
 
 @application.route('/img_browser', methods=['GET', 'POST'])
 def img_browser():
-    gene_name = request.args.get("gene_name")
-    organ_name = request.args.get("organ_name")
-    print(gene_name)
-    print(organ_name)
+    gene = request.args.get("gene")
+    organ = request.args.get("organ")
+    experiment = request.args.get("experiment")
+    sample_type = request.args.get("sample_type")
+    mouse_number = request.args.get("mouse_number")
+    wavelength = request.args.get("wavelength")
+    selected_slice = request.args.get("selected_slice")
     genes = GeneModel.find_unique_names()
     organs = OrganModel.find_all()
     experiments = ExperimentModel.find_all()
-    return render_template('img_browser.html', genes=genes, organs=organs, experiments=experiments, gene_name=gene_name, organ_name=organ_name)
+    return render_template('img_browser.html', genes=genes, organs=organs, experiments=experiments,
+                           gene=gene, organ=organ, experiment=experiment, sample_type=sample_type,
+                           mouse_number=mouse_number, wavelength=wavelength, selected_slice=selected_slice)
 

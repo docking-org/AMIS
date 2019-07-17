@@ -29,6 +29,7 @@ class Config(object):
     IMAGE_LOAD_FOLDER = '/nfs/ex9/idg-images/'
     IMG_UPLOAD_FOLDER_URL = 'http://files.docking.org/idg-images'
     JPEG_FOLDER = '/nfs/ex9/idg-images/jpegs/'
+    JPG_FOLDER = '/nfs/ex9/idg-images/test/'
     # Flask-User settings
     USER_APP_NAME = "A Mouse Image Server"  # Shown in and email templates and page footers
 

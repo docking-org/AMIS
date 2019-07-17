@@ -2,8 +2,6 @@
 
 {% block styles %}
     {{ super() }}
-    <link rel="stylesheet" type="text/css"
-          href="{{ url_for('static', filename='scripts/lightbox/ekko-lightbox.css') }}"/>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
     <link href="{{ url_for('static', filename='scripts/iv-viewer/imageviewer.css') }}"  rel="stylesheet" type="text/css" />
@@ -114,7 +112,7 @@
             background: #333;
         }
 
-        /* Crazy example */
+        /* Crazy  */
         .crazy ul li:nth-child(2n) {
             width: 100px;
             margin: 0 4px 0 20px;
@@ -129,25 +127,24 @@
             width: 400px;
             margin: 0 30px 0 2px;
         }
-
     </style>
 {% endblock %}
 
 
 {% block app_content %}
     <div class="row">
-        <div class="col-sm-3">
+        <div class="col-md-3">
             <form>
                 <div class="form-group row">
                     <label for="gene_dropdown" class="col-sm-4 col-form-label">Gene</label>
                     <div class="col-sm-6">
                         <select name="gene" class="form-control" id="gene_dropdown">
-                            {% for gene in genes %}
-                                <option value="{{ gene.gene_name.name }}"
-                                        {% if gene_name == gene.gene_name.name %}
+                            {% for gene_ in genes %}
+                                <option value="{{ gene_.gene_name.name }}"
+                                        {% if gene == gene_.gene_name.name %}
                                         selected
                                         {% endif %}
-                                >{{ gene.gene_name.name }}</option>
+                                >{{ gene_.gene_name.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -156,12 +153,12 @@
                     <label for="organ_dropdown" class="col-sm-4 col-form-label">Organ</label>
                     <div class="col-sm-6">
                         <select name="organ" class="form-control" id="organ_dropdown">
-                            {% for organ in organs %}
-                                <option value="{{ organ.name }}"
-                                        {% if organ_name == organ.name %}
+                            {% for organ_ in organs %}
+                                <option value="{{ organ_.name }}"
+                                        {% if organ == organ_.name %}
                                         selected
                                         {% endif %}
-                                >{{ organ.name }}</option>
+                                >{{ organ_.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -170,8 +167,12 @@
                     <label for="organ_dropdown" class="col-sm-4 col-form-label">Experiment</label>
                     <div class="col-sm-6">
                         <select name="experiment" class="form-control" id="experiment_dropdown">
-                            {% for experiment in experiments %}
-                                <option value="{{ experiment.name }}">{{ experiment.name }}</option>
+                            {% for experiment_ in experiments %}
+                                <option value="{{ experiment_.name }}"
+                                        {% if experiment_ == experiment_.name %}
+                                        selected
+                                        {% endif %}
+                                >{{ experiment_.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -180,48 +181,78 @@
                     <label for="organ_dropdown" class="col-sm-4 col-form-label">Sample Type</label>
                     <div class="col-sm-6">
                         <select name="sample_type" class="form-control" id="sample_dropdown">
-                            <option value="LSM">Cleared</option>
-                            <option value="other">Histological</option>
+                            <option value="LSM"
+                                    {% if sample_type == "cleared" %}
+                                        selected
+                                    {% endif %}
+                                >Cleared</option>
+                            <option value="other"
+                                {% if sample_type == "other" %}
+                                        selected
+                                    {% endif %}
+                            >Histological</option>
                         </select>
                     </div>
                 </div>
             </form>
         </div>
-        <div class="col-sm-6" style="max-height: 450px; min-height: 450px; max-width: 900px; overflow: hidden;">
-            <div class="row text-center">
-                <div class="btn-group" id="specimen" data-toggle="buttons">
-                </div>
-                <div class="btn-group colors" id="wavelength" data-toggle="buttons">
-                    <label class="btn btn-info active">
-                        <input type="radio" name="options" value="tdTomato" autocomplete="off" checked> tdTomato
-                    </label>
-                    <label class="btn btn-info">
-                        <input type="radio" name="options" value="DAPI" autocomplete="off"> Dapi
-                    </label>
-                </div>
-            </div>
-            <div class="row text-center">
-                <br/>
-                <div class="loader"></div>
-                <div class="no_result controls center"><img
-                        src="{{ url_for('static', filename='images/no_result.png') }}" height="300px">
-                </div>
-                 <div data-max-width="800" height="600" class="cf">
-                    <img src=""  data-high-res-src=""  class="selected_slice img-fluid gallery-items" height="450px">
+        <div class="col-md-6" style="max-height: 450px; min-height: 450px; max-width: 900px; overflow: hidden;">
+            <div class="col-sm-2 ">
+                 <div class="btn-group-vertical" id="specimen" data-toggle="buttons" style="padding-top: 50px;">
                  </div>
             </div>
+            <div class="col-sm-8">
+                <div class="row text-center">
+                    <div class="btn-group colors" id="wavelength" data-toggle="buttons">
+                        <label class="btn btn-info
+                                {% if wavelength == None or wavelength == 'tdTomato'%}
+                                    active
+                                {% endif %}
+                        ">
+                            <input type="radio" name="options" value="tdTomato" autocomplete="off"
+                                {% if wavelength == None or wavelength == 'tdTomato'%}
+                                    checked
+                                {% endif %}> tdTomato
+                        </label>
+                        <label class="btn btn-info
+                                {% if wavelength == 'DAPI'%}
+                                    active
+                                {% endif %}
+                        ">
+                            <input type="radio" name="options" value="DAPI" autocomplete="off"
+                                {% if wavelength == "DAPI" %}
+                                    checked
+                                {% endif %}
+                            > Dapi
+                        </label>
+                    </div>
+                </div>
+                <div class="row text-center">
+                    <br/>
+                    <div class="loader"></div>
+                    <div class="no_result controls center"><img
+                            src="{{ url_for('static', filename='images/no_result.png') }}" height="300px">
+                    </div>
+                     <div  >
+                        <img src=""  data-high-res-src=""  class="selected_slice img-fluid gallery-items" height="400px">
+                     </div>
+                </div>
+            </div>
         </div>
-        <div class="col-sm-3 slice_details">
+        <div class="col-md-3 slice_details">
 
         </div>
     </div>
     <div class="wrap">
+        <div class="text-center b_w_link">
+                    click here to see
+        </div>
         <div class="controls center">
             <button class="btn btn-info prev disabled" disabled=""><span
                     class="glyphicon glyphicon-chevron-left"></span>prev
             </button>
             <span class="" style="font-weight: bold;color: #0aaaf1;font-size: larger">
-                (Slice <span class="current_id"></span> of <span class="total_result"></span>)
+                (Slice <span class="current_id">{{ selected_slice }}</span> of <span class="total_result"></span>)
             </span>
             <button class="btn btn-info next">next <span class="glyphicon glyphicon-chevron-right"></span></button>
         </div>
@@ -256,8 +287,8 @@
             var img_color = 1;
             var bg_color = 1;
             var total_result = 0;
-            var mouse_number = "";
-            var wavelength = "tdTomato";
+            var mouse_number = {% if mouse_number == None %}''{% else %}{{ mouse_number }}{% endif %};
+            var wavelength = {% if wavelength == None %}'tdTomato'{% else %}'{{ wavelength }}'{% endif %};
             var $frame = $('#forcecentered');
             var $wrap = $frame.parent();
 
@@ -270,7 +301,7 @@
                 mouseDragging: 1,
                 touchDragging: 1,
                 releaseSwing: 1,
-                startAt: 0,
+                startAt: {% if selected_slice == None %}0{% else %}{{ selected_slice }}-1{% endif %},
                 scrollBar: $wrap.find('.scrollbar'),
                 scrollBy: 1,
                 speed: 300,
@@ -290,29 +321,33 @@
 
             $('#gene_dropdown').change(function () {
                 slyOptions['startAt'] = 0;
+                mouse_number = "";
                 updateSpecimen();
             });
 
             $('#organ_dropdown').change(function () {
                 slyOptions['startAt'] = 0;
+                mouse_number = "";
                 updateSpecimen();
             });
 
             $('#experiment_dropdown').change(function () {
                 slyOptions['startAt'] = 0;
+                mouse_number = "";
                 updateContent();
 
             });
 
             $('#sample_dropdown').change(function () {
                 slyOptions['startAt'] = 0;
+                mouse_number = "";
                 updateSpecimen();
             });
 
             $("#specimen").on('click', '.btn', function (event) {
                 slyOptions['startAt'] = 0;
                 mouse_number = $(this).find('input').val();
-                console.log(mouse_number);
+                {#console.log(mouse_number);#}
                 updateContent();
             });
 
@@ -344,7 +379,7 @@
                         for (i in data.items) {
                             total_result++;
                             {#console.log(i);#}
-                            content += "<li class='_" + i + "' id='" + data.items[i].id + "'><img src='" + data.items[i].img_url + "' width='200px' ></li>";
+                            content += "<li class='_" + i + "' id='" + data.items[i].id + "'><img src='" + data.items[i].img_colored_sm + "' width='200px' ></li>";
                         }
                         $('.total_result').html(total_result);
                         if (content.length == 0) {
@@ -375,14 +410,13 @@
                         $('.selected_slice').show();
 
                     }, error: function (jqXHR, status, err) {
-                        console.log(status);
+                        {#console.log(status);#}
                     }
                 });
             }
 
             function frameChange(index) {
                 if (index == -1) {
-                    $('.selected_slice_a').hide();
                     $('.no_result').show();
                     $('.slice_details').hide();
                     $('.current_id').html(0);
@@ -393,13 +427,12 @@
                         $('.current_id').html(index + 1);
                     }
                     $('.no_result').hide();
-                    $('.selected_slice_a').show();
                     $('.slice_details').show();
                     var src = $('._' + index).find("img").attr('src');
+                    var pos = src.lastIndexOf(".");
+                    src_png = src.substr(0, pos < 0 ? file.length : pos) + ".png";
                     $('.selected_slice').attr('src', src);
-                    $('.selected_slice').attr('href', src);
-                    $('.selected_slice').attr('data-high-res-src', src);
-                    {#$('.selected_slice_a').attr('href', src);#}
+                    $('.selected_slice').attr('data-high-res-src', src_png);
                     var id = $('._' + index).attr('id');
                     updateSliceDetail(id);
                 }
@@ -415,18 +448,28 @@
                     success: function (data) {
                         var content = "";
                         for (i in data.items) {
-                            {#console.log(i);#}
                             content += "<p>Probe: " + data.items[i].gene + "</p>";
-                            content += "<p>Magnification: <b>" + data.items[i].resolution + "</b></p>";
                             content += "<p>MD5: <b>" + data.items[i].checksum + "</b></p>";
-                            content += "<p><a href=" + data.items[i].tif_url + ">Download TIF file</a></p><br/>";
-                            content += "<a href=" + data.items[i].full_img_url + " ";
-                            content += " data-high-res-src=" + data.items[i].full_img_url + "  class='gallery-items'>";
-                            content += "Click here to see full sized image</a>";
+                            content += "<p><a href=" + data.items[i].tif_url + ">Download TIF file</a></p>";
+                            content += "<p>Shareable URL: <button class='copyUrl'>Copy page URL</button></p>";
+                            content += "<div id='url' style='display:none;'>http://amis.docking.org/img_browser";
+                            content += "?gene="+$('#gene_dropdown').val() + "&organ=" + $('#organ_dropdown').val();
+                            content += "&experiment=" + $('#experiment_dropdown').val() + "&sample_type=" + $('#sample_dropdown').val();
+                            content += "<br/>&wavelength=" + wavelength;
+                            if (mouse_number != "") {
+                                content += "&mouse_number=" + mouse_number;
+                            }
+                            content += "&selected_slice=" + $('.current_id').text() + "</div>";
                         }
+                        var b_w_link = "";
+                        b_w_link += "<a href=" + data.items[i].img_bw_big + " ";
+                        b_w_link += " data-high-res-src=" + data.items[i].img_bw_big + "  class='gallery-items'>";
+                        b_w_link += "Click here to see full sized image</a>";
+
+                        $('.b_w_link').html(b_w_link);
                         $('.slice_details').html(content);
                     }, error: function (jqXHR, status, err) {
-                        console.log(status);
+                        {#console.log(status);#}
                         $('.alert-danger .text').text(err.toLowerCase() + '!');
                         $('.alert-danger').show();
                     }
@@ -441,16 +484,16 @@
                     "dataSrc": "items",
                     success: function (data) {
                         var content = "";
-                        console.log(data);
+                        {#console.log(data);#}
                         data.items.sort(compareValues('number', 'asc'));
                         data.items.sort(compareValues('sex', 'asc'));
                         data.items.sort(compareValues('spec', 'asc'));
-                        console.log(data);
-                        mouse_number = "";
+                        {#console.log(data);#}
+                        {#mouse_number = "";#}
                         for (i in data.items) {
                             {#console.log(i);#}
                             content += "<label class='btn btn2 btn-info";
-                            if(mouse_number == ""){
+                            if(mouse_number == data.items[i].number || mouse_number == ""){
                                 mouse_number = data.items[i].number;
                                 content += " active";
                             }
@@ -467,7 +510,7 @@
                         $('#specimen').html(content);
                         updateContent();
                     }, error: function (jqXHR, status, err) {
-                        console.log(status);
+                        {#console.log(status);#}
                         $('.alert-danger .text').text(err.toLowerCase() + '!');
                         $('.alert-danger').show();
                     }
@@ -527,20 +570,26 @@
                     );
                 };
             }
-
         });
         $(document).on('click', '.gallery-items', function (event) {
             event.preventDefault();
             var viewer = ImageViewer();
-            var imgSrc = '';
-            if(this.tagName == 'A'){
-                imgSrc = this.href;
-            }else{
-                imgSrc = this.src;
-            }
-            highResolutionImage = $(this).data('high-res-img');
+            {#var imgSrc = '';#}
+            {#if(this.tagName == 'A'){#}
+            {#    imgSrc = this.href;#}
+            {#else{#}
+            {#    imgSrc = this.src;#}
+            {##}
 
-            viewer.show(imgSrc, highResolutionImage);
+            highResolutionImage = $(this).attr('data-high-res-src');
+            viewer.show(highResolutionImage);
+        });
+        $(document).on('click', '.copyUrl', function (event) {
+            var $temp = $("<input>");
+                $("body").append($temp);
+                $temp.val($('#url').text()).select();
+                document.execCommand("copy");
+                $temp.remove();
         });
 
     </script>

@@ -84,6 +84,7 @@ def load_images():
         # print("File name: {}".format(file_name))
         # print("File name with extention: {}".format(file_name_with_ext))
         # print("File sub folder: {}".format(file_sub_folder))
+
         if SliceModel.isRegistered(file_name):
             destination = "{}{}/".format(path, file_sub_folder)
             dest_file_with_jpeg = "{}{}.jpg".format(destination, file_name)
@@ -99,7 +100,6 @@ def load_images():
                 try:
                     if os.path.isfile(source):
                         moved_jpegs += 1
-                        print("HIIIIIIIIIIIIIIIII-----333333333333")
                         print("DEST:" + destination)
                         print("SOURCE:" + source)
                         shutil.move(source, destination)
@@ -160,28 +160,7 @@ def load_images():
                 slice.save_to_db()
 
             print(file)
-            # We will use this step
-            # if os.path.isfile("{}{}/img/{}.png".format(path, file_sub_folder, file_name)):
-            #     print("A png file already exists for {}".format(file_name_with_ext))
-            # # If a jpeg is *NOT* present, create one from the tiff.
-            # else:
-            #     Path(path + file_sub_folder + "/img").mkdir(exist_ok=True)
-            #     outfile = "{}{}/img/{}.png".format(path, file_sub_folder, file_name)
-            #     print("outfile: ".format(outfile))
-            #     try:
-            #         im = Image.open(file)
-            #         print("Generating png for {}".format(file_name_with_ext))
-            #         # im.thumbnail(im.size)
-            #         # im.convert('RGBA').save(outfile, "PNG", quality=100)
-            #         basewidth = 900
-            #         wp = (basewidth / float(im.size[0]))
-            #         hsize = int(float(im.size[1]) * float(wp))
-            #         im.mode = 'I'
-            #         im.resize((basewidth, hsize), Image.ANTIALIAS).point(lambda i: i * (1. / 256)).convert(
-            #             'L').save(outfile, "PNG", quality=100)
-            #     except Exception as e:
-            #         print(e)
-            new_files += 1
+
         except PermissionError as p:
             p_denied += 1
             slice.delete_from_db()
@@ -199,3 +178,4 @@ def load_images():
            "<h3>Permission denied:{}</h3><br/> <h3>JPEG(s) not found:{}</h3>" \
            "<br/> <h3>JPEG(s) has been moved to RIGHT directory:{}</h3>".format(
         skipped, new_files, p_denied, jpegs, moved_jpegs)
+
