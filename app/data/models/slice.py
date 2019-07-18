@@ -113,7 +113,7 @@ class SliceModel(PaginatedAPIMixin, db.Model):
 
     @property
     def img_small_RI(self):
-        return "{}{}/{}_RI.png".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
+        return "{}{}/{}.tif_RI.png".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
 
     @property
     def img_big(self):

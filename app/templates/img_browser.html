@@ -181,30 +181,34 @@
                     <label for="organ_dropdown" class="col-sm-4 col-form-label">Sample Type</label>
                     <div class="col-sm-6">
                         <select name="sample_type" class="form-control" id="sample_dropdown">
-                            <option value="LSM"
-                                    {% if sample_type == "cleared" %}
-                                        selected
-                                    {% endif %}
-                                >Cleared</option>
                             <option value="other"
                                 {% if sample_type == "other" %}
                                         selected
                                     {% endif %}
                             >Histological</option>
+                            <option value="LSM"
+                                    {% if sample_type == "cleared" %}
+                                        selected
+                                    {% endif %}
+                                >Cleared</option>
                         </select>
                     </div>
                 </div>
             </form>
+            <div class="col-md-10 row slice_details">
+            </div>
         </div>
         <div class="col-md-6" style="max-height: 450px; min-height: 450px; max-width: 900px; overflow: hidden;">
-            <div class="col-sm-2 ">
+            <div class="col-sm-3 ">
+                <div class="row text-center">
                  <div class="btn-group-vertical" id="specimen" data-toggle="buttons" style="padding-top: 50px;">
                  </div>
+                </div>
             </div>
             <div class="col-sm-8">
                 <div class="row text-center">
                     <div class="btn-group colors" id="wavelength" data-toggle="buttons">
-                        <label class="btn btn-info
+                        <label class="btn btn-danger
                                 {% if wavelength == None or wavelength == 'tdTomato'%}
                                     active
                                 {% endif %}
@@ -213,6 +217,17 @@
                                 {% if wavelength == None or wavelength == 'tdTomato'%}
                                     checked
                                 {% endif %}> tdTomato
+                        </label>
+                        <label class="btn btn-danger
+                                {% if wavelength == 'tdTomato-RI'%}
+                                    active
+                                {% endif %}
+                        ">
+                            <input type="radio" name="options" value="tdTomato-RI" autocomplete="off"
+                                {% if wavelength == "tdTomato-RI" %}
+                                    checked
+                                {% endif %}
+                            > tdTomato-RI
                         </label>
                         <label class="btn btn-info
                                 {% if wavelength == 'DAPI'%}
@@ -239,15 +254,15 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3 slice_details">
-
-        </div>
+{#        <div class="col-md-3 slice_details">#}
+{##}
+{#        </div>#}
     </div>
     <div class="wrap">
         <div class="text-center b_w_link">
-                    click here to see
+
         </div>
-        <div class="controls center">
+        <div class="controls center" style="padding-left: 100px;">
             <button class="btn btn-info prev disabled" disabled=""><span
                     class="glyphicon glyphicon-chevron-left"></span>prev
             </button>
@@ -269,7 +284,7 @@
     </div>
     <div class="row">
         <div class="controls">
-            <button type="button" class="btn btn-change-color btn-default">Change image color</button>
+            <button type="button" class="btn btn-change-color btn-default">Invert color</button>
             <button type="button" class="btn btn-change-bg-color btn-default">Change background color</button>
         </div>
     </div>
@@ -364,7 +379,11 @@
                 var url = "/slices?per_page=-1&order_by=slice_id";
                 url += "&gene=" + $('#gene_dropdown').val() + "&organ=" + $('#organ_dropdown').val();
                 url += "&experiment=" + $('#experiment_dropdown').val() + "&instrument=" + $('#sample_dropdown').val();
-                url += "&wavelength=" + wavelength;
+                if(wavelength == "tdTomato-RI"){
+                    url += "&wavelength=tdTomato";
+                }else{
+                    url += "&wavelength=" + wavelength;
+                }
                 if (mouse_number != "") {
                     url += "&mouse_number=" + mouse_number;
                 }
@@ -378,8 +397,13 @@
                         total_result = 0;
                         for (i in data.items) {
                             total_result++;
-                            {#console.log(i);#}
-                            content += "<li class='_" + i + "' id='" + data.items[i].id + "'><img src='" + data.items[i].img_small + "' width='200px' ></li>";
+                            content += "<li class='_" + i + "' id='" + data.items[i].id + "'><img src='";
+                            if(wavelength == "tdTomato-RI"){
+                                content += data.items[i].img_small_RI;
+                            }else{
+                                content += data.items[i].img_small;
+                            }
+                            content += "' width='200px' ></li>";
                         }
                         $('.total_result').html(total_result);
                         if (content.length == 0) {
@@ -430,9 +454,9 @@
                     $('.slice_details').show();
                     var src = $('._' + index).find("img").attr('src');
                     var pos = src.lastIndexOf(".");
-                    src_png = src.substr(0, pos < 0 ? file.length : pos) + ".png";
+                    src_jpg = src.substr(0, pos < 0 ? file.length : pos) + ".jpg";
                     $('.selected_slice').attr('src', src);
-                    $('.selected_slice').attr('data-high-res-src', src_png);
+                    $('.selected_slice').attr('data-high-res-src', src_jpg);
                     var id = $('._' + index).attr('id');
                     updateSliceDetail(id);
                 }
@@ -448,10 +472,10 @@
                     success: function (data) {
                         var content = "";
                         for (i in data.items) {
-                            content += "<p>Probe: " + data.items[i].gene + "</p>";
+                            content += "<br/><br/><p>Probe: " + data.items[i].gene + "</p>";
                             content += "<p>MD5: <b>" + data.items[i].checksum + "</b></p>";
                             content += "<p><a href=" + data.items[i].tif_url + ">Download TIF file</a></p>";
-                            content += "<p>Shareable URL: <button class='copyUrl'>Copy page URL</button></p>";
+                            content += "<p>Shareable URL: <button class='copyUrl btn btn-info'>Copy page URL</button></p>";
                             content += "<div id='url' style='display:none;'>http://amis.docking.org/img_browser";
                             content += "?gene="+$('#gene_dropdown').val() + "&organ=" + $('#organ_dropdown').val();
                             content += "&experiment=" + $('#experiment_dropdown').val() + "&sample_type=" + $('#sample_dropdown').val();
@@ -461,12 +485,12 @@
                             }
                             content += "&selected_slice=" + $('.current_id').text() + "</div>";
                         }
-                        var b_w_link = "";
-                        b_w_link += "<a href=" + data.items[i].img_small_RI + " ";
-                        b_w_link += " data-high-res-src=" + data.items[i].img_big_RI + "  class='gallery-items'>";
-                        b_w_link += "Click here to see full sized image</a>";
+                        {#var b_w_link = "";#}
+                        {#b_w_link += "<a href=" + data.items[i].img_small_RI + " ";#}
+                        {#b_w_link += " data-high-res-src=" + data.items[i].img_big_RI + "  class='gallery-items'>";#}
+                        {#b_w_link += "Click here to see full sized image</a>";#}
 
-                        $('.b_w_link').html(b_w_link);
+                        {#$('.b_w_link').html(b_w_link);#}
                         $('.slice_details').html(content);
                     }, error: function (jqXHR, status, err) {
                         {#console.log(status);#}
