@@ -379,7 +379,7 @@
                         for (i in data.items) {
                             total_result++;
                             {#console.log(i);#}
-                            content += "<li class='_" + i + "' id='" + data.items[i].id + "'><img src='" + data.items[i].img_colored_sm + "' width='200px' ></li>";
+                            content += "<li class='_" + i + "' id='" + data.items[i].id + "'><img src='" + data.items[i].img_small + "' width='200px' ></li>";
                         }
                         $('.total_result').html(total_result);
                         if (content.length == 0) {
@@ -462,8 +462,8 @@
                             content += "&selected_slice=" + $('.current_id').text() + "</div>";
                         }
                         var b_w_link = "";
-                        b_w_link += "<a href=" + data.items[i].img_bw_big + " ";
-                        b_w_link += " data-high-res-src=" + data.items[i].img_bw_big + "  class='gallery-items'>";
+                        b_w_link += "<a href=" + data.items[i].img_small_RI + " ";
+                        b_w_link += " data-high-res-src=" + data.items[i].img_big_RI + "  class='gallery-items'>";
                         b_w_link += "Click here to see full sized image</a>";
 
                         $('.b_w_link').html(b_w_link);
