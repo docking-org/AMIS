@@ -4,20 +4,31 @@
     {{ super() }}
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
-    <link href="{{ url_for('static', filename='scripts/iv-viewer/imageviewer.css') }}"  rel="stylesheet" type="text/css" />
+    <link href="{{ url_for('static', filename='scripts/iv-viewer/imageviewer.css') }}" rel="stylesheet"
+          type="text/css"/>
     <style>
-        .loader {
+        .area_A_loader {
             border: 16px solid #f3f3f3;
             border-radius: 50%;
             border-top: 16px solid #3498db;
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             -webkit-animation: spin 2s linear infinite; /* Safari */
             animation: spin 2s linear infinite;
             display: block;
-            margin: 135px auto;
+            margin: 100px;
         }
-
+        .area_B_loader {
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 100px;
+            height: 100px;
+            -webkit-animation: spin 2s linear infinite; /* Safari */
+            animation: spin 2s linear infinite;
+            display: block;
+            margin: 100px;
+        }
         /* Safari */
         @-webkit-keyframes spin {
             0% {
@@ -127,6 +138,24 @@
             width: 400px;
             margin: 0 30px 0 2px;
         }
+
+        .figure-container img {
+            height: 290px;
+            width: 290px;
+            overflow: hidden;
+            background: black;
+        }
+
+        .image_table td {
+            padding: 5px;
+            text-align: center;
+        }
+
+        .img_title {
+            width: 300px;
+            font-weight: bold;
+        }
+
     </style>
 {% endblock %}
 
@@ -182,15 +211,17 @@
                     <div class="col-sm-6">
                         <select name="sample_type" class="form-control" id="sample_dropdown">
                             <option value="other"
-                                {% if sample_type == "other" %}
-                                        selected
+                                    {% if sample_type == "other" %}
+                                    selected
                                     {% endif %}
-                            >Histological</option>
+                            >Histological
+                            </option>
                             <option value="LSM"
                                     {% if sample_type == "cleared" %}
-                                        selected
+                                    selected
                                     {% endif %}
-                                >Cleared</option>
+                            >Cleared
+                            </option>
                         </select>
                     </div>
                 </div>
@@ -198,71 +229,75 @@
             <div class="col-md-10 row slice_details">
             </div>
         </div>
-        <div class="col-md-6" style="max-height: 450px; min-height: 450px; max-width: 900px; overflow: hidden;">
-            <div class="col-sm-3 ">
-                <div class="row text-center">
-                 <div class="btn-group-vertical" id="specimen" data-toggle="buttons" style="padding-top: 50px;">
-                 </div>
-                </div>
-            </div>
-            <div class="col-sm-8">
-                <div class="row text-center">
-                    <div class="btn-group colors" id="wavelength" data-toggle="buttons">
-                        <label class="btn btn-danger
-                                {% if wavelength == None or wavelength == 'tdTomato'%}
-                                    active
-                                {% endif %}
-                        ">
-                            <input type="radio" name="options" value="tdTomato" autocomplete="off"
-                                {% if wavelength == None or wavelength == 'tdTomato'%}
-                                    checked
-                                {% endif %}> tdTomato
-                        </label>
-                        <label class="btn btn-danger
-                                {% if wavelength == 'tdTomato-RI'%}
-                                    active
-                                {% endif %}
-                        ">
-                            <input type="radio" name="options" value="tdTomato-RI" autocomplete="off"
-                                {% if wavelength == "tdTomato-RI" %}
-                                    checked
-                                {% endif %}
-                            > tdTomato-RI
-                        </label>
-                        <label class="btn btn-info
-                                {% if wavelength == 'DAPI'%}
-                                    active
-                                {% endif %}
-                        ">
-                            <input type="radio" name="options" value="DAPI" autocomplete="off"
-                                {% if wavelength == "DAPI" %}
-                                    checked
-                                {% endif %}
-                            > Dapi
-                        </label>
-                    </div>
-                </div>
-                <div class="row text-center">
-                    <br/>
-                    <div class="loader"></div>
-                    <div class="no_result controls center"><img
-                            src="{{ url_for('static', filename='images/no_result.png') }}" height="300px">
-                    </div>
-                     <div  >
-                        <img src=""  data-high-res-src=""  class="selected_slice img-fluid gallery-items" height="400px">
-                     </div>
+        <div class="col-md-7">
+            <table class="image_table" style="display: none">
+                <tr>
+                    <td></td>
+                    <td class="img_title">tdTomato</td>
+                    <td class="img_title">tdTomato RI</td>
+                    <td class="img_title">DAPI</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="btn-group-vertical" id="specimen_above" data-toggle="buttons">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="figure-container area_A">
+                            <img src="" data-high-res-src="" class="selected_slice1 img-fluid gallery-items">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="area_A_loader" style="display: none"></div>
+                        <div class="figure-container area_A">
+                            <img src="" data-high-res-src="" class="selected_slice2 img-fluid gallery-items">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="figure-container area_A">
+                            <img src="" data-high-res-src="" class="selected_slice3 img-fluid gallery-items">
+                        </div>
+                    </td>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="btn-group-vertical" id="specimen_below" data-toggle="buttons">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="figure-container area_B">
+                            <img src="" data-high-res-src="" class="selected_slice4 img-fluid gallery-items">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="area_B_loader" style="display: none"></div>
+                        <div class="figure-container area_B">
+                            <img src="" data-high-res-src="" class="selected_slice5 img-fluid gallery-items">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="figure-container area_B">
+                            <img src="" data-high-res-src="" class="selected_slice6 img-fluid gallery-items">
+                        </div>
+                    </td>
+                    </td>
+                </tr>
+            </table>
+            <div class="row">
+                <br/>
+                <div class="loader"></div>
+                <div class="no_result controls " style="display: none; height: 580px;padding-left: 5px; padding-top: 20px;"><img
+                        src="{{ url_for('static', filename='images/no_result.png') }}" height="500px">
                 </div>
             </div>
         </div>
-{#        <div class="col-md-3 slice_details">#}
-{##}
-{#        </div>#}
     </div>
     <div class="wrap">
         <div class="text-center b_w_link">
 
         </div>
-        <div class="controls center" style="padding-left: 100px;">
+        <div class="controls center" >
             <button class="btn btn-info prev disabled" disabled=""><span
                     class="glyphicon glyphicon-chevron-left"></span>prev
             </button>
@@ -270,6 +305,42 @@
                 (Slice <span class="current_id">{{ selected_slice }}</span> of <span class="total_result"></span>)
             </span>
             <button class="btn btn-info next">next <span class="glyphicon glyphicon-chevron-right"></span></button>
+        </div>
+        <div class="controls center" >
+            <div class="btn-group colors" id="wavelength" data-toggle="buttons">
+                <label class="btn btn-danger
+                                        {% if wavelength == None or wavelength == 'tdTomato' %}
+                                            active
+                                        {% endif %}
+                                ">
+                    <input type="radio" name="options" value="tdTomato" autocomplete="off"
+                            {% if wavelength == None or wavelength == 'tdTomato' %}
+                           checked
+                            {% endif %}> tdTomato
+                </label>
+                <label class="btn btn-danger
+                                        {% if wavelength == 'tdTomato-RI' %}
+                                            active
+                                        {% endif %}
+                                ">
+                    <input type="radio" name="options" value="tdTomato-RI" autocomplete="off"
+                            {% if wavelength == "tdTomato-RI" %}
+                           checked
+                            {% endif %}
+                    > tdTomato-RI
+                </label>
+                <label class="btn btn-info
+                                        {% if wavelength == 'DAPI' %}
+                                            active
+                                        {% endif %}
+                                ">
+                    <input type="radio" name="options" value="DAPI" autocomplete="off"
+                            {% if wavelength == "DAPI" %}
+                           checked
+                            {% endif %}
+                    > Dapi
+                </label>
+            </div>
         </div>
 
         <div class="scrollbar">
@@ -302,8 +373,13 @@
             var img_color = 1;
             var bg_color = 1;
             var total_result = 0;
-            var mouse_number = {% if mouse_number == None %}''{% else %}{{ mouse_number }}{% endif %};
+            var pos_mouse_number = {% if pos_mouse_number == None %}''{% else %}{{ pos_mouse_number }}{% endif %};
+            var neg_mouse_number = {% if neg_mouse_number == None %}''{% else %}{{ neg_mouse_number }}{% endif %};
             var wavelength = {% if wavelength == None %}'tdTomato'{% else %}'{{ wavelength }}'{% endif %};
+            var pos_DAPI_list = [];
+            var pos_tomato_list = [];
+            var neg_DAPI_list = [];
+            var neg_tomato_list = [];
             var $frame = $('#forcecentered');
             var $wrap = $frame.parent();
 
@@ -336,60 +412,157 @@
 
             $('#gene_dropdown').change(function () {
                 slyOptions['startAt'] = 0;
-                mouse_number = "";
+                pos_mouse_number = "";
+                neg_mouse_number = "";
                 updateSpecimen();
             });
 
             $('#organ_dropdown').change(function () {
                 slyOptions['startAt'] = 0;
-                mouse_number = "";
+                pos_mouse_number = "";
+                neg_mouse_number = "";
                 updateSpecimen();
             });
 
             $('#experiment_dropdown').change(function () {
                 slyOptions['startAt'] = 0;
-                mouse_number = "";
-                updateContent();
+                pos_mouse_number = "";
+                neg_mouse_number = "";
+                updateAreaC();
 
             });
 
             $('#sample_dropdown').change(function () {
                 slyOptions['startAt'] = 0;
-                mouse_number = "";
+                pos_mouse_number = "";
+                neg_mouse_number = "";
                 updateSpecimen();
             });
 
-            $("#specimen").on('click', '.btn', function (event) {
+            $("#specimen_above").on('click', '.btn', function (event) {
                 slyOptions['startAt'] = 0;
-                mouse_number = $(this).find('input').val();
-                {#console.log(mouse_number);#}
-                updateContent();
+                pos_mouse_number = $(this).find('input').val();
+                updateAreaC();
+            });
+
+            $("#specimen_below").on('click', '.btn', function (event) {
+                slyOptions['startAt'] = 0;
+                neg_mouse_number = $(this).find('input').val();
+
+                var area_b_url = "/slices?per_page=-1&order_by=slice_id";
+                area_b_url += "&gene=" + $('#gene_dropdown').val() + "&organ=" + $('#organ_dropdown').val();
+                area_b_url += "&experiment=" + $('#experiment_dropdown').val() + "&instrument=" + $('#sample_dropdown').val();
+                if (neg_mouse_number != "") {
+                    area_b_url += "&mouse_number=" + neg_mouse_number;
+                }
+                fillAreaBImageArrays(area_b_url);
             });
 
             $("#wavelength .btn").on('click', function (event) {
                 wavelength = $(this).find('input').val();
                 var current = parseInt($('.current_id').text()) - 1;
                 slyOptions['startAt'] = current;
-                updateContent();
+                updateAreaC();
             });
 
-            function updateContent() {
-                $('.loader').show();
-                $('.selected_slice').hide();
-                var url = "/slices?per_page=-1&order_by=slice_id";
-                url += "&gene=" + $('#gene_dropdown').val() + "&organ=" + $('#organ_dropdown').val();
-                url += "&experiment=" + $('#experiment_dropdown').val() + "&instrument=" + $('#sample_dropdown').val();
-                if(wavelength == "tdTomato-RI"){
-                    url += "&wavelength=tdTomato";
-                }else{
-                    url += "&wavelength=" + wavelength;
+            function updateAreaA(index) {
+                if (index == -1) {
+                    $('.no_result').show();
+                    $('.image_table').hide();
+                    $('.slice_details').hide();
+                    $('.current_id').html(0);
+                } else {
+                    if (total_result == 0) {
+                        $('.current_id').html(0);
+                    } else {
+                        $('.current_id').html(index + 1);
+                    }
+                    $('.no_result').hide();
+                    $('.slice_details').show();
+                    $('.image_table').show();
+
+                    $('.selected_slice1').attr('src', pos_tomato_list[index] + ".png");
+                    $('.selected_slice1').attr('data-high-res-src', pos_tomato_list[index] + ".jpg");
+                    $('.selected_slice2').attr('src', pos_tomato_list[index] + "_RI.png");
+                    $('.selected_slice2').attr('data-high-res-src', pos_tomato_list[index] + "_RI.jpg");
+                    $('.selected_slice3').attr('src', pos_DAPI_list[index] + ".png");
+                    $('.selected_slice3').attr('data-high-res-src', pos_DAPI_list[index] + ".jpg");
+
+                    var id = $('._' + index).attr('id');
+                    updateSliceDetail(id);
                 }
-                if (mouse_number != "") {
-                    url += "&mouse_number=" + mouse_number;
+            }
+
+            function updateAreaB(index) {
+                console.log("updateAreaB");
+                console.log(index);
+                if (index == -1) {
+
+                } else {
+                    if(index+1 > neg_tomato_list.length){
+                        $('.selected_slice4').attr('src', "/static/images/no_image.png");
+                        $('.selected_slice5').attr('src',"/static/images/no_image.png");
+                        $('.selected_slice6').attr('src', "/static/images/no_image.png");
+                    }else {
+                        $('.selected_slice4').attr('src', neg_tomato_list[index] + ".png");
+                        $('.selected_slice4').attr('data-high-res-src', neg_tomato_list[index] + ".jpg");
+                        $('.selected_slice5').attr('src', neg_tomato_list[index] + "_RI.png");
+                        $('.selected_slice5').attr('data-high-res-src', neg_tomato_list[index] + "_RI.jpg");
+                        $('.selected_slice6').attr('src', neg_DAPI_list[index] + ".png");
+                        $('.selected_slice6').attr('data-high-res-src', neg_DAPI_list[index] + ".jpg");
+                    }
                 }
+            }
+
+            {#function hideAreaA(){#}
+            {#    $('.area_A').hide();#}
+            {#    $('.area_A_loader').show();#}
+            {##}
+
+            {##}
+            {#function showAreaA(){#}
+            {#    $('.area_A_loader').hide();#}
+            {#    $('.area_A').show();#}
+
+
+            {#function noResultAreaB(){#}
+            {#    $('.area_B').hide();#}
+
+
+            {#function hideAreaB(){#}
+            {#    $('.area_B').hide();#}
+            {#    $('.area_B_loader').show();#}
+            {##}
+
+{##}
+{#            function showAreaB(){#}
+{#                $('.area_B_loader').hide();#}
+{#                $('.area_B').show();#}
+{#            }#}
+
+            function updateAreaC() {
+
+                var area_a_url = "/slices?per_page=-1&order_by=slice_id";
+                var area_b_url;
+                area_a_url += "&gene=" + $('#gene_dropdown').val() + "&organ=" + $('#organ_dropdown').val();
+                area_a_url += "&experiment=" + $('#experiment_dropdown').val() + "&instrument=" + $('#sample_dropdown').val();
+                if (neg_mouse_number != "") {
+                    area_b_url = area_a_url + "&mouse_number=" + neg_mouse_number;
+                }
+                if (wavelength == "tdTomato-RI") {
+                    area_a_url += "&wavelength=tdTomato";
+                } else {
+                    area_a_url += "&wavelength=" + wavelength;
+                }
+                if (pos_mouse_number != "") {
+                    area_a_url += "&mouse_number=" + pos_mouse_number;
+                }
+
+                pos_tomato_list = [];
+                pos_DAPI_list = [];
                 $.ajax({
                     type: 'GET',
-                    url: url,
+                    url: area_a_url,
                     "dataType": "json",
                     "dataSrc": "items",
                     success: function (data) {
@@ -398,12 +571,17 @@
                         for (i in data.items) {
                             total_result++;
                             content += "<li class='_" + i + "' id='" + data.items[i].id + "'><img src='";
-                            if(wavelength == "tdTomato-RI"){
+                            if (wavelength == "tdTomato-RI") {
                                 content += data.items[i].img_small_RI;
-                            }else{
+                            } else {
                                 content += data.items[i].img_small;
                             }
                             content += "' width='200px' ></li>";
+                            if(wavelength == "DAPI"){
+                                pos_DAPI_list.push(data.items[i].img_no_ext);
+                            }else{
+                                pos_tomato_list.push(data.items[i].img_no_ext);
+                            }
                         }
                         $('.total_result').html(total_result);
                         if (content.length == 0) {
@@ -415,9 +593,8 @@
                         $frame.sly(false);
                         $frame.sly(slyOptions);
                         $frame.sly('on', 'active', function (eventName, itemIndex) {
-                            {#console.log(eventName);#}
-                            {#console.log(itemIndex);#}
-                            frameChange(itemIndex);
+                            updateAreaA(itemIndex);
+                            updateAreaB(itemIndex);
                         });
                         if (img_color == 1) {
                             img_color = 2;
@@ -426,41 +603,72 @@
                         }
                         changeFilter();
                         if (content.length > 0) {
-                            frameChange(slyOptions['startAt']);
-                        } else {
-                            frameChange(-1);
+                            if(wavelength == "DAPI"){
+                                area_a_url = area_a_url.replace('wavelength=DAPI', 'wavelength=tdTomato');
+                            }else{
+                                area_a_url = area_a_url.replace('wavelength=tdTomato', 'wavelength=DAPI')
+                            }
+                            fillAreaAImageArrays(area_a_url);
+                            console.log("fillAreaBImageArrays");
+                            fillAreaBImageArrays(area_b_url);
+                        }else {
+                            updateAreaA(-1);
                         }
-                        $('.loader').hide();
-                        $('.selected_slice').show();
-
                     }, error: function (jqXHR, status, err) {
                         {#console.log(status);#}
                     }
                 });
+
+
             }
 
-            function frameChange(index) {
-                if (index == -1) {
-                    $('.no_result').show();
-                    $('.slice_details').hide();
-                    $('.current_id').html(0);
-                } else {
-                    if (total_result == 0) {
-                        $('.current_id').html(0);
-                    } else {
-                        $('.current_id').html(index + 1);
-                    }
-                    $('.no_result').hide();
-                    $('.slice_details').show();
-                    var src = $('._' + index).find("img").attr('src');
-                    var pos = src.lastIndexOf(".");
-                    src_jpg = src.substr(0, pos < 0 ? file.length : pos) + ".jpg";
-                    $('.selected_slice').attr('src', src);
-                    $('.selected_slice').attr('data-high-res-src', src_jpg);
-                    var id = $('._' + index).attr('id');
-                    updateSliceDetail(id);
-                }
 
+            function fillAreaAImageArrays(url){
+                $.ajax({
+                    type: 'GET',
+                    url: url,
+                    "dataType": "json",
+                    "dataSrc": "items",
+                    success: function (data) {
+                        for (i in data.items) {
+                            if (wavelength != "DAPI") {
+                                pos_DAPI_list.push(data.items[i].img_no_ext);
+                            } else {
+                                pos_tomato_list.push(data.items[i].img_no_ext);
+                            }
+                        }
+                        updateAreaA(slyOptions['startAt']);
+                        updateAreaB(slyOptions['startAt']);
+                    }, error: function (jqXHR, status, err) {
+
+                    }
+                });
+            }
+
+            function fillAreaBImageArrays(url){
+                neg_tomato_list = [];
+                neg_DAPI_list = [];
+                $.ajax({
+                    type: 'GET',
+                    url: url,
+                    "dataType": "json",
+                    "dataSrc": "items",
+                    success: function (data) {
+                        for (i in data.items) {
+                            if (data.items[i].wavelength == 'DAPI') {
+                                neg_DAPI_list.push(data.items[i].img_no_ext);
+                            } else {
+                                neg_tomato_list.push(data.items[i].img_no_ext);
+                            }
+                        }
+                        console.log("inside fillAreaBImageArrays");
+                        console.log(neg_DAPI_list.toString());
+                        console.log(neg_tomato_list.toString());
+                        updateAreaB($('.current_id').text()-1);
+                    }, error: function (jqXHR, status, err) {
+
+                    }
+                });
             }
 
             function updateSliceDetail(id) {
@@ -477,11 +685,14 @@
                             content += "<p><a href=" + data.items[i].tif_url + ">Download TIF file</a></p>";
                             content += "<p>Shareable URL: <button class='copyUrl btn btn-info'>Copy page URL</button></p>";
                             content += "<div id='url' style='display:none;'>http://amis.docking.org/img_browser";
-                            content += "?gene="+$('#gene_dropdown').val() + "&organ=" + $('#organ_dropdown').val();
+                            content += "?gene=" + $('#gene_dropdown').val() + "&organ=" + $('#organ_dropdown').val();
                             content += "&experiment=" + $('#experiment_dropdown').val() + "&sample_type=" + $('#sample_dropdown').val();
                             content += "<br/>&wavelength=" + wavelength;
-                            if (mouse_number != "") {
-                                content += "&mouse_number=" + mouse_number;
+                            if (pos_mouse_number != "") {
+                                content += "&pos_mouse_number=" + pos_mouse_number;
+                            }
+                            if (neg_mouse_number != "") {
+                                content += "&neg_mouse_number=" + neg_mouse_number;
                             }
                             content += "&selected_slice=" + $('.current_id').text() + "</div>";
                         }
@@ -507,7 +718,8 @@
                     "dataType": "json",
                     "dataSrc": "items",
                     success: function (data) {
-                        var content = "";
+                        var content_above = "";
+                        var content_below = "";
                         {#console.log(data);#}
                         data.items.sort(compareValues('number', 'asc'));
                         data.items.sort(compareValues('sex', 'asc'));
@@ -516,11 +728,17 @@
                         {#mouse_number = "";#}
                         for (i in data.items) {
                             {#console.log(i);#}
+                            var content = "";
                             content += "<label class='btn btn2 btn-info";
-                            if(mouse_number == data.items[i].number || mouse_number == ""){
-                                mouse_number = data.items[i].number;
+                            if ((pos_mouse_number == data.items[i].number || pos_mouse_number == "") && data.items[i].spec == '+') {
+                                pos_mouse_number = data.items[i].number;
                                 content += " active";
                             }
+                            if ((neg_mouse_number == data.items[i].number || neg_mouse_number == "") && data.items[i].spec == '-') {
+                                neg_mouse_number = data.items[i].number;
+                                content += " active";
+                            }
+
                             content += "'><input type='radio' name='options' ";
                             content += "value='" + data.items[i].number + "'> " + data.items[i].spec;
 
@@ -530,9 +748,17 @@
                                 content += " <i class='fas fa-venus'></i> ";
                             }
                             content += data.items[i].age + " " + data.items[i].number + "</label>";
+                            if (data.items[i].spec == '+') {
+                                content_above += content;
+                            } else {
+                                content_below += content;
+                            }
                         }
-                        $('#specimen').html(content);
-                        updateContent();
+                        $('#specimen_above ').html(content_above);
+                        $('#specimen_below').html(content_below);
+                        {#hideAreaA();#}
+                        updateAreaC();
+                        {#showAreaA();#}
                     }, error: function (jqXHR, status, err) {
                         {#console.log(status);#}
                         $('.alert-danger .text').text(err.toLowerCase() + '!');
@@ -610,10 +836,10 @@
         });
         $(document).on('click', '.copyUrl', function (event) {
             var $temp = $("<input>");
-                $("body").append($temp);
-                $temp.val($('#url').text()).select();
-                document.execCommand("copy");
-                $temp.remove();
+            $("body").append($temp);
+            $temp.val($('#url').text()).select();
+            document.execCommand("copy");
+            $temp.remove();
         });
 
     </script>

@@ -22,7 +22,7 @@ class OrganModel(db.Model):
 
     @classmethod
     def find_all(cls):
-        return cls.query.all()
+        return cls.query.order_by("name").all()
 
     def save_to_db(self):
         db.session.add(self)

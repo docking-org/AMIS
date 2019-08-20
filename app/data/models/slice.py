@@ -37,9 +37,9 @@ class SliceModel(PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     uberon = db.Column(db.String(200), nullable=True)
     orientation = db.Column(db.String(200), nullable=True)
-    slide_number = db.Column(db.Integer, nullable=True)
+    slide_number = db.Column(db.String(200), nullable=True)
     # sample_number = db.Column(db.Integer, nullable=True)
-    slice_id = db.Column(db.Integer)
+    slice_id = db.Column(db.String(200))
     # location_index = db.Column(db.String(200), nullable=True)
     z_step_size = db.Column(db.Float, nullable=True)  # Only for Cleared
     objective = db.Column(db.String(200))
@@ -99,6 +99,7 @@ class SliceModel(PaginatedAPIMixin, db.Model):
             'checksum': self.checksum,
             # 'survey_classification': self.survey_classification,
             # 'img_url': self.img,
+            'img_no_ext': self.img_no_ext,
             'img_small': self.img_small,
             'img_small_RI': self.img_small_RI,
             'img_big': self.img_big,
@@ -108,12 +109,19 @@ class SliceModel(PaginatedAPIMixin, db.Model):
         return data
 
     @property
+    def img_no_ext(self):
+        return "{}{}/{}".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
+
+
+    @property
     def img_small(self):
         return "{}{}/{}.png".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
 
     @property
     def img_small_RI(self):
-        return "{}{}/{}.tif_RI.png".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
+        if self.wavelength == "DAPI":
+            return ""
+        return "{}{}/{}_RI.png".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
 
     @property
     def img_big(self):
@@ -121,6 +129,8 @@ class SliceModel(PaginatedAPIMixin, db.Model):
 
     @property
     def img_big_RI(self):
+        if self.wavelength == "DAPI":
+            return ""
         return "{}{}/{}_RI.jpg".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
 
     @property
