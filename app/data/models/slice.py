@@ -38,15 +38,11 @@ class SliceModel(PaginatedAPIMixin, db.Model):
     uberon = db.Column(db.String(200), nullable=True)
     orientation = db.Column(db.String(200), nullable=True)
     slide_number = db.Column(db.String(200), nullable=True)
-    # sample_number = db.Column(db.Integer, nullable=True)
     slice_id = db.Column(db.String(200))
-    # location_index = db.Column(db.String(200), nullable=True)
     z_step_size = db.Column(db.Float, nullable=True)  # Only for Cleared
     objective = db.Column(db.String(200))
     instrument = db.Column(db.String(200))
     wavelength = db.Column(db.String(200))
-    # probe_id = db.Column(db.String(200), nullable=True)
-    # survey_classification = db.Column(db.String(200), nullable=True)
     checksum = db.Column(db.String(200))
     img_path = db.Column(db.String(500), nullable=True)
     organ_id = db.Column(db.Integer, db.ForeignKey('organ.id'), nullable=False)
@@ -95,9 +91,7 @@ class SliceModel(PaginatedAPIMixin, db.Model):
             'objective': self.objective,
             'instrument': self.instrument,
             'wavelength': self.wavelength,
-            # 'probe_id': self.probe_id,
             'checksum': self.checksum,
-            # 'survey_classification': self.survey_classification,
             # 'img_url': self.img,
             'img_no_ext': self.img_no_ext,
             'img_small': self.img_small,
@@ -141,9 +135,12 @@ class SliceModel(PaginatedAPIMixin, db.Model):
     def find_img_by_checksum(cls, checksum):
         slice = cls.query.filter_by(checksum=checksum).first()
         if slice:
-            return slice.img
+            if slice.wavelength == "tdTomato":
+                return slice.img_small_RI
+            else:
+                return slice.img_small
         else:
-            return url_for('static', filename='images/no_result.png')
+            return url_for('static', filename='images/no_image.png')
 
     @classmethod
     def isRegistered(cls, fileName):

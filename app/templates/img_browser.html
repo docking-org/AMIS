@@ -7,27 +7,37 @@
     <link href="{{ url_for('static', filename='scripts/iv-viewer/imageviewer.css') }}" rel="stylesheet"
           type="text/css"/>
     <style>
-        .area_A_loader {
+        {#.area_A_loader {#}
+        {#    border: 16px solid #f3f3f3;#}
+        {#    border-radius: 50%;#}
+        {#    border-top: 16px solid #3498db;#}
+        {#    width: 100px;#}
+        {#    height: 100px;#}
+        {#    -webkit-animation: spin 2s linear infinite; /* Safari */#}
+        {#    animation: spin 2s linear infinite;#}
+        {#    display: block;#}
+        {#    margin: 100px;#}
+
+        {#.area_B_loader {#}
+        {#    border: 16px solid #f3f3f3;#}
+        {#    border-radius: 50%;#}
+        {#    border-top: 16px solid #3498db;#}
+        {#    width: 100px;#}
+        {#    height: 100px;#}
+        {#    -webkit-animation: spin 2s linear infinite; /* Safari */#}
+        {#    animation: spin 2s linear infinite;#}
+        {#    display: block;#}
+        {#    margin: 100px;#}
+
+        .loader {
             border: 16px solid #f3f3f3;
             border-radius: 50%;
             border-top: 16px solid #3498db;
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             -webkit-animation: spin 2s linear infinite; /* Safari */
             animation: spin 2s linear infinite;
-            display: block;
-            margin: 100px;
-        }
-        .area_B_loader {
-            border: 16px solid #f3f3f3;
-            border-radius: 50%;
-            border-top: 16px solid #3498db;
-            width: 100px;
-            height: 100px;
-            -webkit-animation: spin 2s linear infinite; /* Safari */
-            animation: spin 2s linear infinite;
-            display: block;
-            margin: 100px;
+            margin: 135px auto;
         }
         /* Safari */
         @-webkit-keyframes spin {
@@ -182,13 +192,13 @@
                     <label for="organ_dropdown" class="col-sm-4 col-form-label">Organ</label>
                     <div class="col-sm-6">
                         <select name="organ" class="form-control" id="organ_dropdown">
-                            {% for organ_ in organs %}
-                                <option value="{{ organ_.name }}"
-                                        {% if organ == organ_.name %}
-                                        selected
-                                        {% endif %}
-                                >{{ organ_.name }}</option>
-                            {% endfor %}
+{#                            {% for organ_ in organs %}#}
+{#                                <option value="{{ organ_.name }}"#}
+{#                                        {% if organ == organ_.name %}#}
+{#                                        selected#}
+{#                                        {% endif %}#}
+{#                                >{{ organ_.name }}</option>#}
+{#                            {% endfor %}#}
                         </select>
                     </div>
                 </div>
@@ -217,7 +227,7 @@
                             >Histological
                             </option>
                             <option value="LSM"
-                                    {% if sample_type == "cleared" %}
+                                    {% if sample_type == "LSM" %}
                                     selected
                                     {% endif %}
                             >Cleared
@@ -229,13 +239,14 @@
             <div class="col-md-10 row slice_details">
             </div>
         </div>
-        <div class="col-md-7">
+        <div class="col-md-6">
             <table class="image_table" style="display: none">
                 <tr>
                     <td></td>
                     <td class="img_title">tdTomato</td>
                     <td class="img_title">tdTomato RI</td>
                     <td class="img_title">DAPI</td>
+                    <td></td>
                 </tr>
                 <tr>
                     <td>
@@ -258,7 +269,12 @@
                             <img src="" data-high-res-src="" class="selected_slice3 img-fluid gallery-items">
                         </div>
                     </td>
-                    </td>
+                   <td>
+                       <img id="img_histological"
+                        src="{{ url_for('static', filename='images/LUT_key.jpg') }}" style="max-height: 290px; display: none;">
+                       <img id="img_cleared"
+                        src="{{ url_for('static', filename='images/Thalium_LUT.jpg') }}" style="max-height: 290px; display: none;">
+                   </td>
                 </tr>
                 <tr>
                     <td>
@@ -281,12 +297,13 @@
                             <img src="" data-high-res-src="" class="selected_slice6 img-fluid gallery-items">
                         </div>
                     </td>
+                    <td>
                     </td>
                 </tr>
             </table>
-            <div class="row">
+            <div class="row" >
                 <br/>
-                <div class="loader"></div>
+                <div class="loader" style="padding: 165px"></div>
                 <div class="no_result controls " style="display: none; height: 580px;padding-left: 5px; padding-top: 20px;"><img
                         src="{{ url_for('static', filename='images/no_result.png') }}" height="500px">
                 </div>
@@ -376,10 +393,12 @@
             var pos_mouse_number = {% if pos_mouse_number == None %}''{% else %}{{ pos_mouse_number }}{% endif %};
             var neg_mouse_number = {% if neg_mouse_number == None %}''{% else %}{{ neg_mouse_number }}{% endif %};
             var wavelength = {% if wavelength == None %}'tdTomato'{% else %}'{{ wavelength }}'{% endif %};
+            var organ = "{{ organ }}";
             var pos_DAPI_list = [];
             var pos_tomato_list = [];
             var neg_DAPI_list = [];
             var neg_tomato_list = [];
+            {#var organs_arr = [];#}
             var $frame = $('#forcecentered');
             var $wrap = $frame.parent();
 
@@ -407,14 +426,17 @@
                 next: $wrap.find('.next')
             };
 
-            updateSpecimen();
+
+            $(".loader").show();
+            updateGeneOrgan();
+            scalebar_change();
 
 
             $('#gene_dropdown').change(function () {
                 slyOptions['startAt'] = 0;
                 pos_mouse_number = "";
                 neg_mouse_number = "";
-                updateSpecimen();
+                updateGeneOrgan();
             });
 
             $('#organ_dropdown').change(function () {
@@ -433,6 +455,7 @@
             });
 
             $('#sample_dropdown').change(function () {
+                scalebar_change();
                 slyOptions['startAt'] = 0;
                 pos_mouse_number = "";
                 neg_mouse_number = "";
@@ -465,9 +488,55 @@
                 updateAreaC();
             });
 
+            function scalebar_change(){
+                if($('#sample_dropdown').val() == "LSM"){
+                    $('#img_histological').hide();
+                    $('#img_cleared').show();
+                }else{
+                    $('#img_cleared').hide();
+                    $('#img_histological').show();
+                }
+            }
+
+            function updateGeneOrgan() {
+                var url = "/slices?per_page=-1&order_by=slice_id";
+                url += "&gene=" + $('#gene_dropdown').val();
+                url += "&experiment=" + $('#experiment_dropdown').val() + "&instrument=" + $('#sample_dropdown').val();
+                var organs_arr = [];
+                var organs = "";
+                 $.ajax({
+                    type: 'GET',
+                    url: url,
+                    "dataType": "json",
+                    "dataSrc": "items",
+                    success: function (data) {
+                        for (i in data.items) {
+                            if(!organs_arr.includes(data.items[i].organ)){
+                                organs_arr.push(data.items[i].organ);
+                            }
+                        }
+                        organs_arr.sort();
+                        organs_arr.forEach(function(item){
+                            if("{{ organ }}" != "None" && item == "{{ organ }}"){
+                                organs += "<option value='" + item + "' selected>";
+                                organs += item + "</option>";
+                            }else{
+                                organs += "<option value='" + item + "'>" + item + "</option>";
+                            }
+                        });
+                        $('#organ_dropdown').html(organs);
+                        updateSpecimen();
+                    }, error: function (jqXHR, status, err) {
+
+                    }
+                });
+
+            }
+
             function updateAreaA(index) {
                 if (index == -1) {
                     $('.no_result').show();
+                    $(".loader").hide();
                     $('.image_table').hide();
                     $('.slice_details').hide();
                     $('.current_id').html(0);
@@ -480,6 +549,7 @@
                     $('.no_result').hide();
                     $('.slice_details').show();
                     $('.image_table').show();
+                    $(".loader").hide();
 
                     $('.selected_slice1').attr('src', pos_tomato_list[index] + ".png");
                     $('.selected_slice1').attr('data-high-res-src', pos_tomato_list[index] + ".jpg");
@@ -494,8 +564,6 @@
             }
 
             function updateAreaB(index) {
-                console.log("updateAreaB");
-                console.log(index);
                 if (index == -1) {
 
                 } else {
@@ -513,32 +581,6 @@
                     }
                 }
             }
-
-            {#function hideAreaA(){#}
-            {#    $('.area_A').hide();#}
-            {#    $('.area_A_loader').show();#}
-            {##}
-
-            {##}
-            {#function showAreaA(){#}
-            {#    $('.area_A_loader').hide();#}
-            {#    $('.area_A').show();#}
-
-
-            {#function noResultAreaB(){#}
-            {#    $('.area_B').hide();#}
-
-
-            {#function hideAreaB(){#}
-            {#    $('.area_B').hide();#}
-            {#    $('.area_B_loader').show();#}
-            {##}
-
-{##}
-{#            function showAreaB(){#}
-{#                $('.area_B_loader').hide();#}
-{#                $('.area_B').show();#}
-{#            }#}
 
             function updateAreaC() {
 
@@ -609,7 +651,6 @@
                                 area_a_url = area_a_url.replace('wavelength=tdTomato', 'wavelength=DAPI')
                             }
                             fillAreaAImageArrays(area_a_url);
-                            console.log("fillAreaBImageArrays");
                             fillAreaBImageArrays(area_b_url);
                         }else {
                             updateAreaA(-1);
@@ -618,8 +659,6 @@
                         {#console.log(status);#}
                     }
                 });
-
-
             }
 
 
@@ -661,9 +700,6 @@
                                 neg_tomato_list.push(data.items[i].img_no_ext);
                             }
                         }
-                        console.log("inside fillAreaBImageArrays");
-                        console.log(neg_DAPI_list.toString());
-                        console.log(neg_tomato_list.toString());
                         updateAreaB($('.current_id').text()-1);
                     }, error: function (jqXHR, status, err) {
 
@@ -696,12 +732,6 @@
                             }
                             content += "&selected_slice=" + $('.current_id').text() + "</div>";
                         }
-                        {#var b_w_link = "";#}
-                        {#b_w_link += "<a href=" + data.items[i].img_small_RI + " ";#}
-                        {#b_w_link += " data-high-res-src=" + data.items[i].img_big_RI + "  class='gallery-items'>";#}
-                        {#b_w_link += "Click here to see full sized image</a>";#}
-
-                        {#$('.b_w_link').html(b_w_link);#}
                         $('.slice_details').html(content);
                     }, error: function (jqXHR, status, err) {
                         {#console.log(status);#}
@@ -711,23 +741,95 @@
                 });
             }
 
-            function updateSpecimen() {
+            function updateGene() {
+                var uri = "/mice?gene=" + $('#gene_dropdown').val()  + "&instrument=" + $('#sample_dropdown').val();
+                var organs_arr = [];
                 $.ajax({
                     type: 'GET',
-                    url: "/mice?gene=" + $('#gene_dropdown').val() + "&organ=" + $('#organ_dropdown').val() + "&instrument=" + $('#sample_dropdown').val(),
+                    url: uri,
                     "dataType": "json",
                     "dataSrc": "items",
                     success: function (data) {
                         var content_above = "";
                         var content_below = "";
-                        {#console.log(data);#}
                         data.items.sort(compareValues('number', 'asc'));
                         data.items.sort(compareValues('sex', 'asc'));
                         data.items.sort(compareValues('spec', 'asc'));
-                        {#console.log(data);#}
-                        {#mouse_number = "";#}
+
                         for (i in data.items) {
-                            {#console.log(i);#}
+                            if(!organs_arr.includes(data.items[i].organ)){
+                                organs_arr.push(data.items[i].organ);
+                            }
+                        }
+                        organs_arr.sort();
+                        organs_arr.forEach(function(item){
+                            if(organ != "None" && item == {{ organ }}){
+                                organs += "<option value='" + item + "' selected>";
+                                organs += item + "</option>";
+                            }else{
+                                organs += "<option value='" + item + "'>" + item + "</option>";
+                            }
+                        });
+                        $('#organ_dropdown').html(organs);
+
+
+                        for (i in data.items) {
+                            if(organs[0] == data.items[i].organ) {
+                                var content = "";
+                                content += "<label class='btn btn2 btn-info";
+                                if ((pos_mouse_number == data.items[i].number || pos_mouse_number == "") && data.items[i].spec == '+') {
+                                    pos_mouse_number = data.items[i].number;
+                                    content += " active";
+                                }
+                                if ((neg_mouse_number == data.items[i].number || neg_mouse_number == "") && data.items[i].spec == '-') {
+                                    neg_mouse_number = data.items[i].number;
+                                    content += " active";
+                                }
+
+                                content += "'><input type='radio' name='options' ";
+                                content += "value='" + data.items[i].number + "'> " + data.items[i].spec;
+
+                                if (data.items[i].sex) {
+                                    content += " <i class='fas fa-mars'></i> ";
+                                } else {
+                                    content += " <i class='fas fa-venus'></i> ";
+                                }
+                                content += data.items[i].age + " " + data.items[i].number + "</label>";
+                                if (data.items[i].spec == '+') {
+                                    content_above += content;
+                                } else {
+                                    content_below += content;
+                                }
+                            }
+                        }
+                        $('#specimen_above ').html(content_above);
+                        $('#specimen_below').html(content_below);
+                        updateAreaC();
+                    }, error: function (jqXHR, status, err) {
+                        {#console.log(status);#}
+                        $('.alert-danger .text').text(err.toLowerCase() + '!');
+                        $('.alert-danger').show();
+                    }
+                });
+            }
+
+            function updateSpecimen() {
+                var uri = "/mice?gene=" + $('#gene_dropdown').val()  + "&instrument=" + $('#sample_dropdown').val();
+                uri += "&organ=" + $('#organ_dropdown').val();
+                $.ajax({
+                    type: 'GET',
+                    url: uri,
+                    "dataType": "json",
+                    "dataSrc": "items",
+                    success: function (data) {
+                        var content_above = "";
+                        var content_below = "";
+
+                        data.items.sort(compareValues('number', 'asc'));
+                        data.items.sort(compareValues('sex', 'asc'));
+                        data.items.sort(compareValues('spec', 'asc'));
+
+                        for (i in data.items) {
                             var content = "";
                             content += "<label class='btn btn2 btn-info";
                             if ((pos_mouse_number == data.items[i].number || pos_mouse_number == "") && data.items[i].spec == '+') {
@@ -756,9 +858,7 @@
                         }
                         $('#specimen_above ').html(content_above);
                         $('#specimen_below').html(content_below);
-                        {#hideAreaA();#}
                         updateAreaC();
-                        {#showAreaA();#}
                     }, error: function (jqXHR, status, err) {
                         {#console.log(status);#}
                         $('.alert-danger .text').text(err.toLowerCase() + '!');

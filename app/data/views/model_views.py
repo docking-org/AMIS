@@ -43,18 +43,18 @@ def _file_name_link(view, context, model, name):
 
 
 def _list_thumbnail(view, context, model, name):
-    if not model.img_colored_sm:
+    if not model.img_small:
         return ''
 
     return Markup(
-        '<img src="{model.img_colored_sm}" style="height: 70px;">'.format(model=model)
+        '<img src="{model.img_small}" style="height: 70px;">'.format(model=model)
     )
 
 
 class SliceViewWithImages(sqla.ModelView):
-    column_list = ['id', 'img_colored_sm', 'slice_id', 'slide_number', 'mouse.number',
+    column_list = ['id', 'img_small', 'slice_id', 'slide_number', 'mouse.number',
                    'mouse.sex_string', 'mouse.age']
-    column_labels = {'img_colored_sm': 'Image', 'slice_id': 'Slice ID', 'mouse.number': 'Mouse #',
+    column_labels = {'img_small': 'Image', 'slice_id': 'Slice ID', 'mouse.number': 'Mouse #',
                    'mouse.sex_string': 'Sex', 'mouse.age': 'Age'}
     column_searchable_list = ('slice_id', 'slide_number', 'mouse.number', 'mouse.age',)
     page_size = 20
@@ -62,7 +62,7 @@ class SliceViewWithImages(sqla.ModelView):
     # can_delete = False
     # can_edit = False
     column_formatters = {
-        'img_colored_sm': _list_thumbnail,
+        'img_small': _list_thumbnail,
         'id': _file_name_link
     }
 

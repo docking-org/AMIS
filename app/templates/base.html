@@ -1,4 +1,5 @@
 {% extends 'bootstrap/base.html' %}
+{% import "bootstrap/google.html" as google %}
 
 {% block title %}
     {% if title %}{{ title }} {% else %}AMIS - A Mouse Image Server{% endif %}
@@ -51,5 +52,10 @@
     </div>
 {% endblock %}
 
+{% block scripts %}
+{{super()}}
+{{google.uanalytics('UA-10800222-10')}}
+<script src="{{ url_for('static', filename='scripts/script.js') }}"></script>
+{% endblock %}
 
 

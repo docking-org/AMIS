@@ -20,7 +20,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.20190815.1',
+    version='0.20190828.4',
 
     description='AMIS v1.0',
     long_description='',
@@ -75,6 +75,7 @@ setup(
         'config.py',
         'setup.py',
         'requirements.txt',
+        '.env',
     ),
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
@@ -90,8 +91,8 @@ setup(
     # have to be included in MANIFEST.in as well.
     include_package_data=True,
     package_data={
-        'static': 'app/static/*',
-        'templates': 'app/templates/*',
+        'static': ['app/static/*',],
+        'templates': ['app/templates/*',],
     },
 
     # Although 'package_data' is the preferred approach, in some case you may

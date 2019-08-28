@@ -105,9 +105,9 @@ def img_browser():
     imgType = request.args.get("imgType")
     selected_slice = request.args.get("selected_slice")
     genes = GeneModel.find_unique_names()
-    organs = OrganModel.find_all()
+    # organs = OrganModel.find_all()
     experiments = ExperimentModel.find_all()
-    return render_template('img_browser.html', genes=genes, organs=organs, experiments=experiments,
+    return render_template('img_browser.html', genes=genes, experiments=experiments,
                            gene=gene, organ=organ, experiment=experiment, sample_type=sample_type,
                            pos_mouse_number=pos_mouse_number, neg_mouse_number=neg_mouse_number, wavelength=wavelength, selected_slice=selected_slice,
                            imgType=imgType)

@@ -84,12 +84,15 @@ def load_images():
         # print("File name: {}".format(file_name))
         # print("File name with extention: {}".format(file_name_with_ext))
         # print("File sub folder: {}".format(file_sub_folder))
+        if "hidden" in file_sub_folder:
+            print("_______________Skipped the file in HIDDEN dir: {}/{}".format(file_sub_folder, file_name_with_ext))
+            continue;
 
         if SliceModel.isRegistered(file_name):
             destination = "{}{}/".format(path, file_sub_folder)
             dest_file_with_jpeg = "{}{}.jpg".format(destination, file_name)
             # print("DEST:"+destination+file_name)
-            print("dest_file_with_jpeg:" + dest_file_with_jpeg)
+            # print("dest_file_with_jpeg:" + dest_file_with_jpeg)
             if not os.path.isfile(dest_file_with_jpeg):
                 jpegs += 1
                 jpeg_folder = current_app.config['JPEG_FOLDER']
@@ -111,7 +114,7 @@ def load_images():
             skipped += 1
             print("_______________Skipped the file: {}".format(file_name_with_ext))
             continue
-        values = file_name.split('_')
+        values = file_name.replace('_RI','').split('_')
         try:
             genotype_gene = GenotypeModel.find_by_id(values[2])
             if genotype_gene is None:
@@ -143,22 +146,21 @@ def load_images():
             organ = OrganModel.find_by_name(values[8])
             if organ is None:
                 organ = OrganModel(values[8])
-            if len(values) == 17:
-                # values.remove('')
+            if values[14].upper() != "LSM":
                 # uberon, orientation, slide_number, slice_id, z_step_size=None, objective, instrument,
-                # wavelength, checksum, organ, mouse, experiment, combined_data
-                slice = SliceModel(values[9], values[10], re.sub("[^0-9]", "", values[11]), values[12], None,
-                                   values[13], values[14],
-                                   values[15], values[16], organ, mouse, experiment, file_name, file_sub_folder)
-                slice.save_to_db()
-            elif len(values) == 16:
-                # uberon, orientation=None, slide_number, slice_id=None, z_step_size, objective, instrument,
-                # wavelength, checksum, organ, mouse, experiment, combined_data
-                slice = SliceModel(values[9], None, re.sub("[^0-9]", "", values[10]), None, values[11],
-                                   values[12], values[13], values[14], values[15],
+                # wavelength, checksum, organ, mouse, experiment, combined_data, sub_folder
+                slice = SliceModel(values[9], values[10], values[11], values[12], None,
+                                   values[13], values[14], values[15], values[16],
                                    organ, mouse, experiment, file_name, file_sub_folder)
                 slice.save_to_db()
-
+            else:
+                # uberon, orientation, slide_number=None, slice_id, z_step_size, objective, instrument,
+                # wavelength, checksum, organ, mouse, experiment, combined_data, sub_folder
+                slice = SliceModel(values[9], values[10], None, values[11], values[12],
+                                   values[13], values[14], values[15], values[16],
+                                   organ, mouse, experiment, file_name, file_sub_folder)
+                slice.save_to_db()
+            new_files += 1
             print(file)
 
         except PermissionError as p:
@@ -177,5 +179,5 @@ def load_images():
     return "<h1>Status:</h1> <br/> <h3>Skipped old files:{}</h3> <br/><h3>Added new files:{}</h3> <br/> " \
            "<h3>Permission denied:{}</h3><br/> <h3>JPEG(s) not found:{}</h3>" \
            "<br/> <h3>JPEG(s) has been moved to RIGHT directory:{}</h3>".format(
-        skipped, new_files, p_denied, jpegs, moved_jpegs)
+            skipped, new_files, p_denied, jpegs, moved_jpegs)
 
