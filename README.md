@@ -18,26 +18,27 @@ http://amis.docking.org/slices?per_page=-1&gene=GPR85
 
 There are 2 types of format that script loads.
 
- #| Uploaded 4/22/2019 | | Uploaded 4/17/2019 |  |
+ #| Histological | | Cleared |  |
 --- | --- | --- | --- |--- |
  #| nomenclature | Value | nomenclature | Value | 
 1 | gene | GPR85 | gene | GPR85 | 
 2 | experiment | Ai9 | experiment | Ai9 |
 3 | genotype_gene | 1 | genotype_gene | 1 |
-4 | genotype_reporter | 1 | genotype_reporter | 0 |
-5 | mouse_number | 1 | mouse_number | 1538b |
-6 | sex | M | sex | F |
+4 | genotype_reporter | 1 | genotype_reporter | 1 |
+5 | mouse_number | 1540 | mouse_number | 1 |
+6 | sex | m | sex | M |
 7 | age | p30 | age | p30 |
 8 | manipulation_type | reporter-gene-cross | manipulation_type | reporter-gene-cross |
-9 | organ | brain | organ | jeja | 
-10 | UBERON | 955 | UBERON | 2115 |
-11 | slice_number | 0000 | orientation | nd |
-12 | z_step_size | 5.97867 | slice_number | 1 |
-13 | resolution | 20x | slide_id | 2 |
-14 | instrument | LSM | objective | 4x |
-15 | wavelength | tdTomato | instrument | Keyence |
-16 | checksum | md5 | wavelength | tdTomato |
-17 |  | | checksum | checksum |
+9 | organ | heart | organ | brain | 
+10 | UBERON | 948 | UBERON | 955 |
+11 | orientation | nd | orientation | c |
+12 | slde_number | 00001 | slice_id | 812 |
+13 | slice_id | 3 | z_step_size | 1 .26675|
+14 | objective | 10x | objective | 20x |
+15 | instrument | Olympus | instrument | LSM |
+16 | wavelength | DAPI | wavelength | tdTomato |
+17 | checksum | md5 | checksum | md5 |
+
 
 
 If you want to download as a json format. You need to add .json after slices as below.
