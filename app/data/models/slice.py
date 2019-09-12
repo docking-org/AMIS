@@ -30,6 +30,12 @@ class PaginatedAPIMixin(object):
         }
         return data
 
+    @staticmethod
+    def to_menu_filter_dict(query):
+        L = [item.to_menu_dict() for item in query.all()]
+        return {'items': list({v['unique']:v for v in L}.values())}
+
+
 
 class SliceModel(PaginatedAPIMixin, db.Model):
     __tablename__ = 'slice'
@@ -99,6 +105,17 @@ class SliceModel(PaginatedAPIMixin, db.Model):
             'img_big': self.img_big,
             'img_big_RI': self.img_big_RI,
             'tif_url': self.tif
+        }
+        return data
+
+    def to_menu_dict(self):
+        data = {
+            'unique': self.mouse.gene.gene_name.name + self.experiment.name + self.organ.name +
+                      ("Cleared" if self.instrument.upper() == "LSM" else "Histological"),
+            'gene': self.mouse.gene.gene_name.name,
+            'experiment': self.experiment.name,
+            'organ': self.organ.name,
+            'sample_type': "Cleared" if self.instrument.upper() == "LSM" else "Histological",
         }
         return data
 

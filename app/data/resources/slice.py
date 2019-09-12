@@ -71,8 +71,11 @@ class Slices(Resource):
                 GeneModel.genotype_reporter.has(GenotypeModel.type_id == new_args.get('genotype_reporter')))))
             new_args.pop('genotype_reporter')
         if new_args.get('instrument'):
-            if new_args.get('instrument') == 'other':
+            if new_args.get('instrument').lower() == 'histological':
                 slices = slices.filter(SliceModel.instrument != 'LSM')
+                new_args.pop('instrument')
+            elif new_args.get('instrument').lower() != 'histological':
+                slices = slices.filter(SliceModel.instrument == 'LSM')
                 new_args.pop('instrument')
         data = SliceModel.to_collection_dict(slices.filter_by(**new_args).order_by(order), page, per_page, 'slices')
 
@@ -88,3 +91,31 @@ class Slices(Resource):
 #         data = {'items': [x.to_dict() for x in SliceModel.query.all()]}
 #         return jsonify(data)
 # return jsonify(SliceModel.query.all().to_dict())
+
+class Filters(Resource):
+    def get(self):
+        parser.add_argument('gene', type=str)
+        parser.add_argument('organ', type=str)
+        parser.add_argument('experiment', type=str)
+        # instrument
+        parser.add_argument("instrument", type=str)
+
+        args = parser.parse_args()
+        new_args = {key: val for key, val in args.items() if val is not None}
+
+        slices = SliceModel.query
+
+        if new_args.get('gene'):
+            slices = slices.filter(SliceModel.mouse.has(
+                MouseModel.gene.has(GeneModel.gene_name.has(GeneNameModel.name == new_args.get('gene')))))
+            new_args.pop('gene')
+        if new_args.get('organ'):
+            slices = slices.filter(SliceModel.organ.has(OrganModel.name == new_args.get('organ')))
+            new_args.pop('organ')
+        if new_args.get('experiment'):
+            slices = slices.filter(SliceModel.experiment.has(ExperimentModel.name == new_args.get('experiment')))
+            new_args.pop('experiment')
+
+        data = SliceModel.to_menu_filter_dict(slices.filter_by(**new_args))
+
+        return jsonify(data)

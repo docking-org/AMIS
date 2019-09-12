@@ -35,7 +35,7 @@ class MouseList(Resource):
                 SliceModel.organ.has(OrganModel.name == new_args.get('organ'))))
             new_args.pop('organ')
         if new_args.get('instrument'):
-            if new_args.get('instrument') == 'other':
+            if new_args.get('instrument').lower() == 'histological':
                 mice = mice.filter(MouseModel.slices.any(SliceModel.instrument != 'LSM'))
             else:
                 mice = mice.filter(MouseModel.slices.any(SliceModel.instrument == 'LSM'))
@@ -43,7 +43,7 @@ class MouseList(Resource):
         if new_args.get('experiment'):
             mice = mice.filter(
                 MouseModel.slices.any(SliceModel.experiment.has(ExperimentModel.name == new_args.get('experiment'))))
-            new_args.pop('instrument')
+            new_args.pop('experiment')
 
         data = {'items': [x.to_dict() for x in mice.filter_by(**new_args).order_by(order)]}
 

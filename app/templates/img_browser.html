@@ -7,28 +7,6 @@
     <link href="{{ url_for('static', filename='scripts/iv-viewer/imageviewer.css') }}" rel="stylesheet"
           type="text/css"/>
     <style>
-        {#.area_A_loader {#}
-        {#    border: 16px solid #f3f3f3;#}
-        {#    border-radius: 50%;#}
-        {#    border-top: 16px solid #3498db;#}
-        {#    width: 100px;#}
-        {#    height: 100px;#}
-        {#    -webkit-animation: spin 2s linear infinite; /* Safari */#}
-        {#    animation: spin 2s linear infinite;#}
-        {#    display: block;#}
-        {#    margin: 100px;#}
-
-        {#.area_B_loader {#}
-        {#    border: 16px solid #f3f3f3;#}
-        {#    border-radius: 50%;#}
-        {#    border-top: 16px solid #3498db;#}
-        {#    width: 100px;#}
-        {#    height: 100px;#}
-        {#    -webkit-animation: spin 2s linear infinite; /* Safari */#}
-        {#    animation: spin 2s linear infinite;#}
-        {#    display: block;#}
-        {#    margin: 100px;#}
-
         .loader {
             border: 16px solid #f3f3f3;
             border-radius: 50%;
@@ -37,8 +15,9 @@
             height: 120px;
             -webkit-animation: spin 2s linear infinite; /* Safari */
             animation: spin 2s linear infinite;
-            margin: 135px auto;
+            margin: 250px auto;
         }
+
         /* Safari */
         @-webkit-keyframes spin {
             0% {
@@ -152,8 +131,12 @@
         .figure-container img {
             height: 290px;
             width: 290px;
-            overflow: hidden;
             background: black;
+        }
+
+        /* Hover on Parent Container */
+        .figure-container:hover {
+            cursor: zoom-in;
         }
 
         .image_table td {
@@ -165,6 +148,13 @@
             width: 300px;
             font-weight: bold;
         }
+        .img-fluid {
+          object-fit: contain;
+        }
+
+
+
+
 
     </style>
 {% endblock %}
@@ -178,6 +168,7 @@
                     <label for="gene_dropdown" class="col-sm-4 col-form-label">Gene</label>
                     <div class="col-sm-6">
                         <select name="gene" class="form-control" id="gene_dropdown">
+                            <option value="">Select</option>
                             {% for gene_ in genes %}
                                 <option value="{{ gene_.gene_name.name }}"
                                         {% if gene == gene_.gene_name.name %}
@@ -192,13 +183,14 @@
                     <label for="organ_dropdown" class="col-sm-4 col-form-label">Organ</label>
                     <div class="col-sm-6">
                         <select name="organ" class="form-control" id="organ_dropdown">
-{#                            {% for organ_ in organs %}#}
-{#                                <option value="{{ organ_.name }}"#}
-{#                                        {% if organ == organ_.name %}#}
-{#                                        selected#}
-{#                                        {% endif %}#}
-{#                                >{{ organ_.name }}</option>#}
-{#                            {% endfor %}#}
+                            <option value="">Select</option>
+                            {% for organ_ in organs %}
+                                <option value="{{ organ_.name }}"
+                                        {% if organ_ == organ_.name %}
+                                        selected
+                                        {% endif %}
+                                >{{ organ_.name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
@@ -206,6 +198,7 @@
                     <label for="organ_dropdown" class="col-sm-4 col-form-label">Experiment</label>
                     <div class="col-sm-6">
                         <select name="experiment" class="form-control" id="experiment_dropdown">
+                            <option value="">Select</option>
                             {% for experiment_ in experiments %}
                                 <option value="{{ experiment_.name }}"
                                         {% if experiment_ == experiment_.name %}
@@ -220,14 +213,15 @@
                     <label for="organ_dropdown" class="col-sm-4 col-form-label">Sample Type</label>
                     <div class="col-sm-6">
                         <select name="sample_type" class="form-control" id="sample_dropdown">
-                            <option value="other"
-                                    {% if sample_type == "other" %}
+                            <option value="">Select</option>
+                            <option value="Histological"
+                                    {% if sample_type == "Histological" %}
                                     selected
                                     {% endif %}
                             >Histological
                             </option>
-                            <option value="LSM"
-                                    {% if sample_type == "LSM" %}
+                            <option value="Cleared"
+                                    {% if sample_type == "Cleared" %}
                                     selected
                                     {% endif %}
                             >Cleared
@@ -269,12 +263,14 @@
                             <img src="" data-high-res-src="" class="selected_slice3 img-fluid gallery-items">
                         </div>
                     </td>
-                   <td>
-                       <img id="img_histological"
-                        src="{{ url_for('static', filename='images/LUT_key.jpg') }}" style="max-height: 290px; display: none;">
-                       <img id="img_cleared"
-                        src="{{ url_for('static', filename='images/Thalium_LUT.jpg') }}" style="max-height: 290px; display: none;">
-                   </td>
+                    <td>
+                        <img id="img_histological"
+                             src="{{ url_for('static', filename='images/LUT_key.jpg') }}"
+                             style="max-height: 290px; display: none;">
+                        <img id="img_cleared"
+                             src="{{ url_for('static', filename='images/Thalium_LUT.jpg') }}"
+                             style="max-height: 290px; display: none;">
+                    </td>
                 </tr>
                 <tr>
                     <td>
@@ -301,10 +297,11 @@
                     </td>
                 </tr>
             </table>
-            <div class="row" >
-                <br/>
-                <div class="loader" style="padding: 165px"></div>
-                <div class="no_result controls " style="display: none; height: 580px;padding-left: 5px; padding-top: 20px;"><img
+            <div class="row">
+                <div class="loader" style="padding: 50px">
+                </div>
+                <div class="no_result controls "
+                     style="display: none; height: 580px;padding-left: 5px; padding-top: 20px;"><img
                         src="{{ url_for('static', filename='images/no_result.png') }}" height="500px">
                 </div>
             </div>
@@ -314,7 +311,7 @@
         <div class="text-center b_w_link">
 
         </div>
-        <div class="controls center" >
+        <div class="controls center">
             <button class="btn btn-info prev disabled" disabled=""><span
                     class="glyphicon glyphicon-chevron-left"></span>prev
             </button>
@@ -323,8 +320,21 @@
             </span>
             <button class="btn btn-info next">next <span class="glyphicon glyphicon-chevron-right"></span></button>
         </div>
-        <div class="controls center" >
-            <div class="btn-group colors" id="wavelength" data-toggle="buttons">
+
+
+        <div class="scrollbar">
+            <div class="handle" style="transform: translateZ(0px) translateX(0px); width: 190px;">
+                <div class="mousearea"></div>
+            </div>
+        </div>
+
+        <div class="frame" id="forcecentered" style="overflow: hidden;">
+            <ul class="clearfix"></ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="controls center">
+            <div class="btn-group colors" id="wavelength" data-toggle="buttons" style="display: none;">
                 <label class="btn btn-danger
                                         {% if wavelength == None or wavelength == 'tdTomato' %}
                                             active
@@ -359,22 +369,11 @@
                 </label>
             </div>
         </div>
-
-        <div class="scrollbar">
-            <div class="handle" style="transform: translateZ(0px) translateX(0px); width: 190px;">
-                <div class="mousearea"></div>
-            </div>
-        </div>
-
-        <div class="frame" id="forcecentered" style="overflow: hidden;">
-            <ul class="clearfix"></ul>
-        </div>
-    </div>
-    <div class="row">
         <div class="controls">
             <button type="button" class="btn btn-change-color btn-default">Invert color</button>
             <button type="button" class="btn btn-change-bg-color btn-default">Change background color</button>
         </div>
+
     </div>
 
 {% endblock %}
@@ -398,7 +397,6 @@
             var pos_tomato_list = [];
             var neg_DAPI_list = [];
             var neg_tomato_list = [];
-            {#var organs_arr = [];#}
             var $frame = $('#forcecentered');
             var $wrap = $frame.parent();
 
@@ -426,32 +424,31 @@
                 next: $wrap.find('.next')
             };
 
+            change_bg();
+            $('.no_result').show();
+            $(".loader").hide();
 
-            $(".loader").show();
-            updateGeneOrgan();
             scalebar_change();
-
 
             $('#gene_dropdown').change(function () {
                 slyOptions['startAt'] = 0;
                 pos_mouse_number = "";
                 neg_mouse_number = "";
-                updateGeneOrgan();
+                updateFilter(0);
             });
 
             $('#organ_dropdown').change(function () {
                 slyOptions['startAt'] = 0;
                 pos_mouse_number = "";
                 neg_mouse_number = "";
-                updateSpecimen();
+                updateFilter(1);
             });
 
             $('#experiment_dropdown').change(function () {
                 slyOptions['startAt'] = 0;
                 pos_mouse_number = "";
                 neg_mouse_number = "";
-                updateAreaC();
-
+                updateFilter(2);
             });
 
             $('#sample_dropdown').change(function () {
@@ -459,7 +456,7 @@
                 slyOptions['startAt'] = 0;
                 pos_mouse_number = "";
                 neg_mouse_number = "";
-                updateSpecimen();
+                updateFilter(3);
             });
 
             $("#specimen_above").on('click', '.btn', function (event) {
@@ -474,7 +471,18 @@
 
                 var area_b_url = "/slices?per_page=-1&order_by=slice_id";
                 area_b_url += "&gene=" + $('#gene_dropdown').val() + "&organ=" + $('#organ_dropdown').val();
-                area_b_url += "&experiment=" + $('#experiment_dropdown').val() + "&instrument=" + $('#sample_dropdown').val();
+                if($('#gene_dropdown').val().length > 0) {
+                    area_b_url += "&gene=" + $('#gene_dropdown').val();
+                }
+                if($('#organ_dropdown').val().length > 0) {
+                    area_b_url += "&organ=" + $('#organ_dropdown').val();
+                }
+                if($('#experiment_dropdown').val().length > 0) {
+                    area_b_url += "&experiment=" + $('#experiment_dropdown').val();
+                }
+                if($('#sample_dropdown').val().length > 0) {
+                    area_b_url += "&instrument=" + $('#sample_dropdown').val();
+                }
                 if (neg_mouse_number != "") {
                     area_b_url += "&mouse_number=" + neg_mouse_number;
                 }
@@ -488,44 +496,145 @@
                 updateAreaC();
             });
 
-            function scalebar_change(){
-                if($('#sample_dropdown').val() == "LSM"){
+            function no_result(){
+                $('.no_result').show();
+                $(".loader").hide();
+                $('.image_table').hide();
+                $('.slice_details').hide();
+                $('.current_id').html(0);
+                $('.clearfix').html("");
+                $('#wavelength').hide();
+            }
+
+            function scalebar_change() {
+                if ($('#sample_dropdown').val() == "LSM") {
                     $('#img_histological').hide();
                     $('#img_cleared').show();
-                }else{
+                } else {
                     $('#img_cleared').hide();
                     $('#img_histological').show();
                 }
             }
 
-            function updateGeneOrgan() {
-                var url = "/slices?per_page=-1&order_by=slice_id";
-                url += "&gene=" + $('#gene_dropdown').val();
-                url += "&experiment=" + $('#experiment_dropdown').val() + "&instrument=" + $('#sample_dropdown').val();
-                var organs_arr = [];
-                var organs = "";
-                 $.ajax({
+            function updateFilter(selected) {
+                var url = "/filters?";
+                var dropdowns = 0;
+                if($('#gene_dropdown').val().length > 0) {
+                    dropdowns += $('#gene_dropdown').val().length;
+                    url += "gene=" + $('#gene_dropdown').val();
+                }
+                if($('#organ_dropdown').val().length > 0) {
+                    dropdowns += $('#organ_dropdown').val().length;
+                    url += "&organ=" + $('#organ_dropdown').val();
+                }
+                if($('#experiment_dropdown').val().length > 0) {
+                    dropdowns += $('#experiment_dropdown').val().length;
+                    url += "&experiment=" + $('#experiment_dropdown').val();
+                }
+                if($('#sample_dropdown').val().length > 0) {
+                    dropdowns += $('#sample_dropdown').val().length;
+                    url += "&instrument=" + $('#sample_dropdown').val();
+                }
+
+                var gene_arr = [];
+                var genes = "<option value=\"\">Select</option>";
+                var organ_arr = [];
+                var organs = "<option value=\"\">Select</option>";
+                var experiment_arr = [];
+                var experiments = "<option value=\"\">Select</option>";
+                var sample_type_arr = [];
+                var sample_types = "<option value=\"\">Select</option>";
+
+                $.ajax({
                     type: 'GET',
                     url: url,
                     "dataType": "json",
                     "dataSrc": "items",
                     success: function (data) {
                         for (i in data.items) {
-                            if(!organs_arr.includes(data.items[i].organ)){
-                                organs_arr.push(data.items[i].organ);
-                            }
+                            gene_arr.push(data.items[i].gene);
+                            organ_arr.push(data.items[i].organ);
+                            experiment_arr.push(data.items[i].experiment);
+                            sample_type_arr.push(data.items[i].sample_type);
                         }
-                        organs_arr.sort();
-                        organs_arr.forEach(function(item){
-                            if("{{ organ }}" != "None" && item == "{{ organ }}"){
-                                organs += "<option value='" + item + "' selected>";
-                                organs += item + "</option>";
-                            }else{
-                                organs += "<option value='" + item + "'>" + item + "</option>";
-                            }
-                        });
-                        $('#organ_dropdown').html(organs);
-                        updateSpecimen();
+                        if (selected != 0) {
+                            gene_arr.sort();
+                            gene_arr = gene_arr.filter(onlyUnique);
+                            gene_arr.forEach(function (item) {
+                                if ($('#gene_dropdown').val() != "" && item == $('#gene_dropdown').val()) {
+                                    genes += "<option value='" + item + "' selected>";
+                                    genes += item + "</option>";
+                                } else {
+                                    genes += "<option value='" + item + "'>" + item + "</option>";
+                                }
+                            });
+                        }
+
+                        if (selected != 1) {
+                            organ_arr.sort();
+                            organ_arr = organ_arr.filter(onlyUnique);
+                            organ_arr.forEach(function (item) {
+                                if ($('#organ_dropdown').val() != "" && item == $('#organ_dropdown').val()) {
+                                    organs += "<option value='" + item + "' selected>";
+                                    organs += item + "</option>";
+                                } else {
+                                    organs += "<option value='" + item + "'>" + item + "</option>";
+                                }
+                            });
+                        }
+
+                        if (selected != 2) {
+                            experiment_arr.sort();
+                            experiment_arr = experiment_arr.filter(onlyUnique);
+                            experiment_arr.forEach(function (item) {
+                                if ($('#experiment_dropdown').val() != "" && item == $('#experiment_dropdown').val()) {
+                                    experiments += "<option value='" + item + "' selected>";
+                                    experiments += item + "</option>";
+                                } else {
+                                    experiments += "<option value='" + item + "'>" + item + "</option>";
+                                }
+                            });
+                        }
+
+                        if (selected != 3) {
+                            sample_type_arr.sort();
+                            sample_type_arr = sample_type_arr.filter(onlyUnique);
+                            sample_type_arr.forEach(function (item) {
+                                console.log(item);
+                                if ($('#sample_dropdown').val() != "" && item == $('#sample_dropdown').val()) {
+                                    sample_types += "<option value='" + item + "' selected>";
+                                    sample_types += item + "</option>";
+                                } else {
+                                    sample_types += "<option value='" + item + "'>" + item + "</option>";
+                                }
+                            });
+                        }
+
+                        if (selected == 0) {
+                            $('#organ_dropdown').html(organs);
+                            $('#experiment_dropdown').html(experiments);
+                            $('#sample_dropdown').html(sample_types);
+                        }
+                        if (selected == 1) {
+                            $('#experiment_dropdown').html(experiments);
+                            $('#sample_dropdown').html(sample_types);
+                        }
+                        if (selected == 2) {
+                            $('#sample_dropdown').html(sample_types);
+                        }
+                        {#if (selected == 3) {#}
+                        {#    $('#gene_dropdown').html(genes);#}
+                        {#    $('#experiment_dropdown').html(experiments);#}
+
+
+
+                        if(dropdowns == 0){
+                            no_result();
+                            return 0;
+                        }else{
+                            updateSpecimen();
+                        }
+
                     }, error: function (jqXHR, status, err) {
 
                     }
@@ -535,11 +644,7 @@
 
             function updateAreaA(index) {
                 if (index == -1) {
-                    $('.no_result').show();
-                    $(".loader").hide();
-                    $('.image_table').hide();
-                    $('.slice_details').hide();
-                    $('.current_id').html(0);
+                    no_result();
                 } else {
                     if (total_result == 0) {
                         $('.current_id').html(0);
@@ -549,6 +654,7 @@
                     $('.no_result').hide();
                     $('.slice_details').show();
                     $('.image_table').show();
+                    $('#wavelength').show();
                     $(".loader").hide();
 
                     $('.selected_slice1').attr('src', pos_tomato_list[index] + ".png");
@@ -567,11 +673,17 @@
                 if (index == -1) {
 
                 } else {
-                    if(index+1 > neg_tomato_list.length){
-                        $('.selected_slice4').attr('src', "/static/images/no_image.png");
-                        $('.selected_slice5').attr('src',"/static/images/no_image.png");
-                        $('.selected_slice6').attr('src', "/static/images/no_image.png");
-                    }else {
+                    if (index + 1 > neg_tomato_list.length) {
+                        $('.area_B img').css('cursor', 'auto');
+                        $('.selected_slice4').attr('src', "/static/images/na.png");
+                        $('.selected_slice4').attr('data-high-res-src', "");
+                        $('.selected_slice5').attr('src', "/static/images/na.png");
+                        $('.selected_slice5').attr('data-high-res-src', "");
+                        $('.selected_slice6').attr('src', "/static/images/na.png");
+                        $('.selected_slice6').attr('data-high-res-src', "");
+
+                    } else {
+                        $('.area_B img').css('cursor', 'zoom-in');
                         $('.selected_slice4').attr('src', neg_tomato_list[index] + ".png");
                         $('.selected_slice4').attr('data-high-res-src', neg_tomato_list[index] + ".jpg");
                         $('.selected_slice5').attr('src', neg_tomato_list[index] + "_RI.png");
@@ -583,11 +695,20 @@
             }
 
             function updateAreaC() {
-
                 var area_a_url = "/slices?per_page=-1&order_by=slice_id";
                 var area_b_url;
-                area_a_url += "&gene=" + $('#gene_dropdown').val() + "&organ=" + $('#organ_dropdown').val();
-                area_a_url += "&experiment=" + $('#experiment_dropdown').val() + "&instrument=" + $('#sample_dropdown').val();
+                if($('#gene_dropdown').val().length > 0) {
+                    area_a_url += "&gene=" + $('#gene_dropdown').val();
+                }
+                if($('#organ_dropdown').val().length > 0) {
+                    area_a_url += "&organ=" + $('#organ_dropdown').val();
+                }
+                if($('#experiment_dropdown').val().length > 0) {
+                    area_a_url += "&experiment=" + $('#experiment_dropdown').val();
+                }
+                if($('#sample_dropdown').val().length > 0) {
+                    area_a_url += "&instrument=" + $('#sample_dropdown').val();
+                }
                 if (neg_mouse_number != "") {
                     area_b_url = area_a_url + "&mouse_number=" + neg_mouse_number;
                 }
@@ -619,9 +740,9 @@
                                 content += data.items[i].img_small;
                             }
                             content += "' width='200px' ></li>";
-                            if(wavelength == "DAPI"){
+                            if (wavelength == "DAPI") {
                                 pos_DAPI_list.push(data.items[i].img_no_ext);
-                            }else{
+                            } else {
                                 pos_tomato_list.push(data.items[i].img_no_ext);
                             }
                         }
@@ -645,14 +766,15 @@
                         }
                         changeFilter();
                         if (content.length > 0) {
-                            if(wavelength == "DAPI"){
+                            if (wavelength == "DAPI") {
                                 area_a_url = area_a_url.replace('wavelength=DAPI', 'wavelength=tdTomato');
-                            }else{
+                            } else {
                                 area_a_url = area_a_url.replace('wavelength=tdTomato', 'wavelength=DAPI')
                             }
                             fillAreaAImageArrays(area_a_url);
                             fillAreaBImageArrays(area_b_url);
-                        }else {
+                            $('.wavelength').show();
+                        } else {
                             updateAreaA(-1);
                         }
                     }, error: function (jqXHR, status, err) {
@@ -662,7 +784,7 @@
             }
 
 
-            function fillAreaAImageArrays(url){
+            function fillAreaAImageArrays(url) {
                 $.ajax({
                     type: 'GET',
                     url: url,
@@ -684,7 +806,7 @@
                 });
             }
 
-            function fillAreaBImageArrays(url){
+            function fillAreaBImageArrays(url) {
                 neg_tomato_list = [];
                 neg_DAPI_list = [];
                 $.ajax({
@@ -700,7 +822,7 @@
                                 neg_tomato_list.push(data.items[i].img_no_ext);
                             }
                         }
-                        updateAreaB($('.current_id').text()-1);
+                        updateAreaB($('.current_id').text() - 1);
                     }, error: function (jqXHR, status, err) {
 
                     }
@@ -721,8 +843,19 @@
                             content += "<p><a href=" + data.items[i].tif_url + ">Download TIF file</a></p>";
                             content += "<p>Shareable URL: <button class='copyUrl btn btn-info'>Copy page URL</button></p>";
                             content += "<div id='url' style='display:none;'>http://amis.docking.org/img_browser";
-                            content += "?gene=" + $('#gene_dropdown').val() + "&organ=" + $('#organ_dropdown').val();
-                            content += "&experiment=" + $('#experiment_dropdown').val() + "&sample_type=" + $('#sample_dropdown').val();
+                            content += "?";
+                            if($('#gene_dropdown').val().length > 0) {
+                                content += "gene=" + $('#gene_dropdown').val();
+                            }
+                            if($('#organ_dropdown').val().length > 0) {
+                                content += "&organ=" + $('#organ_dropdown').val();
+                            }
+                            if($('#experiment_dropdown').val().length > 0) {
+                                content += "&experiment=" + $('#experiment_dropdown').val();
+                            }
+                            if($('#sample_dropdown').val().length > 0) {
+                                content += "&instrument=" + $('#sample_dropdown').val();
+                            }
                             content += "<br/>&wavelength=" + wavelength;
                             if (pos_mouse_number != "") {
                                 content += "&pos_mouse_number=" + pos_mouse_number;
@@ -741,81 +874,95 @@
                 });
             }
 
-            function updateGene() {
-                var uri = "/mice?gene=" + $('#gene_dropdown').val()  + "&instrument=" + $('#sample_dropdown').val();
-                var organs_arr = [];
-                $.ajax({
-                    type: 'GET',
-                    url: uri,
-                    "dataType": "json",
-                    "dataSrc": "items",
-                    success: function (data) {
-                        var content_above = "";
-                        var content_below = "";
-                        data.items.sort(compareValues('number', 'asc'));
-                        data.items.sort(compareValues('sex', 'asc'));
-                        data.items.sort(compareValues('spec', 'asc'));
-
-                        for (i in data.items) {
-                            if(!organs_arr.includes(data.items[i].organ)){
-                                organs_arr.push(data.items[i].organ);
-                            }
-                        }
-                        organs_arr.sort();
-                        organs_arr.forEach(function(item){
-                            if(organ != "None" && item == {{ organ }}){
-                                organs += "<option value='" + item + "' selected>";
-                                organs += item + "</option>";
-                            }else{
-                                organs += "<option value='" + item + "'>" + item + "</option>";
-                            }
-                        });
-                        $('#organ_dropdown').html(organs);
-
-
-                        for (i in data.items) {
-                            if(organs[0] == data.items[i].organ) {
-                                var content = "";
-                                content += "<label class='btn btn2 btn-info";
-                                if ((pos_mouse_number == data.items[i].number || pos_mouse_number == "") && data.items[i].spec == '+') {
-                                    pos_mouse_number = data.items[i].number;
-                                    content += " active";
-                                }
-                                if ((neg_mouse_number == data.items[i].number || neg_mouse_number == "") && data.items[i].spec == '-') {
-                                    neg_mouse_number = data.items[i].number;
-                                    content += " active";
-                                }
-
-                                content += "'><input type='radio' name='options' ";
-                                content += "value='" + data.items[i].number + "'> " + data.items[i].spec;
-
-                                if (data.items[i].sex) {
-                                    content += " <i class='fas fa-mars'></i> ";
-                                } else {
-                                    content += " <i class='fas fa-venus'></i> ";
-                                }
-                                content += data.items[i].age + " " + data.items[i].number + "</label>";
-                                if (data.items[i].spec == '+') {
-                                    content_above += content;
-                                } else {
-                                    content_below += content;
-                                }
-                            }
-                        }
-                        $('#specimen_above ').html(content_above);
-                        $('#specimen_below').html(content_below);
-                        updateAreaC();
-                    }, error: function (jqXHR, status, err) {
+            {#function updateGene() {#}
+            {#    var uri = "/mice?gene=" + $('#gene_dropdown').val() + "&instrument=" + $('#sample_dropdown').val();#}
+            {#    var organs_arr = [];#}
+            {#    $.ajax({#}
+            {#        type: 'GET',#}
+            {#        url: uri,#}
+            {#        "dataType": "json",#}
+            {#        "dataSrc": "items",#}
+            {#        success: function (data) {#}
+            {#            var content_above = "";#}
+            {#            var content_below = "";#}
+            {#            data.items.sort(compareValues('number', 'asc'));#}
+            {#            data.items.sort(compareValues('sex', 'asc'));#}
+            {#            data.items.sort(compareValues('spec', 'asc'));#}
+            {##}
+            {#            for (i in data.items) {#}
+            {#                if (!organs_arr.includes(data.items[i].organ)) {#}
+            {#                    organs_arr.push(data.items[i].organ);#}
+            {#                }#}
+            {#            }#}
+            {#            organs_arr.sort();#}
+            {#            organs_arr.forEach(function (item) {#}
+            {#                if (organ != "None" && item == {{ organ }}) {#}
+            {#                    organs += "<option value='" + item + "' selected>";#}
+            {#                    organs += item + "</option>";#}
+            {#                } else {#}
+            {#                    organs += "<option value='" + item + "'>" + item + "</option>";#}
+            {#                }#}
+            {#            });#}
+            {#            $('#organ_dropdown').html(organs);#}
+            {##}
+            {##}
+            {#            for (i in data.items) {#}
+            {#                if (organs[0] == data.items[i].organ) {#}
+            {#                    var content = "";#}
+            {#                    content += "<label class='btn btn2 btn-info";#}
+            {#                    if ((pos_mouse_number == data.items[i].number || pos_mouse_number == "") && data.items[i].spec == '+') {#}
+            {#                        pos_mouse_number = data.items[i].number;#}
+            {#                        content += " active";#}
+            {#                    }#}
+            {#                    if ((neg_mouse_number == data.items[i].number || neg_mouse_number == "") && data.items[i].spec == '-') {#}
+            {#                        neg_mouse_number = data.items[i].number;#}
+            {#                        content += " active";#}
+            {#                    }#}
+            {##}
+            {#                    content += "'><input type='radio' name='options' ";#}
+            {#                    content += "value='" + data.items[i].number + "'> " + data.items[i].spec;#}
+            {##}
+            {#                    if (data.items[i].sex) {#}
+            {#                        content += " <i class='fas fa-mars'></i> ";#}
+            {#                    } else {#}
+            {#                        content += " <i class='fas fa-venus'></i> ";#}
+            {#                    }#}
+            {#                    content += data.items[i].age + " " + data.items[i].number + "</label>";#}
+            {#                    if (data.items[i].spec == '+') {#}
+            {#                        content_above += content;#}
+            {#                    } else {#}
+            {#                        content_below += content;#}
+            {#                    }#}
+            {#                }#}
+            {#            }#}
+            {#            $('#specimen_above ').html(content_above);#}
+            {#            $('#specimen_below').html(content_below);#}
+            {#            updateAreaC();#}
+            {#        }, error: function (jqXHR, status, err) {#}
                         {#console.log(status);#}
-                        $('.alert-danger .text').text(err.toLowerCase() + '!');
-                        $('.alert-danger').show();
-                    }
-                });
-            }
+            {#            $('.alert-danger .text').text(err.toLowerCase() + '!');#}
+            {#            $('.alert-danger').show();#}
+            {#        }#}
+            {#    });#}
+
 
             function updateSpecimen() {
-                var uri = "/mice?gene=" + $('#gene_dropdown').val()  + "&instrument=" + $('#sample_dropdown').val();
-                uri += "&organ=" + $('#organ_dropdown').val();
+                $(".loader").show();
+                var uri = "/mice?";
+                if($('#gene_dropdown').val().length > 0) {
+                    uri += "&gene=" + $('#gene_dropdown').val();
+                }
+                if($('#organ_dropdown').val().length > 0) {
+                    uri += "&organ=" + $('#organ_dropdown').val();
+                }
+                if($('#experiment_dropdown').val().length > 0) {
+                    uri += "&experiment=" + $('#experiment_dropdown').val();
+                }
+                if($('#sample_dropdown').val().length > 0) {
+                    uri += "&instrument=" + $('#sample_dropdown').val();
+                }
+
+
                 $.ajax({
                     type: 'GET',
                     url: uri,
@@ -856,8 +1003,9 @@
                                 content_below += content;
                             }
                         }
-                        $('#specimen_above ').html(content_above);
+                        $('#specimen_above').html(content_above);
                         $('#specimen_below').html(content_below);
+                        $(".loader").hide();
                         updateAreaC();
                     }, error: function (jqXHR, status, err) {
                         {#console.log(status);#}
@@ -869,12 +1017,14 @@
 
             function changeFilter() {
                 if (img_color == 1) {
-                    {#$(".selected_slice_a").css('-webkit-filter', 'brightness(10) invert(1)');#}
+                    $(".area_A img").css('-webkit-filter', 'brightness(10) invert(1)');
+                    $(".area_B img").css('-webkit-filter', 'brightness(10) invert(1)');
                     $(".frame li img").css('-webkit-filter', 'brightness(10) invert(1)');
                     $(".frame li").css('background', '#fff');
                     img_color = 2;
                 } else {
-                    {#$(".selected_slice_a").css('-webkit-filter', '');#}
+                    $(".area_A img").css('-webkit-filter', '');
+                    $(".area_B img").css('-webkit-filter', '');
                     $(".frame li  img").css('-webkit-filter', '');
                     $(".frame li").css('background', '#000');
                     img_color = 1;
@@ -885,7 +1035,11 @@
                 changeFilter();
             });
 
-            $(".btn-change-bg-color").click(function () {
+            $(".btn-change-bg-color").click(function(){
+                change_bg();
+            });
+
+            function change_bg() {
                 if (bg_color == 1) {
                     $("body").css('background-color', '#000');
                     $("body").css('color', '#fff');
@@ -895,7 +1049,11 @@
                     $("body").css('color', '#000');
                     bg_color = 1;
                 }
-            });
+            }
+
+            function onlyUnique(value, index, self) {
+                return self.indexOf(value) === index;
+            }
 
             function compareValues(key, order = 'asc') {
                 return function (a, b) {
@@ -921,18 +1079,14 @@
                 };
             }
         });
-        $(document).on('click', '.gallery-items', function (event) {
-            event.preventDefault();
-            var viewer = ImageViewer();
-            {#var imgSrc = '';#}
-            {#if(this.tagName == 'A'){#}
-            {#    imgSrc = this.href;#}
-            {#else{#}
-            {#    imgSrc = this.src;#}
-            {##}
 
+        $(document).on('click', '.gallery-items', function (event) {
             highResolutionImage = $(this).attr('data-high-res-src');
-            viewer.show(highResolutionImage);
+            if (highResolutionImage.length > 0) {
+                event.preventDefault();
+                var viewer = ImageViewer();
+                viewer.show(highResolutionImage);
+            }
         });
         $(document).on('click', '.copyUrl', function (event) {
             var $temp = $("<input>");

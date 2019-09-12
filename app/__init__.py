@@ -30,6 +30,7 @@ def create_app(config_class=Config):
     from app.data.resources.experiment import ExperimentList
     from app.data.resources.organ import OrganList
     from app.data.resources.slice import Slices
+    from app.data.resources.slice import Filters
     from app.data.resources.lookup import LookupList
     from app.data.resources.mouse import MouseList
     # from app.data.resources.scan import ScanList, Scan
@@ -56,6 +57,7 @@ def create_app(config_class=Config):
         '/slices.<file_type>',
     ]
     api.add_resource(Slices, *slice_routes)
+    api.add_resource(Filters, "/filters")
 
     db.init_app(app)
     migrate.init_app(app, db)
