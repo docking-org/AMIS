@@ -11,7 +11,7 @@ load_dotenv(dotenv_path)
 class Config(object):
     SECRET_KEY = os.getenv("SECRET_KEY") or 'secret'
     SECURITY_PASSWORD_SALT = os.getenv("SECURITY_PASSWORD_SALT")
-    SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI") or 'your_db_URI'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # SQLALCHEMY_POOL_SIZE = 20

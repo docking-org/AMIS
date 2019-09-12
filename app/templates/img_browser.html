@@ -151,11 +151,6 @@
         .img-fluid {
           object-fit: contain;
         }
-
-
-
-
-
     </style>
 {% endblock %}
 
@@ -186,7 +181,7 @@
                             <option value="">Select</option>
                             {% for organ_ in organs %}
                                 <option value="{{ organ_.name }}"
-                                        {% if organ_ == organ_.name %}
+                                        {% if organ == organ_.name %}
                                         selected
                                         {% endif %}
                                 >{{ organ_.name }}</option>
@@ -201,7 +196,7 @@
                             <option value="">Select</option>
                             {% for experiment_ in experiments %}
                                 <option value="{{ experiment_.name }}"
-                                        {% if experiment_ == experiment_.name %}
+                                        {% if experiment == experiment_.name %}
                                         selected
                                         {% endif %}
                                 >{{ experiment_.name }}</option>
