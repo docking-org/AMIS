@@ -145,7 +145,7 @@
         }
 
         .img_title {
-            width: 300px;
+
             font-weight: bold;
         }
         .img-fluid {
@@ -475,7 +475,6 @@
                 neg_mouse_number = $(this).find('input').val();
 
                 var area_b_url = "/slices?per_page=-1&order_by=slice_id";
-                area_b_url += "&gene=" + $('#gene_dropdown').val() + "&organ=" + $('#organ_dropdown').val();
                 if($('#gene_dropdown').val().length > 0) {
                     area_b_url += "&gene=" + $('#gene_dropdown').val();
                 }
