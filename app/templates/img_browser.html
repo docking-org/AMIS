@@ -39,8 +39,8 @@
 
         /* Frame */
         .frame {
-            height: 200px;
-            line-height: 200px;
+            height: 180px;
+            line-height: 180px;
             overflow: hidden;
         }
 
@@ -54,7 +54,7 @@
 
         .frame ul li {
             float: left;
-            width: 200px;
+            width: 180px;
             height: 100%;
             margin: 0 1px 0 0;
             padding: 0;
@@ -129,8 +129,8 @@
         }
 
         .figure-container img {
-            height: 290px;
-            width: 290px;
+            height: 240px;
+            width: 240px;
             background: black;
         }
 
@@ -261,10 +261,10 @@
                     <td>
                         <img id="img_histological"
                              src="{{ url_for('static', filename='images/LUT_key.jpg') }}"
-                             style="max-height: 290px; display: none;">
+                             style="max-height: 240px; display: none;">
                         <img id="img_cleared"
                              src="{{ url_for('static', filename='images/Thalium_LUT.jpg') }}"
-                             style="max-height: 290px; display: none;">
+                             style="max-height: 240px; display: none;">
                     </td>
                 </tr>
                 <tr>
@@ -296,8 +296,8 @@
                 <div class="loader" style="padding: 50px">
                 </div>
                 <div class="no_result controls "
-                     style="display: none; height: 580px;padding-left: 5px; padding-top: 20px;"><img
-                        src="{{ url_for('static', filename='images/no_result.png') }}" height="500px">
+                     style="display: none; height: 480px;padding-left: 5px; padding-top: 120px;"><img
+                        src="{{ url_for('static', filename='images/no_result.png') }}" height="300px">
                 </div>
             </div>
         </div>
@@ -311,7 +311,8 @@
                     class="glyphicon glyphicon-chevron-left"></span>prev
             </button>
             <span class="" style="font-weight: bold;color: #0aaaf1;font-size: larger">
-                (Slice <span class="current_id">{{ selected_slice }}</span> of <span class="total_result"></span>)
+                (Slice  <input class="current_id" type="number" min="0" style="width: 50px;"/>
+                of <span class="total_result">0</span>)
             </span>
             <button class="btn btn-info next">next <span class="glyphicon glyphicon-chevron-right"></span></button>
         </div>
@@ -422,7 +423,7 @@
             change_bg();
             $('.no_result').show();
             $(".loader").hide();
-
+            updateFilter(4);
             scalebar_change();
 
             $('#gene_dropdown').change(function () {
@@ -460,6 +461,15 @@
                 updateAreaC();
             });
 
+            $(".current_id").change(function(){
+                if($('.current_id').val() > parseInt($('.total_result').text())){
+                    $('.current_id').val(parseInt($('.total_result').text()));
+                }
+                var current = parseInt($('.current_id').val()) - 1;
+                slyOptions['startAt'] = current;
+                updateAreaC();
+            });
+
             $("#specimen_below").on('click', '.btn', function (event) {
                 slyOptions['startAt'] = 0;
                 neg_mouse_number = $(this).find('input').val();
@@ -486,7 +496,7 @@
 
             $("#wavelength .btn").on('click', function (event) {
                 wavelength = $(this).find('input').val();
-                var current = parseInt($('.current_id').text()) - 1;
+                var current = parseInt($('.current_id').val()) - 1;
                 slyOptions['startAt'] = current;
                 updateAreaC();
             });
@@ -496,13 +506,13 @@
                 $(".loader").hide();
                 $('.image_table').hide();
                 $('.slice_details').hide();
-                $('.current_id').html(0);
+                $('.current_id').val(0);
                 $('.clearfix').html("");
                 $('#wavelength').hide();
             }
 
             function scalebar_change() {
-                if ($('#sample_dropdown').val() == "LSM") {
+                if ($('#sample_dropdown').val().toLowerCase() == "cleared") {
                     $('#img_histological').hide();
                     $('#img_cleared').show();
                 } else {
@@ -642,9 +652,9 @@
                     no_result();
                 } else {
                     if (total_result == 0) {
-                        $('.current_id').html(0);
+                        $('.current_id').val(0);
                     } else {
-                        $('.current_id').html(index + 1);
+                        $('.current_id').val(index + 1);
                     }
                     $('.no_result').hide();
                     $('.slice_details').show();
@@ -734,7 +744,7 @@
                             } else {
                                 content += data.items[i].img_small;
                             }
-                            content += "' width='200px' ></li>";
+                            content += "' width='180px' ></li>";
                             if (wavelength == "DAPI") {
                                 pos_DAPI_list.push(data.items[i].img_no_ext);
                             } else {
@@ -742,6 +752,8 @@
                             }
                         }
                         $('.total_result').html(total_result);
+                        $('.current_id').attr("max", total_result);
+                        $('.current_id').attr("min", 1);
                         if (content.length == 0) {
                             $('.clearfix').html("<li>N/A</li>");
                         } else {
@@ -817,7 +829,7 @@
                                 neg_tomato_list.push(data.items[i].img_no_ext);
                             }
                         }
-                        updateAreaB($('.current_id').text() - 1);
+                        updateAreaB($('.current_id').val() - 1);
                     }, error: function (jqXHR, status, err) {
 
                     }
@@ -858,7 +870,7 @@
                             if (neg_mouse_number != "") {
                                 content += "&neg_mouse_number=" + neg_mouse_number;
                             }
-                            content += "&selected_slice=" + $('.current_id').text() + "</div>";
+                            content += "&selected_slice=" + $('.current_id').val() + "</div>";
                         }
                         $('.slice_details').html(content);
                     }, error: function (jqXHR, status, err) {
@@ -868,78 +880,6 @@
                     }
                 });
             }
-
-            {#function updateGene() {#}
-            {#    var uri = "/mice?gene=" + $('#gene_dropdown').val() + "&instrument=" + $('#sample_dropdown').val();#}
-            {#    var organs_arr = [];#}
-            {#    $.ajax({#}
-            {#        type: 'GET',#}
-            {#        url: uri,#}
-            {#        "dataType": "json",#}
-            {#        "dataSrc": "items",#}
-            {#        success: function (data) {#}
-            {#            var content_above = "";#}
-            {#            var content_below = "";#}
-            {#            data.items.sort(compareValues('number', 'asc'));#}
-            {#            data.items.sort(compareValues('sex', 'asc'));#}
-            {#            data.items.sort(compareValues('spec', 'asc'));#}
-            {##}
-            {#            for (i in data.items) {#}
-            {#                if (!organs_arr.includes(data.items[i].organ)) {#}
-            {#                    organs_arr.push(data.items[i].organ);#}
-            {#                }#}
-            {#            }#}
-            {#            organs_arr.sort();#}
-            {#            organs_arr.forEach(function (item) {#}
-            {#                if (organ != "None" && item == {{ organ }}) {#}
-            {#                    organs += "<option value='" + item + "' selected>";#}
-            {#                    organs += item + "</option>";#}
-            {#                } else {#}
-            {#                    organs += "<option value='" + item + "'>" + item + "</option>";#}
-            {#                }#}
-            {#            });#}
-            {#            $('#organ_dropdown').html(organs);#}
-            {##}
-            {##}
-            {#            for (i in data.items) {#}
-            {#                if (organs[0] == data.items[i].organ) {#}
-            {#                    var content = "";#}
-            {#                    content += "<label class='btn btn2 btn-info";#}
-            {#                    if ((pos_mouse_number == data.items[i].number || pos_mouse_number == "") && data.items[i].spec == '+') {#}
-            {#                        pos_mouse_number = data.items[i].number;#}
-            {#                        content += " active";#}
-            {#                    }#}
-            {#                    if ((neg_mouse_number == data.items[i].number || neg_mouse_number == "") && data.items[i].spec == '-') {#}
-            {#                        neg_mouse_number = data.items[i].number;#}
-            {#                        content += " active";#}
-            {#                    }#}
-            {##}
-            {#                    content += "'><input type='radio' name='options' ";#}
-            {#                    content += "value='" + data.items[i].number + "'> " + data.items[i].spec;#}
-            {##}
-            {#                    if (data.items[i].sex) {#}
-            {#                        content += " <i class='fas fa-mars'></i> ";#}
-            {#                    } else {#}
-            {#                        content += " <i class='fas fa-venus'></i> ";#}
-            {#                    }#}
-            {#                    content += data.items[i].age + " " + data.items[i].number + "</label>";#}
-            {#                    if (data.items[i].spec == '+') {#}
-            {#                        content_above += content;#}
-            {#                    } else {#}
-            {#                        content_below += content;#}
-            {#                    }#}
-            {#                }#}
-            {#            }#}
-            {#            $('#specimen_above ').html(content_above);#}
-            {#            $('#specimen_below').html(content_below);#}
-            {#            updateAreaC();#}
-            {#        }, error: function (jqXHR, status, err) {#}
-                        {#console.log(status);#}
-            {#            $('.alert-danger .text').text(err.toLowerCase() + '!');#}
-            {#            $('.alert-danger').show();#}
-            {#        }#}
-            {#    });#}
-
 
             function updateSpecimen() {
                 $(".loader").show();

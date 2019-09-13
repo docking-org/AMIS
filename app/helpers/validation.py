@@ -170,7 +170,7 @@ def load_images():
             # return "Please check the file name: {}\n Exception {}\n".format(name[0:-4], str(e))
             skipped += 1
             print("Skipped the file: {}".format(file_name_with_ext))
-            print("Please check the file name: {}\n Exception {}\n".format(file_name, str(e)))
+            print("Please check the file name: {}/{}\n Exception {}\n".format(file_sub_folder, file_name, str(e)))
 
     with open(path+'/missing_jpeg_paths.txt', 'w') as file_handler:
         for item in missing_jpegs:
