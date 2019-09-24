@@ -115,7 +115,13 @@ class Filters(Resource):
         if new_args.get('experiment'):
             slices = slices.filter(SliceModel.experiment.has(ExperimentModel.name == new_args.get('experiment')))
             new_args.pop('experiment')
-
+        if new_args.get('instrument'):
+            if new_args.get('instrument').lower() == 'histological':
+                slices = slices.filter(SliceModel.instrument != 'LSM')
+                new_args.pop('instrument')
+            elif new_args.get('instrument').lower() != 'histological':
+                slices = slices.filter(SliceModel.instrument == 'LSM')
+                new_args.pop('instrument')
         data = SliceModel.to_menu_filter_dict(slices.filter_by(**new_args))
 
         return jsonify(data)

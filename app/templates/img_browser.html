@@ -160,6 +160,26 @@
         <div class="col-md-3">
             <form>
                 <div class="form-group row">
+                    <label for="sample_type" class="col-sm-4 col-form-label">Sample Type</label>
+                    <div class="col-sm-6">
+                        <select name="sample_type" class="form-control" id="sample_dropdown">
+                            <option value="">Select</option>
+                            <option value="Histological"
+                                    {% if sample_type == "Histological" %}
+                                    selected
+                                    {% endif %}
+                            >Histological
+                            </option>
+                            <option value="Cleared"
+                                    {% if sample_type == "Cleared" %}
+                                    selected
+                                    {% endif %}
+                            >Cleared
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
                     <label for="gene_dropdown" class="col-sm-4 col-form-label">Gene</label>
                     <div class="col-sm-6">
                         <select name="gene" class="form-control" id="gene_dropdown">
@@ -190,7 +210,7 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="organ_dropdown" class="col-sm-4 col-form-label">Experiment</label>
+                    <label for="experiment_dropdown" class="col-sm-4 col-form-label">Experiment</label>
                     <div class="col-sm-6">
                         <select name="experiment" class="form-control" id="experiment_dropdown">
                             <option value="">Select</option>
@@ -201,26 +221,6 @@
                                         {% endif %}
                                 >{{ experiment_.name }}</option>
                             {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="organ_dropdown" class="col-sm-4 col-form-label">Sample Type</label>
-                    <div class="col-sm-6">
-                        <select name="sample_type" class="form-control" id="sample_dropdown">
-                            <option value="">Select</option>
-                            <option value="Histological"
-                                    {% if sample_type == "Histological" %}
-                                    selected
-                                    {% endif %}
-                            >Histological
-                            </option>
-                            <option value="Cleared"
-                                    {% if sample_type == "Cleared" %}
-                                    selected
-                                    {% endif %}
-                            >Cleared
-                            </option>
                         </select>
                     </div>
                 </div>
@@ -423,6 +423,7 @@
             change_bg();
             $('.no_result').show();
             $(".loader").hide();
+            setDefaultDDlVal();
             updateFilter(4);
             scalebar_change();
 
@@ -500,6 +501,21 @@
                 updateAreaC();
             });
 
+            function setDefaultDDlVal(){
+                if("{{ gene }}" == "None"){
+                     $("#gene_dropdown").val($("#gene_dropdown option:eq(1)").val());
+                }
+                if(organ == "None"){
+                     $("#organ_dropdown").val($("#organ_dropdown option:eq(1)").val());
+                }
+                if("{{ experiment }}" == "None"){
+                     $("#experiment_dropdown").val($("#experiment_dropdown option:eq(1)").val());
+                }
+                if("{{ sample_type }}" == "None"){
+                     $("#sample_dropdown").val($("#sample_dropdown option:eq(1)").val());
+                }
+            }
+
             function no_result(){
                 $('.no_result').show();
                 $(".loader").hide();
@@ -565,7 +581,8 @@
                             gene_arr.sort();
                             gene_arr = gene_arr.filter(onlyUnique);
                             gene_arr.forEach(function (item) {
-                                if ($('#gene_dropdown').val() != "" && item == $('#gene_dropdown').val()) {
+                                if (($('#gene_dropdown').val() == "" && genes == "<option value=\"\">Select</option>") ||
+                                ($('#gene_dropdown').val() != "" && item == $('#gene_dropdown').val())) {
                                     genes += "<option value='" + item + "' selected>";
                                     genes += item + "</option>";
                                 } else {
@@ -599,7 +616,6 @@
                                 }
                             });
                         }
-
                         if (selected != 3) {
                             sample_type_arr.sort();
                             sample_type_arr = sample_type_arr.filter(onlyUnique);
@@ -613,7 +629,11 @@
                                 }
                             });
                         }
-
+                        if (selected == 3) {
+                            $('#organ_dropdown').html(organs);
+                            $('#experiment_dropdown').html(experiments);
+                            $('#sample_dropdown').html(sample_types);
+                        }
                         if (selected == 0) {
                             $('#organ_dropdown').html(organs);
                             $('#experiment_dropdown').html(experiments);
@@ -626,9 +646,12 @@
                         if (selected == 2) {
                             $('#sample_dropdown').html(sample_types);
                         }
-                        {#if (selected == 3) {#}
-                        {#    $('#gene_dropdown').html(genes);#}
-                        {#    $('#experiment_dropdown').html(experiments);#}
+
+                        // Default
+                        if (selected == 4) {
+                            $('#experiment_dropdown').html(experiments);
+                            $('#sample_dropdown').html(sample_types);
+                        }
 
 
 
