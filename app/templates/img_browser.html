@@ -224,6 +224,13 @@
                         </select>
                     </div>
                 </div>
+                <div class="form-group row">
+                    <label for="" class="col-sm-4 col-form-label"></label>
+                    <div class="col-sm-6">
+                        <button type="button" class="btn btn-info clear_filter">Clear all filters
+                        </button>
+                    </div>
+                </div>
             </form>
             <div class="col-md-10 row slice_details">
             </div>
@@ -427,34 +434,36 @@
             updateFilter(4);
             scalebar_change();
 
-            $('#gene_dropdown').change(function () {
+            $('#sample_dropdown').change(function () {
+                scalebar_change();
                 slyOptions['startAt'] = 0;
                 pos_mouse_number = "";
                 neg_mouse_number = "";
                 updateFilter(0);
             });
 
-            $('#organ_dropdown').change(function () {
+            $('#gene_dropdown').change(function () {
                 slyOptions['startAt'] = 0;
                 pos_mouse_number = "";
                 neg_mouse_number = "";
                 updateFilter(1);
             });
 
-            $('#experiment_dropdown').change(function () {
+            $('#organ_dropdown').change(function () {
                 slyOptions['startAt'] = 0;
                 pos_mouse_number = "";
                 neg_mouse_number = "";
                 updateFilter(2);
             });
 
-            $('#sample_dropdown').change(function () {
-                scalebar_change();
+            $('#experiment_dropdown').change(function () {
                 slyOptions['startAt'] = 0;
                 pos_mouse_number = "";
                 neg_mouse_number = "";
                 updateFilter(3);
             });
+
+
 
             $("#specimen_above").on('click', '.btn', function (event) {
                 slyOptions['startAt'] = 0;
@@ -469,6 +478,15 @@
                 var current = parseInt($('.current_id').val()) - 1;
                 slyOptions['startAt'] = current;
                 updateAreaC();
+            });
+
+             $(".clear_filter").on('click', function (event) {
+                 $("#gene_dropdown").val($("#gene_dropdown option:eq(0)").val());
+                 $("#organ_dropdown").val($("#organ_dropdown option:eq(0)").val());
+                 $("#experiment_dropdown").val($("#experiment_dropdown option:eq(0)").val());
+                 $("#sample_dropdown").val($("#sample_dropdown option:eq(0)").val());
+                 {#no_result();#}
+                 updateFilter(5);
             });
 
             $("#specimen_below").on('click', '.btn', function (event) {
@@ -539,23 +557,30 @@
             function updateFilter(selected) {
                 var url = "/filters?";
                 var dropdowns = 0;
-                if($('#gene_dropdown').val().length > 0) {
-                    dropdowns += $('#gene_dropdown').val().length;
-                    url += "gene=" + $('#gene_dropdown').val();
+                if(selected != 5 && selected != 0) {
+                    if ($('#gene_dropdown').val().length > 0) {
+                        dropdowns += $('#gene_dropdown').val().length;
+                        url += "gene=" + $('#gene_dropdown').val();
+                    }
+                    if ($('#organ_dropdown').val().length > 0) {
+                        dropdowns += $('#organ_dropdown').val().length;
+                        url += "&organ=" + $('#organ_dropdown').val();
+                    }
+                    if ($('#experiment_dropdown').val().length > 0) {
+                        dropdowns += $('#experiment_dropdown').val().length;
+                        url += "&experiment=" + $('#experiment_dropdown').val();
+                    }
+                    if ($('#sample_dropdown').val().length > 0) {
+                        dropdowns += $('#sample_dropdown').val().length;
+                        url += "&instrument=" + $('#sample_dropdown').val();
+                    }
                 }
-                if($('#organ_dropdown').val().length > 0) {
-                    dropdowns += $('#organ_dropdown').val().length;
-                    url += "&organ=" + $('#organ_dropdown').val();
+                if(selected == 0){
+                    if ($('#sample_dropdown').val().length > 0) {
+                        dropdowns += $('#sample_dropdown').val().length;
+                        url += "&instrument=" + $('#sample_dropdown').val();
+                    }
                 }
-                if($('#experiment_dropdown').val().length > 0) {
-                    dropdowns += $('#experiment_dropdown').val().length;
-                    url += "&experiment=" + $('#experiment_dropdown').val();
-                }
-                if($('#sample_dropdown').val().length > 0) {
-                    dropdowns += $('#sample_dropdown').val().length;
-                    url += "&instrument=" + $('#sample_dropdown').val();
-                }
-
                 var gene_arr = [];
                 var genes = "<option value=\"\">Select</option>";
                 var organ_arr = [];
@@ -577,50 +602,11 @@
                             experiment_arr.push(data.items[i].experiment);
                             sample_type_arr.push(data.items[i].sample_type);
                         }
+
                         if (selected != 0) {
-                            gene_arr.sort();
-                            gene_arr = gene_arr.filter(onlyUnique);
-                            gene_arr.forEach(function (item) {
-                                if (($('#gene_dropdown').val() == "" && genes == "<option value=\"\">Select</option>") ||
-                                ($('#gene_dropdown').val() != "" && item == $('#gene_dropdown').val())) {
-                                    genes += "<option value='" + item + "' selected>";
-                                    genes += item + "</option>";
-                                } else {
-                                    genes += "<option value='" + item + "'>" + item + "</option>";
-                                }
-                            });
-                        }
-
-                        if (selected != 1) {
-                            organ_arr.sort();
-                            organ_arr = organ_arr.filter(onlyUnique);
-                            organ_arr.forEach(function (item) {
-                                if ($('#organ_dropdown').val() != "" && item == $('#organ_dropdown').val()) {
-                                    organs += "<option value='" + item + "' selected>";
-                                    organs += item + "</option>";
-                                } else {
-                                    organs += "<option value='" + item + "'>" + item + "</option>";
-                                }
-                            });
-                        }
-
-                        if (selected != 2) {
-                            experiment_arr.sort();
-                            experiment_arr = experiment_arr.filter(onlyUnique);
-                            experiment_arr.forEach(function (item) {
-                                if ($('#experiment_dropdown').val() != "" && item == $('#experiment_dropdown').val()) {
-                                    experiments += "<option value='" + item + "' selected>";
-                                    experiments += item + "</option>";
-                                } else {
-                                    experiments += "<option value='" + item + "'>" + item + "</option>";
-                                }
-                            });
-                        }
-                        if (selected != 3) {
                             sample_type_arr.sort();
                             sample_type_arr = sample_type_arr.filter(onlyUnique);
                             sample_type_arr.forEach(function (item) {
-                                console.log(item);
                                 if ($('#sample_dropdown').val() != "" && item == $('#sample_dropdown').val()) {
                                     sample_types += "<option value='" + item + "' selected>";
                                     sample_types += item + "</option>";
@@ -629,32 +615,73 @@
                                 }
                             });
                         }
-                        if (selected == 3) {
-                            $('#organ_dropdown').html(organs);
-                            $('#experiment_dropdown').html(experiments);
-                            $('#sample_dropdown').html(sample_types);
+
+                        if (selected != 1) {
+                            gene_arr.sort();
+                            gene_arr = gene_arr.filter(onlyUnique);
+                            gene_arr.forEach(function (item) {
+                                if ($('#gene_dropdown').val() != "" && item == $('#gene_dropdown').val() && selected != 0) {
+                                    genes += "<option value='" + item + "' selected>";
+                                    genes += item + "</option>";
+                                } else {
+                                    genes += "<option value='" + item + "'>" + item + "</option>";
+                                }
+                            });
                         }
+
+                        if (selected != 2) {
+                            organ_arr.sort();
+                            organ_arr = organ_arr.filter(onlyUnique);
+                            organ_arr.forEach(function (item) {
+                                if ($('#organ_dropdown').val() != "" && item == $('#organ_dropdown').val() && selected != 0) {
+                                    organs += "<option value='" + item + "' selected>";
+                                    organs += item + "</option>";
+                                } else {
+                                    organs += "<option value='" + item + "'>" + item + "</option>";
+                                }
+                            });
+                        }
+
+                        if (selected != 3) {
+                            experiment_arr.sort();
+                            experiment_arr = experiment_arr.filter(onlyUnique);
+                            experiment_arr.forEach(function (item) {
+                                if ($('#experiment_dropdown').val() != "" && item == $('#experiment_dropdown').val() && selected != 0) {
+                                    experiments += "<option value='" + item + "' selected>";
+                                    experiments += item + "</option>";
+                                } else {
+                                    experiments += "<option value='" + item + "'>" + item + "</option>";
+                                }
+                            });
+                        }
+
                         if (selected == 0) {
+                            {#$('#sample_dropdown').html(sample_types);#}
+                            $('#gene_dropdown').html(genes);
                             $('#organ_dropdown').html(organs);
                             $('#experiment_dropdown').html(experiments);
-                            $('#sample_dropdown').html(sample_types);
                         }
                         if (selected == 1) {
+                            $('#organ_dropdown').html(organs);
                             $('#experiment_dropdown').html(experiments);
-                            $('#sample_dropdown').html(sample_types);
                         }
                         if (selected == 2) {
-                            $('#sample_dropdown').html(sample_types);
+                            $('#gene_dropdown').html(genes);
+                            $('#experiment_dropdown').html(experiments);
                         }
 
                         // Default
                         if (selected == 4) {
                             $('#experiment_dropdown').html(experiments);
-                            $('#sample_dropdown').html(sample_types);
+                            {#$('#sample_dropdown').html(sample_types);#}
                         }
 
-
-
+                        if (selected == 5) {
+                            $('#sample_dropdown').html(sample_types);
+                            $('#gene_dropdown').html(genes);
+                            $('#organ_dropdown').html(organs);
+                            $('#experiment_dropdown').html(experiments);
+                        }
                         if(dropdowns == 0){
                             no_result();
                             return 0;
