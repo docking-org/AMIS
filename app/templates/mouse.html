@@ -7,7 +7,7 @@
 
 
 {% block app_content %}
-    <table id="example" class="display" style="width:85%">
+    <table id="mouse" class="display" style="width:85%">
         <thead>
             <tr>
                 <th>ID</th>
@@ -37,7 +37,7 @@
     <script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('#example').DataTable( {
+            $('#').DataTable( {
                 "ajax": {
                     "url": "/mice",
                     "dataType": "json",

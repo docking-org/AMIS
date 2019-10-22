@@ -233,15 +233,16 @@
                 </div>
             </form>
             <div class="col-md-10 row slice_details">
+
             </div>
         </div>
         <div class="col-md-6">
             <table class="image_table" style="display: none">
                 <tr>
                     <td></td>
-                    <td class="img_title">tdTomato</td>
-                    <td class="img_title">tdTomato RI</td>
-                    <td class="img_title">DAPI</td>
+                    <td><span class="img_title">tdTomato</span><br/>(contrast stretched)</td>
+                    <td><span class="img_title">tdTomato RI</span><br/>(relative intensity)</td>
+                    <td><span class="img_title">DAPI </span><br/>(contrast stretched)</td>
                     <td></td>
                 </tr>
                 <tr>
@@ -303,8 +304,8 @@
                 <div class="loader" style="padding: 50px">
                 </div>
                 <div class="no_result controls "
-                     style="display: none; height: 480px;padding-left: 5px; padding-top: 120px;"><img
-                        src="{{ url_for('static', filename='images/no_result.png') }}" height="300px">
+                     style="display: none; height: 480px;padding-left: 5px; padding-top: 120px;">
+                    <img src="{{ url_for('static', filename='images/no_result.png') }}" height="300px">
                 </div>
             </div>
         </div>
@@ -430,8 +431,15 @@
             change_bg();
             $('.no_result').show();
             $(".loader").hide();
-            setDefaultDDlVal();
-            updateFilter(4);
+            if($('#sample_dropdown').val().length + $('#gene_dropdown').val().length +
+                $('#organ_dropdown').val().length + $('#experiment_dropdown').val().length > 0){
+                updateFilter(0);
+                // need to fix this call. Cannot able to call by order. It calls 1 and then 0
+                updateFilter(1);
+                updateFilter(1);
+            }else{
+                setDefaultDDlVal(1, 1, 1, 1);
+            }
             scalebar_change();
 
             $('#sample_dropdown').change(function () {
@@ -440,6 +448,9 @@
                 pos_mouse_number = "";
                 neg_mouse_number = "";
                 updateFilter(0);
+                 $("#gene_dropdown").val($("#gene_dropdown option:eq(0)").val());
+                 $("#organ_dropdown").val($("#organ_dropdown option:eq(0)").val());
+                 $("#experiment_dropdown").val($("#experiment_dropdown option:eq(0)").val());
             });
 
             $('#gene_dropdown').change(function () {
@@ -481,12 +492,11 @@
             });
 
              $(".clear_filter").on('click', function (event) {
+                 $("#sample_dropdown").val($("#sample_dropdown option:eq(0)").val());
                  $("#gene_dropdown").val($("#gene_dropdown option:eq(0)").val());
                  $("#organ_dropdown").val($("#organ_dropdown option:eq(0)").val());
                  $("#experiment_dropdown").val($("#experiment_dropdown option:eq(0)").val());
-                 $("#sample_dropdown").val($("#sample_dropdown option:eq(0)").val());
-                 {#no_result();#}
-                 updateFilter(5);
+                 updateFilter(0);
             });
 
             $("#specimen_below").on('click', '.btn', function (event) {
@@ -519,19 +529,24 @@
                 updateAreaC();
             });
 
-            function setDefaultDDlVal(){
-                if("{{ gene }}" == "None"){
-                     $("#gene_dropdown").val($("#gene_dropdown option:eq(1)").val());
-                }
-                if(organ == "None"){
-                     $("#organ_dropdown").val($("#organ_dropdown option:eq(1)").val());
-                }
-                if("{{ experiment }}" == "None"){
-                     $("#experiment_dropdown").val($("#experiment_dropdown option:eq(1)").val());
-                }
-                if("{{ sample_type }}" == "None"){
+            function setDefaultDDlVal(s1, s2, s3, s4){
+                if($('#sample_dropdown').val().length == 0){
                      $("#sample_dropdown").val($("#sample_dropdown option:eq(1)").val());
+                     updateFilter(s1);
                 }
+                if($('#gene_dropdown').val().length == 0){
+                     $("#gene_dropdown").val($("#gene_dropdown option:eq(1)").val());
+                     updateFilter(s2);
+                }
+                if($('#organ_dropdown').val().length == 0){
+                     $("#organ_dropdown").val($("#organ_dropdown option:eq(1)").val());
+                     updateFilter(s3);
+                }
+                if($('#experiment_dropdown').val().length == 0){
+                     $("#experiment_dropdown").val($("#experiment_dropdown option:eq(1)").val());
+                     updateFilter(s4);
+                }
+
             }
 
             function no_result(){
@@ -557,30 +572,39 @@
             function updateFilter(selected) {
                 var url = "/filters?";
                 var dropdowns = 0;
-                if(selected != 5 && selected != 0) {
-                    if ($('#gene_dropdown').val().length > 0) {
-                        dropdowns += $('#gene_dropdown').val().length;
-                        url += "gene=" + $('#gene_dropdown').val();
-                    }
-                    if ($('#organ_dropdown').val().length > 0) {
-                        dropdowns += $('#organ_dropdown').val().length;
-                        url += "&organ=" + $('#organ_dropdown').val();
-                    }
-                    if ($('#experiment_dropdown').val().length > 0) {
-                        dropdowns += $('#experiment_dropdown').val().length;
-                        url += "&experiment=" + $('#experiment_dropdown').val();
-                    }
-                    if ($('#sample_dropdown').val().length > 0) {
-                        dropdowns += $('#sample_dropdown').val().length;
-                        url += "&instrument=" + $('#sample_dropdown').val();
-                    }
+
+                if ($('#sample_dropdown').val().length > 0) {
+                    url += "&instrument=" + $('#sample_dropdown').val();
+                    dropdowns ++;
+                    $('#sample_dropdown').css('color', 'black');
+                }else{
+                    $('#sample_dropdown').css('color', 'red');
                 }
-                if(selected == 0){
-                    if ($('#sample_dropdown').val().length > 0) {
-                        dropdowns += $('#sample_dropdown').val().length;
-                        url += "&instrument=" + $('#sample_dropdown').val();
-                    }
+
+                if (selected >= 1 && $('#gene_dropdown').val().length > 0) {
+                    url += "&gene=" + $('#gene_dropdown').val();
                 }
+                if($('#gene_dropdown').val().length > 0 ){
+                    dropdowns ++;
+                    $('#gene_dropdown').css('color', 'black');
+                }else{
+                    $('#gene_dropdown').css('color', 'red');
+                }
+
+                if (selected >= 2 && $('#organ_dropdown').val().length > 0) {
+                    url += "&organ=" + $('#organ_dropdown').val();
+                }
+                if($('#organ_dropdown').val().length > 0 ){
+                    dropdowns ++;
+                    $('#organ_dropdown').css('color', 'black');
+                }else{
+                    $('#organ_dropdown').css('color', 'red');
+                }
+
+                if (selected >= 3 && $('#experiment_dropdown').val().length > 0) {
+                    url += "&experiment=" + $('#experiment_dropdown').val();
+                }
+
                 var gene_arr = [];
                 var genes = "<option value=\"\">Select</option>";
                 var organ_arr = [];
@@ -595,7 +619,10 @@
                     url: url,
                     "dataType": "json",
                     "dataSrc": "items",
-                    success: function (data) {
+                    error: function (jqXHR, status, err) {
+
+                    }
+                }).done(function (data) {
                         for (i in data.items) {
                             gene_arr.push(data.items[i].gene);
                             organ_arr.push(data.items[i].organ);
@@ -603,24 +630,23 @@
                             sample_type_arr.push(data.items[i].sample_type);
                         }
 
-                        if (selected != 0) {
-                            sample_type_arr.sort();
-                            sample_type_arr = sample_type_arr.filter(onlyUnique);
-                            sample_type_arr.forEach(function (item) {
-                                if ($('#sample_dropdown').val() != "" && item == $('#sample_dropdown').val()) {
-                                    sample_types += "<option value='" + item + "' selected>";
-                                    sample_types += item + "</option>";
-                                } else {
-                                    sample_types += "<option value='" + item + "'>" + item + "</option>";
-                                }
-                            });
-                        }
+                        {#if (selected != 0) {#}
+                        {#    sample_type_arr.sort();#}
+                        {#    sample_type_arr = sample_type_arr.filter(onlyUnique);#}
+                        {#    sample_type_arr.forEach(function (item) {#}
+                        {#        if ($('#sample_dropdown').val() != "" && item == $('#sample_dropdown').val()) {#}
+                        {#            sample_types += "<option value='" + item + "' selected>";#}
+                        {#            sample_types += item + "</option>";#}
+                        {#        } else {#}
+                        {#            sample_types += "<option value='" + item + "'>" + item + "</option>";#}
+                        {#        }#}
+                        {#    });#}
 
-                        if (selected != 1) {
+                        if (selected < 1) {
                             gene_arr.sort();
                             gene_arr = gene_arr.filter(onlyUnique);
                             gene_arr.forEach(function (item) {
-                                if ($('#gene_dropdown').val() != "" && item == $('#gene_dropdown').val() && selected != 0) {
+                                if ($('#gene_dropdown').val() != "" && item == $('#gene_dropdown').val()) {
                                     genes += "<option value='" + item + "' selected>";
                                     genes += item + "</option>";
                                 } else {
@@ -629,11 +655,11 @@
                             });
                         }
 
-                        if (selected != 2) {
+                        if (selected < 2) {
                             organ_arr.sort();
                             organ_arr = organ_arr.filter(onlyUnique);
                             organ_arr.forEach(function (item) {
-                                if ($('#organ_dropdown').val() != "" && item == $('#organ_dropdown').val() && selected != 0) {
+                                if ($('#organ_dropdown').val() != "" && item == $('#organ_dropdown').val()) {
                                     organs += "<option value='" + item + "' selected>";
                                     organs += item + "</option>";
                                 } else {
@@ -642,11 +668,11 @@
                             });
                         }
 
-                        if (selected != 3) {
+                        if (selected < 3) {
                             experiment_arr.sort();
                             experiment_arr = experiment_arr.filter(onlyUnique);
                             experiment_arr.forEach(function (item) {
-                                if ($('#experiment_dropdown').val() != "" && item == $('#experiment_dropdown').val() && selected != 0) {
+                                if ($('#experiment_dropdown').val() != "" && item == $('#experiment_dropdown').val()) {
                                     experiments += "<option value='" + item + "' selected>";
                                     experiments += item + "</option>";
                                 } else {
@@ -656,7 +682,6 @@
                         }
 
                         if (selected == 0) {
-                            {#$('#sample_dropdown').html(sample_types);#}
                             $('#gene_dropdown').html(genes);
                             $('#organ_dropdown').html(organs);
                             $('#experiment_dropdown').html(experiments);
@@ -666,33 +691,22 @@
                             $('#experiment_dropdown').html(experiments);
                         }
                         if (selected == 2) {
-                            $('#gene_dropdown').html(genes);
                             $('#experiment_dropdown').html(experiments);
                         }
 
                         // Default
-                        if (selected == 4) {
+                        if (selected == -1) {
                             $('#experiment_dropdown').html(experiments);
                             {#$('#sample_dropdown').html(sample_types);#}
                         }
 
-                        if (selected == 5) {
-                            $('#sample_dropdown').html(sample_types);
-                            $('#gene_dropdown').html(genes);
-                            $('#organ_dropdown').html(organs);
-                            $('#experiment_dropdown').html(experiments);
-                        }
-                        if(dropdowns == 0){
-                            no_result();
-                            return 0;
-                        }else{
+                        if(dropdowns > 2 && selected != 0){
                             updateSpecimen();
+                        }else{
+                            no_result();
                         }
 
-                    }, error: function (jqXHR, status, err) {
-
-                    }
-                });
+                    });
 
             }
 
@@ -896,8 +910,9 @@
                         for (i in data.items) {
                             content += "<br/><br/><p>Probe: " + data.items[i].gene + "</p>";
                             content += "<p>MD5: <b>" + data.items[i].checksum + "</b></p>";
-                            content += "<p><a href=" + data.items[i].tif_url + ">Download TIF file</a></p>";
-                            content += "<p>Shareable URL: <button class='copyUrl btn btn-info'>Copy page URL</button></p>";
+                            content += "<p><a href=" + data.items[i].tif_url + ">Download TIF file (raw 16 bit)</a></p>";
+                            content += "<p>Shareable URL: <button class='glyphicon glyphicon-copy copyUrl btn btn-info' ";
+                            content += " title='click here to copy Shareable URL'></button></p>";
                             content += "<div id='url' style='display:none;'>http://amis.docking.org/img_browser";
                             content += "?";
                             if($('#gene_dropdown').val().length > 0) {
@@ -932,6 +947,7 @@
 
             function updateSpecimen() {
                 $(".loader").show();
+                $('.no_result').hide();
                 var uri = "/mice?";
                 if($('#gene_dropdown').val().length > 0) {
                     uri += "&gene=" + $('#gene_dropdown').val();
