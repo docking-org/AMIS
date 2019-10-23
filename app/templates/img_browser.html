@@ -306,6 +306,7 @@
                 <div class="no_result controls "
                      style="display: none; height: 480px;padding-left: 5px; padding-top: 120px;">
                     <img src="{{ url_for('static', filename='images/no_result.png') }}" height="300px">
+                    <div class="text-center text-danger">Please select "Sample Type" > "Gene" > "Organ"</div>
                 </div>
             </div>
         </div>
@@ -492,6 +493,7 @@
             });
 
              $(".clear_filter").on('click', function (event) {
+                 no_result();
                  $("#sample_dropdown").val($("#sample_dropdown option:eq(0)").val());
                  $("#gene_dropdown").val($("#gene_dropdown option:eq(0)").val());
                  $("#organ_dropdown").val($("#organ_dropdown option:eq(0)").val());
@@ -629,19 +631,6 @@
                             experiment_arr.push(data.items[i].experiment);
                             sample_type_arr.push(data.items[i].sample_type);
                         }
-
-                        {#if (selected != 0) {#}
-                        {#    sample_type_arr.sort();#}
-                        {#    sample_type_arr = sample_type_arr.filter(onlyUnique);#}
-                        {#    sample_type_arr.forEach(function (item) {#}
-                        {#        if ($('#sample_dropdown').val() != "" && item == $('#sample_dropdown').val()) {#}
-                        {#            sample_types += "<option value='" + item + "' selected>";#}
-                        {#            sample_types += item + "</option>";#}
-                        {#        } else {#}
-                        {#            sample_types += "<option value='" + item + "'>" + item + "</option>";#}
-                        {#        }#}
-                        {#    });#}
-
                         if (selected < 1) {
                             gene_arr.sort();
                             gene_arr = gene_arr.filter(onlyUnique);
