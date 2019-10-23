@@ -803,21 +803,7 @@
                                 pos_tomato_list.push(data.items[i].img_no_ext);
                             }
                         }
-                        $('.total_result').html(total_result);
-                        $('.current_id').attr("max", total_result);
-                        $('.current_id').attr("min", 1);
-                        if (content.length == 0) {
-                            $('.clearfix').html("<li>N/A</li>");
-                        } else {
-                            $('.clearfix').html(content);
-                        }
 
-                        $frame.sly(false);
-                        $frame.sly(slyOptions);
-                        $frame.sly('on', 'active', function (eventName, itemIndex) {
-                            updateAreaA(itemIndex);
-                            updateAreaB(itemIndex);
-                        });
                         if (img_color == 1) {
                             img_color = 2;
                         } else {
@@ -836,6 +822,22 @@
                         } else {
                             updateAreaA(-1);
                         }
+
+                        $('.total_result').html(total_result);
+                        $('.current_id').attr("max", total_result);
+                        $('.current_id').attr("min", 1);
+                        if (content.length == 0) {
+                            $('.clearfix').html("<li>N/A</li>");
+                        } else {
+                            $('.clearfix').html(content);
+                        }
+
+                        $frame.sly(false);
+                        $frame.sly(slyOptions);
+                        $frame.sly('on', 'active', function (eventName, itemIndex) {
+                            updateAreaA(itemIndex);
+                            updateAreaB(itemIndex);
+                        });
                     }, error: function (jqXHR, status, err) {
                         {#console.log(status);#}
                     }
