@@ -60,7 +60,7 @@ openpyxl==2.5.4
 paramiko==2.6.0
 passlib==1.7.1
 pathspec==0.5.5
-Pillow==5.4.1
+Pillow==6.2.0
 psycopg2==2.7.6.1
 py==1.4.34
 pycparser==2.19
