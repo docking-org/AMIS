@@ -2,13 +2,14 @@ from flask_restful import Resource, reqparse
 from app.data.models.lookup import LookupModel
 from app.data.models.gene_name import GeneNameModel
 from app.data.models.organ import OrganModel
-from flask import jsonify
+from flask import jsonify, Response
+from flask_csv import send_csv
 
 parser = reqparse.RequestParser()
 
 
 class LookupList(Resource):
-    def get(self):
+     def get(self, file_type=None):
         parser.add_argument('id', type=int)
         parser.add_argument('gene_name_id', type=int)
         parser.add_argument('organ_id', type=int)
@@ -28,5 +29,14 @@ class LookupList(Resource):
 
         data = lookup.filter_by(**new_args).all()
 
-        data = {'items': [x.to_dict() for x in data]}
+        if file_type == 'csv':
+            data2 = [x.to_dict() for x in data]
+            keys = data2[0].keys()
+            return send_csv(data2, "lookupList.csv", keys)
+            # return Response(str(data),
+            #                 mimetype='text/csv',
+            #                 headers={'Content-Disposition': 'attachment;filename=lookupList.csv'})
+        else:
+            data = {'items': [x.to_dict() for x in data]}
+
         return jsonify(data)

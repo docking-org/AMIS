@@ -42,7 +42,11 @@ def create_app(config_class=Config):
     # api.add_resource(Scan, '/scan/<string:name>')
     api.add_resource(Genes, '/genes')
     # api.add_resource(GeneList, '/genes')
-    api.add_resource(LookupList, '/lookups')
+    lookup_routes = [
+        '/lookups',
+        '/lookups.<file_type>',
+    ]
+    api.add_resource(LookupList, *lookup_routes)
     api.add_resource(MouseList, '/mice')
     # api.add_resource(CompoundList, '/compounds')
     # api.add_resource(OperatorList, '/operators')
@@ -112,5 +116,5 @@ def create_app(config_class=Config):
     app.register_blueprint(main_bp)
 
     return app
-
-from app.data import models
+#
+# from app.data import models

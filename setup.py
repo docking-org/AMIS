@@ -20,7 +20,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.20191023.4',
+    version='0.20191118.1',
 
     description='AMIS v1.0',
     long_description='',
@@ -58,7 +58,7 @@ setup(
     ],
 
     # What does your project relate to?
-    keywords='sample setuptools development',
+    keywords='A Mouse Imaging Server',
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
