@@ -70,3 +70,7 @@ target
 
 .env
 deployment/
+
+# Ignore bento tool run paths (this line added by `bento init`)
+.bento/
+.bento*

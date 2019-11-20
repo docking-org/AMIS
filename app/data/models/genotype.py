@@ -9,7 +9,8 @@ class GenotypeModel(db.Model):
     type = db.Column(db.String(200), nullable=True)
     # genes = db.relationship('GeneModel', back_populates='genotype')
     # genes = db.relationship('GeneModel', back_populates='genotype_gene')
-    # reporters = db.relationship('GeneModel', back_populates='genotype_reporter')
+    # reporters = db.relationship('GeneModel',
+    # back_populates='genotype_reporter')
 
     def __init__(self, type_id, type):
         self.type_id = type_id

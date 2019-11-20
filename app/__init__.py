@@ -1,18 +1,18 @@
 __author__ = 'Chinzorig Dandarchuluun'
 __copyright__ = ""
 
-
 from flask import Flask
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bootstrap import Bootstrap
 import flask_admin
-from app.data.views.model_views import ExperimentView, SliceView, ClearedView, SliceViewWithImages, GeneView, MouseView
-#     import DataSetView, GeneView, OperatorView, OrganView, SampleView, ScanView, CompoundView
+from app.data.views.model_views import ExperimentView, \
+     SliceViewWithImages, GeneView, MouseView
+#     import DataSetView, GeneView, OperatorView, OrganView, SampleView,
+#     ScanView, CompoundView
 from flask_restful import Api
 from flask_admin.contrib.sqla import ModelView
-
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -93,15 +93,18 @@ def create_app(config_class=Config):
         template_mode='bootstrap3'
     )
 
-    admin.add_view(SliceViewWithImages(SliceModel, db.session, "Mouse Slices", endpoint='slices'))
+    admin.add_view(SliceViewWithImages(SliceModel, db.session, "Mouse Slices",
+                                       endpoint='slices'))
     # admin.add_view(SliceView(SliceModel, db.session, "Slides"))
-    # admin.add_view(ClearedView(SliceModel, db.session, "Cleared", endpoint='cleared'))
+    # admin.add_view(ClearedView(SliceModel, db.session, "Cleared",
+    # endpoint='cleared'))
     admin.add_view(ExperimentView(ExperimentModel, db.session, "Experiment"))
     admin.add_view(MouseView(MouseModel, db.session, "Mouse"))
     admin.add_view(GeneView(GeneModel, db.session, "Gene"))
     admin.add_view(ModelView(GenotypeModel, db.session, "Geno Type"))
     admin.add_view(ModelView(OrganModel, db.session, "Organ"))
-    admin.add_view(ModelView(ManipulationTypeModel, db.session, "Manipulation Type"))
+    admin.add_view(
+        ModelView(ManipulationTypeModel, db.session, "Manipulation Type"))
     admin.add_view(ModelView(LookupModel, db.session, "Lookup"))
 
     #

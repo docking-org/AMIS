@@ -1,12 +1,12 @@
 from app import db
-from flask import current_app, url_for
+from flask import url_for
 
 
 class PaginatedAPIMixin(object):
     @staticmethod
     def to_collection_dict(query, page, per_page, endpoint, **kwargs):
         if per_page == -1:
-            return  {'items': [item.to_dict() for item in query.all()]}
+            return {'items': [item.to_dict() for item in query.all()]}
         else:
             resources = query.paginate(page, per_page, False)
         data = {
@@ -38,7 +38,8 @@ class MouseModel(PaginatedAPIMixin, db.Model):
     age = db.Column(db.String(40))
     gene_id = db.Column(db.Integer, db.ForeignKey('gene.id'), nullable=False)
     gene = db.relationship("GeneModel", back_populates='mice')
-    mani_type_id = db.Column(db.Integer, db.ForeignKey('mani_type.id'), nullable=False)
+    mani_type_id = db.Column(db.Integer, db.ForeignKey('mani_type.id'),
+                             nullable=False)
     mani_type = db.relationship("ManipulationTypeModel", back_populates='mice')
     slices = db.relationship("SliceModel", back_populates='mouse')
 

@@ -20,21 +20,18 @@ class Genes(Resource):
         parser.add_argument('genotype_reporter', type=str)
 
         args = parser.parse_args()
-        new_args = {key:val for key, val in args.items() if val is not None}
-
+        new_args = {key: val for key, val in args.items() if val is not None}
 
         data = GeneModel.query.filter_by(**new_args).all()
-
 
         # if file_type:
         #     return Response(str(data),
         #                     mimetype='application/json',
-        #                     headers={'Content-Disposition': 'attachment;filename=slices.json'})
+        #                     headers={'Content-Disposition': '
+        #                     attachment;filename=slices.json'})
 
         data = {'items': [x.to_dict() for x in data]}
         return jsonify(data)
-
-
 
 # class GeneList(Resource):
 #     def get(self):

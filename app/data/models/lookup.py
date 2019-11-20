@@ -6,7 +6,8 @@ class LookupModel(db.Model):
     __tablename__ = 'lookup'
 
     id = db.Column(db.Integer, primary_key=True)
-    gene_name_id = db.Column(db.Integer, db.ForeignKey('gene_name.id'), nullable=False)
+    gene_name_id = db.Column(db.Integer,
+                             db.ForeignKey('gene_name.id'), nullable=False)
     gene_name = db.relationship("GeneNameModel", back_populates='lookups')
     organ_id = db.Column(db.Integer, db.ForeignKey('organ.id'), nullable=False)
     organ = db.relationship("OrganModel", back_populates='lookups')
@@ -55,4 +56,4 @@ class LookupModel(db.Model):
         return self.name
 
     def __repr__(self):
-        return '<Loopup {}>'.format(self.status)
+        return '<Lookup {}>'.format(self.status)

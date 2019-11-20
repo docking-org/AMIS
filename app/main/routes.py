@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, url_for, current_app, app, request, Response
+from flask import render_template, request
 
 from app.main import application
 from app.helpers.validation import load_images
@@ -6,12 +6,7 @@ from app.data.models.slice import SliceModel
 from app.data.models.gene import GeneModel
 from app.data.models.gene_name import GeneNameModel
 from app.data.models.organ import OrganModel
-from app.data.models.mouse import MouseModel
 from app.data.models.experiment import ExperimentModel
-import pyexcel as pe
-import os
-import pathlib
-from flask_user import roles_required
 
 
 @application.route('/<gene_name>/<organ_name>', methods=['GET'])
@@ -24,7 +19,7 @@ def index(gene_name=None, organ_name=None):
 
 
 @application.route('/slice', methods=['GET'])
-def slice():
+def get_slice():
     return render_template('slice.html')
 
 
@@ -111,4 +106,3 @@ def img_browser():
                            gene=gene, organ=organ, experiment=experiment, sample_type=sample_type,
                            pos_mouse_number=pos_mouse_number, neg_mouse_number=neg_mouse_number, wavelength=wavelength, selected_slice=selected_slice,
                            imgType=imgType)
-

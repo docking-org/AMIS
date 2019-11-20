@@ -1,7 +1,5 @@
 from app import db
 from flask import current_app, url_for
-from sqlalchemy import Index
-from sqlalchemy.ext.hybrid import hybrid_property
 
 
 class PaginatedAPIMixin(object):
@@ -33,8 +31,7 @@ class PaginatedAPIMixin(object):
     @staticmethod
     def to_menu_filter_dict(query):
         L = [item.to_menu_dict() for item in query.all()]
-        return {'items': list({v['unique']:v for v in L}.values())}
-
+        return {'items': list({v['unique']: v for v in L}.values())}
 
 
 class SliceModel(PaginatedAPIMixin, db.Model):
@@ -55,13 +52,17 @@ class SliceModel(PaginatedAPIMixin, db.Model):
     organ = db.relationship("OrganModel", back_populates='slices')
     mouse_id = db.Column(db.Integer, db.ForeignKey('mouse.id'))
     mouse = db.relationship("MouseModel", back_populates="slices")
-    experiment_id = db.Column(db.Integer, db.ForeignKey('experiment.id'), nullable=False)
+    experiment_id = db.Column(db.Integer,
+                              db.ForeignKey('experiment.id'),
+                              nullable=False)
     experiment = db.relationship("ExperimentModel", back_populates="slices")
     orientation = db.Column(db.String(200), nullable=True)
     combined_data = db.Column(db.String(800), unique=True)
 
-    def __init__(self, uberon, orientation, slide_number, slice_id, z_step_size, objective, instrument,
-                 wavelength, checksum, organ, mouse, experiment, combined_data, img_path):
+    def __init__(self, uberon, orientation, slide_number, slice_id,
+                 z_step_size, objective, instrument,
+                 wavelength, checksum, organ, mouse,
+                 experiment, combined_data, img_path):
         self.slide_number = slide_number
         self.slice_id = slice_id
         self.uberon = uberon
@@ -110,7 +111,8 @@ class SliceModel(PaginatedAPIMixin, db.Model):
 
     def to_menu_dict(self):
         data = {
-            'unique': self.mouse.gene.gene_name.name + self.experiment.name + self.organ.name +
+            'unique': self.mouse.gene.gene_name.name + self.experiment.name +
+                      self.organ.name +
                       ("Cleared" if self.instrument.upper() == "LSM" else "Histological"),
             'gene': self.mouse.gene.gene_name.name,
             'experiment': self.experiment.name,
@@ -121,32 +123,42 @@ class SliceModel(PaginatedAPIMixin, db.Model):
 
     @property
     def img_no_ext(self):
-        return "{}{}/{}".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
-
+        return "{}{}/{}".format(current_app.config['IMG_UPLOAD_FOLDER_URL'],
+                                self.img_path, self.combined_data)
 
     @property
     def img_small(self):
-        return "{}{}/{}.png".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
+        return "{}{}/{}.png".format(
+            current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path,
+            self.combined_data)
 
     @property
     def img_small_RI(self):
         if self.wavelength == "DAPI":
             return ""
-        return "{}{}/{}_RI.png".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
+        return "{}{}/{}_RI.png".format(
+            current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path,
+            self.combined_data)
 
     @property
     def img_big(self):
-        return "{}{}/{}.jpg".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
+        return "{}{}/{}.jpg".format(
+            current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path,
+            self.combined_data)
 
     @property
     def img_big_RI(self):
         if self.wavelength == "DAPI":
             return ""
-        return "{}{}/{}_RI.jpg".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
+        return "{}{}/{}_RI.jpg".format(
+            current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path,
+            self.combined_data)
 
     @property
     def tif(self):
-        return "{}{}/{}.tif".format(current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path, self.combined_data)
+        return "{}{}/{}.tif".format(
+            current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path,
+            self.combined_data)
 
     @classmethod
     def find_img_by_checksum(cls, checksum):

@@ -5,11 +5,19 @@ class GeneModel(db.Model):
     __tablename__ = 'gene'
 
     id = db.Column(db.Integer, primary_key=True)
-    gene_name_id = db.Column(db.Integer, db.ForeignKey('gene_name.id'), nullable=False)
-    gene_name = db.relationship("GeneNameModel", foreign_keys='GeneModel.gene_name_id')
-    genotype_gene_id = db.Column(db.Integer, db.ForeignKey('genotype.id'), nullable=False)
-    genotype_gene = db.relationship("GenotypeModel",foreign_keys='GeneModel.genotype_gene_id')
-    genotype_reporter_id = db.Column(db.Integer, db.ForeignKey('genotype.id'), nullable=False)
+    gene_name_id = db.Column(db.Integer,
+                             db.ForeignKey('gene_name.id'),
+                             nullable=False)
+    gene_name = db.relationship("GeneNameModel",
+                                foreign_keys='GeneModel.gene_name_id')
+    genotype_gene_id = db.Column(db.Integer,
+                                 db.ForeignKey('genotype.id'),
+                                 nullable=False)
+    genotype_gene = db.relationship("GenotypeModel",
+                                    foreign_keys='GeneModel.genotype_gene_id')
+    genotype_reporter_id = db.Column(db.Integer,
+                                     db.ForeignKey('genotype.id'),
+                                     nullable=False)
     genotype_reporter = db.relationship("GenotypeModel",
                                         foreign_keys='GeneModel.genotype_reporter_id')
     mice = db.relationship("MouseModel", back_populates='gene')
@@ -42,9 +50,11 @@ class GeneModel(db.Model):
     #     return cls.query.filter_by(cls.gene_name.name=name).all()
 
     @classmethod
-    def find_by_gene_name_ids(cls, gene_name, genotype_gene, genotype_reporter):
+    def find_by_gene_name_ids(cls, gene_name, genotype_gene,
+                              genotype_reporter):
         return cls.query.filter_by(gene_name=gene_name). \
-            filter_by(genotype_gene=genotype_gene).filter_by(genotype_reporter=genotype_reporter).first()
+            filter_by(genotype_gene=genotype_gene).filter_by(
+            genotype_reporter=genotype_reporter).first()
 
     @classmethod
     def find_all(cls):
