@@ -12,7 +12,7 @@ It will automatically select gene and organ that specified in the URL http://ami
 Returns all data without any pagination
 http://amis.docking.org/slices?per_page=-1
 
-http://amis.docking.org/TAS2R4/thymusReturns all data without any pagination and filter by gene
+http://amis.docking.org/TAS2R4/thymus Returns all data without any pagination and filter by gene
 http://amis.docking.org/slices?per_page=-1&gene=GPR85
 
 
