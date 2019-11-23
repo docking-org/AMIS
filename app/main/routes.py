@@ -9,13 +9,13 @@ from app.data.models.organ import OrganModel
 from app.data.models.experiment import ExperimentModel
 
 
-@application.route('/<gene_name>/<organ_name>', methods=['GET'])
-@application.route('/<gene_name>', methods=['GET'])
 @application.route('/', methods=['GET'])
 def index(gene_name=None, organ_name=None):
+    gene = request.args.get("gene")
+    organ = request.args.get("organ")
     genes = GeneNameModel.find_all()
     organs = OrganModel.find_all()
-    return render_template('index.html', genes=genes, organs=organs, gene_name=gene_name, organ_name=organ_name)
+    return render_template('index.html', genes=genes, organs=organs, gene_name=gene, organ_name=organ)
 
 
 @application.route('/slice', methods=['GET'])
