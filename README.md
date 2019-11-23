@@ -5,14 +5,14 @@ A Mouse Image Server
 1. http://amis.docking.org/loadimages
 This script will load all tif files from ‘/nfs/ex9/idg-images/’  including all sub folders. If .tif file is already in our database it sill skip those files. If .tif file is new and not stored our database, it will store data by parsing file name. If there is no jpg file with same file name in the same directory, script will lookup jpg file from ‘/nfs/ex9/idg-images/jpegs/’ folder and it will move the jpeg files from this directory if there is jpeg file with same name.  
 
-2. http://amis.docking.org/TAS2R4/thymus
+2. http://amis.docking.org/TAS2R4/thymus or http://amis.docking.org?gene=TAS2R4&organ=thymus 
 It will automatically select gene and organ that specified in the URL http://amis.docking.org/{gene}/{organ}
 
 
 Returns all data without any pagination
 http://amis.docking.org/slices?per_page=-1
 
-http://amis.docking.org/TAS2R4/thymusReturns all data without any pagination and filter by gene
+Returns all data without any pagination and filter by gene
 http://amis.docking.org/slices?per_page=-1&gene=GPR85
 
 
