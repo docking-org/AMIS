@@ -24,8 +24,7 @@ def create_app(config_class=Config):
     application = app = Flask(__name__)
     # Menu(app=app)
     app.config.from_object(config_class)
-
-    # from app.data.resources.compound import CompoundList, Compound
+    app.config['TEMPLATES_AUTO_RELOAD'] = True
     from app.data.resources.gene import Genes
     from app.data.resources.experiment import ExperimentList
     from app.data.resources.organ import OrganList
@@ -54,7 +53,6 @@ def create_app(config_class=Config):
     api.add_resource(ExperimentList, '/experiments')
     # api.add_resource(SampleList, '/samples')
     # api.add_resource(ScanList, '/scans')
-    #
     # api.add_resource(Slice, '/slice')
     slice_routes = [
         '/slices',
