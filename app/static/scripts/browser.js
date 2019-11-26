@@ -209,11 +209,9 @@ jQuery(function ($) {
     function updateFilter(selected) {
         show_loader();
         var url = "/filters?";
-        var dropdowns = 0;
 
         if ($('#sample_dropdown').val().length > 0) {
             url += "&instrument=" + $('#sample_dropdown').val();
-            dropdowns++;
             $('#sample_dropdown').css('color', 'black');
         } else {
             $('#sample_dropdown').css('color', 'red');
@@ -223,7 +221,6 @@ jQuery(function ($) {
             url += "&gene=" + $('#gene_dropdown').val();
         }
         if ($('#gene_dropdown').val().length > 0) {
-            dropdowns++;
             $('#gene_dropdown').css('color', 'black');
         } else {
             $('#gene_dropdown').css('color', 'red');
@@ -233,7 +230,6 @@ jQuery(function ($) {
             url += "&organ=" + $('#organ_dropdown').val();
         }
         if ($('#organ_dropdown').val().length > 0) {
-            dropdowns++;
             $('#organ_dropdown').css('color', 'black');
         } else {
             $('#organ_dropdown').css('color', 'red');
@@ -249,8 +245,6 @@ jQuery(function ($) {
         var organs = "<option value=\"\">Select</option>";
         var experiment_arr = [];
         var experiments = "<option value=\"\">Select</option>";
-        var sample_type_arr = [];
-        var sample_types = "<option value=\"\">Select</option>";
 
         $.ajax({
             type: 'GET',
@@ -265,7 +259,6 @@ jQuery(function ($) {
                 gene_arr.push(data.items[i].gene);
                 organ_arr.push(data.items[i].organ);
                 experiment_arr.push(data.items[i].experiment);
-                sample_type_arr.push(data.items[i].sample_type);
             }
             if (selected < 1) {
                 gene_arr.sort();
@@ -322,14 +315,7 @@ jQuery(function ($) {
             // Default
             if (selected == -1) {
                 $('#experiment_dropdown').html(experiments);
-                // $('#sample_dropdown').html(sample_types);
             }
-
-            // if(check_mandatory_ddl() > 2 && selected != 0){
-            //     // updateSpecimen();
-            // }else{
-            //     no_result();
-            // }
 
         });
 
@@ -599,7 +585,7 @@ jQuery(function ($) {
             console.log("updateSpeciment");
             no_result();
         } else {
-            var uri = "/mice?";
+            let uri = "/mice?";
             if ($('#gene_dropdown').val().length > 0) {
                 uri += "&gene=" + $('#gene_dropdown').val();
             }

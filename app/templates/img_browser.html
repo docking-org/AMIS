@@ -87,9 +87,7 @@
                     </div>
                 </div>
             </form>
-            <div class="col-md-10 row slice_details">
-
-            </div>
+            <div class="col-md-10 row slice_details"></div>
         </div>
         <div class="col-md-6" style="min-height:550px">
             <table class="image_table" style="display: none">
@@ -167,9 +165,7 @@
         </div>
     </div>
     <div class="wrap">
-        <div class="text-center b_w_link">
-
-        </div>
+        <div class="text-center b_w_link"></div>
         <div class="controls center">
             <button class="btn btn-info prev disabled" disabled=""><span
                     class="glyphicon glyphicon-chevron-left"></span>prev
@@ -241,9 +237,7 @@
     {{ super() }}
     <script src="{{ url_for('static', filename='scripts/sly/sly.min.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/sly/examples/js/vendor/plugins.js') }}"></script>
-    {#    <script src="{{ url_for('static', filename='scripts/sly/horizontal.js') }}"></script>#}
     <script src="{{ url_for('static', filename='scripts/iv-viewer/imageviewerScript.js') }}"></script>
-
     <script type="text/javascript">
         var pos_mouse_number = {% if pos_mouse_number == None %}''{% else %}{{ pos_mouse_number }}{% endif %};
         var neg_mouse_number = {% if neg_mouse_number == None %}''{% else %}{{ neg_mouse_number }}{% endif %};
@@ -252,7 +246,7 @@
         var selected_slice = {% if selected_slice == None %}0{% else %}{{ selected_slice }}-1{% endif %};
 
         $(document).on('click', '.gallery-items', function (event) {
-            highResolutionImage = $(this).attr('data-high-res-src');
+            let highResolutionImage = $(this).attr('data-high-res-src');
             if (highResolutionImage.length > 0) {
                 event.preventDefault();
                 var viewer = ImageViewer();
@@ -260,7 +254,7 @@
             }
         });
         $(document).on('click', '.copyUrl', function (event) {
-            var $temp = $("<input>");
+            $temp = $("<input>");
             $("body").append($temp);
             $temp.val($('#url').text()).select();
             document.execCommand("copy");
