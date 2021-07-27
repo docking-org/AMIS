@@ -18,15 +18,6 @@ class ExperimentView(sqla.ModelView):
     column_list = ['name', 'description']
     form_columns = ('name', 'description')
     column_editable_list = ('name', 'description')
-    # form_columns = ('active', 'roles', 'username',
-    # 'short_name', 'email', 'company')
-    # column_searchable_list = ('username', 'email')
-    # column_editable_list = ('active', 'email', 'company')
-    # page_size = 20
-    # column_formatters = {
-    #     'date': _date_format,
-    #     'img_path': _list_thumbnail
-    # }
 
 
 def _file_name_link(view, context, model, name):

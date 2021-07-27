@@ -57,7 +57,10 @@ class MouseModel(PaginatedAPIMixin, db.Model):
             'sex': self.sex,
             'age': self.age,
             'gene': self.gene.gene_name.name,
-            'spec': "-" if self.gene.genotype_gene.type_id == 0 or self.gene.genotype_reporter.type_id == 0 else "+",
+            'spec': "-" if self.gene.genotype_gene.type_id == 0 or
+                           self.gene.genotype_reporter.type_id == 0 or
+                           (self.gene.genotype_reporter.type_id == 2 and
+                            self.mani_type.type == "reporter-gene-cross-VEH") else "+",
             'mani_type': self.mani_type.type
         }
         return data
