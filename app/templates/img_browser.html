@@ -100,7 +100,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <div>Positive Conrols</div> <br/>
+                        <div>Positive Controls</div> <br/>
                         <div class="btn-group-vertical" id="specimen_above" data-toggle="buttons">
                         </div>
                     </td>
@@ -131,7 +131,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <div>Negative Conrols</div> <br/>
+                        <div>Negative Controls</div> <br/>
                         <div class="btn-group-vertical" id="specimen_below" data-toggle="buttons">
                         </div>
                     </td>
@@ -165,6 +165,12 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-3">
+            <div class="controls">
+                <button type="button" class="btn btn-change-color btn-default">Invert color</button>
+                <button type="button" class="btn btn-change-bg-color btn-default">Change background color</button>
+            </div>
+        </div>
     </div>
     <div class="wrap">
         <div class="text-center b_w_link"></div>
@@ -177,6 +183,21 @@
                 of <span class="total_result">0</span>)
             </span>
             <button class="btn btn-info next">next <span class="glyphicon glyphicon-chevron-right"></span></button>
+        </div>
+
+
+        <div class="scrollbar">
+            <div class="handle" style="transform: translateZ(0px) translateX(0px); width: 190px;">
+                <div class="mousearea"></div>
+            </div>
+        </div>
+
+        <div class="frame" id="forcecentered" style="overflow: hidden;">
+            <ul class="clearfix"></ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="controls">
             <div class="btn-group colors" id="wavelength" data-toggle="buttons" style="display: none;">
                 <label class="btn btn-danger
                                         {% if wavelength == None or wavelength == 'tdTomato' %}
@@ -212,24 +233,6 @@
                 </label>
             </div>
         </div>
-
-
-        <div class="scrollbar">
-            <div class="handle" style="transform: translateZ(0px) translateX(0px); width: 190px;">
-                <div class="mousearea"></div>
-            </div>
-        </div>
-
-        <div class="frame" id="forcecentered" style="overflow: hidden;">
-            <ul class="clearfix"></ul>
-        </div>
-    </div>
-    <div class="row">
-        <div class="controls">
-            <button type="button" class="btn btn-change-color btn-default">Invert color</button>
-            <button type="button" class="btn btn-change-bg-color btn-default">Change background color</button>
-        </div>
-
     </div>
 {% endblock %}
 
