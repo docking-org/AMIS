@@ -31,7 +31,6 @@ jQuery(function ($) {
         dynamicHandle: 1,
         clickBar: 1,
 
-        // Buttons
         prev: $wrap.find('.prev'),
         next: $wrap.find('.next')
     };
@@ -43,7 +42,6 @@ jQuery(function ($) {
     if ($('#sample_dropdown').val().length + $('#gene_dropdown').val().length +
         $('#organ_dropdown').val().length + $('#experiment_dropdown').val().length > 0) {
         updateFilter(0);
-        updateFilter(1);
         updateSpecimen();
     } else {
         setDefaultDDlVal(1, 1, 1, 1);
@@ -148,21 +146,6 @@ jQuery(function ($) {
             updateFilter(s1);
             updateSpecimen();
         }
-        if ($('#gene_dropdown').val().length == 0) {
-            $("#gene_dropdown").val($("#gene_dropdown option:eq(1)").val());
-            updateFilter(s2);
-            updateSpecimen();
-        }
-        if ($('#organ_dropdown').val().length == 0) {
-            $("#organ_dropdown").val($("#organ_dropdown option:eq(1)").val());
-            updateFilter(s3);
-            updateSpecimen();
-        }
-        if ($('#experiment_dropdown').val().length == 0) {
-            $("#experiment_dropdown").val($("#experiment_dropdown option:eq(1)").val());
-            updateFilter(s4);
-            updateSpecimen();
-        }
 
     }
 
@@ -245,7 +228,6 @@ jQuery(function ($) {
         var organs = "<option value=\"\">Select</option>";
         var experiment_arr = [];
         var experiments = "<option value=\"\">Select</option>";
-
         $.ajax({
             type: 'GET',
             url: url,
@@ -312,7 +294,6 @@ jQuery(function ($) {
                 $('#experiment_dropdown').html(experiments);
             }
 
-            // Default
             if (selected == -1) {
                 $('#experiment_dropdown').html(experiments);
             }
@@ -348,7 +329,7 @@ jQuery(function ($) {
 
     function updateAreaA(index) {
         if (index == -1) {
-            // no_result();
+
         } else {
             if (total_result == 0) {
                 $('.current_id').val(0);
@@ -357,14 +338,14 @@ jQuery(function ($) {
             }
             show_result();
 
-            $('.selected_slice2').attr('src', pos_tomato_list[index] + "_RI.png");
-            $('.selected_slice2').attr('data-high-res-src', pos_tomato_list[index] + "_RI.jpg");
+            $('.selected_slice2').attr('src', pos_tomato_list[index] + "_RI.webp");
+            $('.selected_slice2').attr('data-high-res-src', pos_tomato_list[index] + "_RI");
 
-            $('.selected_slice1').attr('src', pos_tomato_list[index] + ".png");
-            $('.selected_slice1').attr('data-high-res-src', pos_tomato_list[index] + ".jpg");
+            $('.selected_slice1').attr('src', pos_tomato_list[index] + ".webp");
+            $('.selected_slice1').attr('data-high-res-src', pos_tomato_list[index]);
 
-            $('.selected_slice3').attr('src', pos_DAPI_list[index] + ".png");
-            $('.selected_slice3').attr('data-high-res-src', pos_DAPI_list[index] + ".jpg");
+            $('.selected_slice3').attr('src', pos_DAPI_list[index] + ".webp");
+            $('.selected_slice3').attr('data-high-res-src', pos_DAPI_list[index]);
 
             var id = $('._' + index).attr('id');
             updateSliceDetail(id);
@@ -383,15 +364,14 @@ jQuery(function ($) {
                 $('.selected_slice5').attr('data-high-res-src', "");
                 $('.selected_slice6').attr('src', "/static/images/na.png");
                 $('.selected_slice6').attr('data-high-res-src', "");
-
             } else {
                 $('.area_B img').css('cursor', 'zoom-in');
-                $('.selected_slice4').attr('src', neg_tomato_list[index] + ".png");
-                $('.selected_slice4').attr('data-high-res-src', neg_tomato_list[index] + ".jpg");
-                $('.selected_slice5').attr('src', neg_tomato_list[index] + "_RI.png");
-                $('.selected_slice5').attr('data-high-res-src', neg_tomato_list[index] + "_RI.jpg");
-                $('.selected_slice6').attr('src', neg_DAPI_list[index] + ".png");
-                $('.selected_slice6').attr('data-high-res-src', neg_DAPI_list[index] + ".jpg");
+                $('.selected_slice4').attr('src', neg_tomato_list[index] + ".webp");
+                $('.selected_slice4').attr('data-high-res-src', neg_tomato_list[index]);
+                $('.selected_slice5').attr('src', neg_tomato_list[index] + "_RI.webp");
+                $('.selected_slice5').attr('data-high-res-src', neg_tomato_list[index] + "_RI");
+                $('.selected_slice6').attr('src', neg_DAPI_list[index] + ".webp");
+                $('.selected_slice6').attr('data-high-res-src', neg_DAPI_list[index]);
             }
         }
     }
@@ -484,7 +464,7 @@ jQuery(function ($) {
                     updateAreaB(itemIndex);
                 });
             }, error: function (jqXHR, status, err) {
-                // console.log(status);
+
             }
         });
     }
@@ -549,7 +529,7 @@ jQuery(function ($) {
                     content += "<p><a href=" + data.items[i].tif_url + ">Download TIF file (raw 16 bit)</a></p>";
                     content += "<p>Shareable URL: <button class='glyphicon glyphicon-copy copyUrl btn btn-info' ";
                     content += " title='click here to copy Shareable URL'></button></p>";
-                    content += "<div id='url' style='display:none;'>http://amis.docking.org/img_browser";
+                    content += "<div id='url' style='display:none;'>https://amis.docking.org/img_browser";
                     content += "?";
                     if ($('#gene_dropdown').val().length > 0) {
                         content += "gene=" + $('#gene_dropdown').val();
@@ -626,7 +606,7 @@ jQuery(function ($) {
                         }
 
                         content += "'><input type='radio' name='options' ";
-                        content += "value='" + data.items[i].number + "'> " + data.items[i].spec;
+                        content += "value='" + data.items[i].number + "'> ";
 
                         if (data.items[i].sex) {
                             content += " <i class='fas fa-mars'></i> ";
@@ -642,7 +622,7 @@ jQuery(function ($) {
                     }
                     $('#specimen_above').html(content_above);
                     $('#specimen_below').html(content_below);
-                    // $(".loader").hide();
+
                     updateAreaC();
                 }, error: function (jqXHR, status, err) {
                     $('.alert-danger .text').text(err.toLowerCase() + '!');
@@ -695,7 +675,7 @@ jQuery(function ($) {
     function compareValues(key, order = 'asc') {
         return function (a, b) {
             if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
-                // property doesn't exist on either object
+
                 return 0;
             }
 
