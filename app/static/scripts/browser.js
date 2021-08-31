@@ -31,7 +31,6 @@ jQuery(function ($) {
         dynamicHandle: 1,
         clickBar: 1,
 
-        // Buttons
         prev: $wrap.find('.prev'),
         next: $wrap.find('.next')
     };
@@ -312,7 +311,6 @@ jQuery(function ($) {
                 $('#experiment_dropdown').html(experiments);
             }
 
-            // Default
             if (selected == -1) {
                 $('#experiment_dropdown').html(experiments);
             }
@@ -348,7 +346,7 @@ jQuery(function ($) {
 
     function updateAreaA(index) {
         if (index == -1) {
-            // no_result();
+
         } else {
             if (total_result == 0) {
                 $('.current_id').val(0);
@@ -358,13 +356,13 @@ jQuery(function ($) {
             show_result();
 
             $('.selected_slice2').attr('src', pos_tomato_list[index] + "_RI.png");
-            $('.selected_slice2').attr('data-high-res-src', pos_tomato_list[index] + "_RI.jpg");
+            $('.selected_slice2').attr('data-high-res-src', pos_tomato_list[index] + "_RI");
 
             $('.selected_slice1').attr('src', pos_tomato_list[index] + ".png");
-            $('.selected_slice1').attr('data-high-res-src', pos_tomato_list[index] + ".jpg");
+            $('.selected_slice1').attr('data-high-res-src', pos_tomato_list[index]);
 
             $('.selected_slice3').attr('src', pos_DAPI_list[index] + ".png");
-            $('.selected_slice3').attr('data-high-res-src', pos_DAPI_list[index] + ".jpg");
+            $('.selected_slice3').attr('data-high-res-src', pos_DAPI_list[index]);
 
             var id = $('._' + index).attr('id');
             updateSliceDetail(id);
@@ -387,11 +385,11 @@ jQuery(function ($) {
             } else {
                 $('.area_B img').css('cursor', 'zoom-in');
                 $('.selected_slice4').attr('src', neg_tomato_list[index] + ".png");
-                $('.selected_slice4').attr('data-high-res-src', neg_tomato_list[index] + ".jpg");
+                $('.selected_slice4').attr('data-high-res-src', neg_tomato_list[index]);
                 $('.selected_slice5').attr('src', neg_tomato_list[index] + "_RI.png");
-                $('.selected_slice5').attr('data-high-res-src', neg_tomato_list[index] + "_RI.jpg");
+                $('.selected_slice5').attr('data-high-res-src', neg_tomato_list[index] + "_RI");
                 $('.selected_slice6').attr('src', neg_DAPI_list[index] + ".png");
-                $('.selected_slice6').attr('data-high-res-src', neg_DAPI_list[index] + ".jpg");
+                $('.selected_slice6').attr('data-high-res-src', neg_DAPI_list[index]);
             }
         }
     }
@@ -484,7 +482,7 @@ jQuery(function ($) {
                     updateAreaB(itemIndex);
                 });
             }, error: function (jqXHR, status, err) {
-                // console.log(status);
+
             }
         });
     }
@@ -642,7 +640,7 @@ jQuery(function ($) {
                     }
                     $('#specimen_above').html(content_above);
                     $('#specimen_below').html(content_below);
-                    // $(".loader").hide();
+
                     updateAreaC();
                 }, error: function (jqXHR, status, err) {
                     $('.alert-danger .text').text(err.toLowerCase() + '!');
@@ -695,7 +693,7 @@ jQuery(function ($) {
     function compareValues(key, order = 'asc') {
         return function (a, b) {
             if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
-                // property doesn't exist on either object
+
                 return 0;
             }
 
