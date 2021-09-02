@@ -128,7 +128,7 @@ class SliceModel(PaginatedAPIMixin, db.Model):
 
     @property
     def img_small(self):
-        return "{}{}/{}.png".format(
+        return "{}{}/{}.webp".format(
             current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path,
             self.combined_data)
 
@@ -136,7 +136,7 @@ class SliceModel(PaginatedAPIMixin, db.Model):
     def img_small_RI(self):
         if self.wavelength == "DAPI":
             return ""
-        return "{}{}/{}_RI.png".format(
+        return "{}{}/{}_RI.webp".format(
             current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path,
             self.combined_data)
 

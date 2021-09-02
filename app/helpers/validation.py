@@ -11,6 +11,7 @@ import os
 import shutil
 import glob
 from pathlib import Path
+from PIL import Image
 
 
 def save_excel_records(type, records):
@@ -100,14 +101,31 @@ def load_images():
         file_name = Path(file).stem
         file_name_with_ext = Path(file).name
         file_sub_folder = str(Path(file).parent)[len(path):]
+
+
         # print("File: {}".format(file))
         # print("File name: {}".format(file_name))
         # print("File name with extention: {}".format(file_name_with_ext))
         # print("File sub folder: {}".format(file_sub_folder))
+
         if "hidden" in file_sub_folder:
-            print("_______________Skipped the file in HIDDEN dir: {}/{}".
-                  format(file_sub_folder, file_name_with_ext))
+            # print("_______________Skipped the file in HIDDEN dir: {}/{}".
+            #       format(file_sub_folder, file_name_with_ext))
             continue
+
+        full_path_without_ext = "{}{}/{}".format(path, file_sub_folder, file_name)
+        print("full_path_without_ext", full_path_without_ext)
+        # It converts png to resized .webp file if there is now *.webp file
+        for type in ["_RI.", "."]:
+            if not os.path.isfile('{}{}webp'.format(full_path_without_ext, type)) and \
+                    os.path.isfile('{}{}png'.format(full_path_without_ext, type)):
+                fixed_height = 350
+                image = Image.open("{}{}png".format(full_path_without_ext, type))
+                height_percent = (fixed_height / float(image.size[1]))
+                width_size = int((float(image.size[0]) * float(height_percent)))
+
+                image = image.resize((width_size, fixed_height), Image.NEAREST)
+                image.save('{}{}webp'.format(full_path_without_ext, type), optimize=True, quality=50)
 
         if SliceModel.isRegistered(file_name):
             destination = "{}{}/".format(path, file_sub_folder)
@@ -136,6 +154,7 @@ def load_images():
             print("_______________Skipped the file: {}".format(
                 file_name_with_ext))
             continue
+
         values = file_name.replace('_RI', '').split('_')
         try:
             genotype_gene = GenotypeModel.find_by_id(values[2])

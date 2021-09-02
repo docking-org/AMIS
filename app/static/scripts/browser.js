@@ -42,7 +42,7 @@ jQuery(function ($) {
     if ($('#sample_dropdown').val().length + $('#gene_dropdown').val().length +
         $('#organ_dropdown').val().length + $('#experiment_dropdown').val().length > 0) {
         updateFilter(0);
-        updateFilter(1);
+        // updateFilter(1);
         updateSpecimen();
     } else {
         setDefaultDDlVal(1, 1, 1, 1);
@@ -147,21 +147,21 @@ jQuery(function ($) {
             updateFilter(s1);
             updateSpecimen();
         }
-        if ($('#gene_dropdown').val().length == 0) {
-            $("#gene_dropdown").val($("#gene_dropdown option:eq(1)").val());
-            updateFilter(s2);
-            updateSpecimen();
-        }
-        if ($('#organ_dropdown').val().length == 0) {
-            $("#organ_dropdown").val($("#organ_dropdown option:eq(1)").val());
-            updateFilter(s3);
-            updateSpecimen();
-        }
-        if ($('#experiment_dropdown').val().length == 0) {
-            $("#experiment_dropdown").val($("#experiment_dropdown option:eq(1)").val());
-            updateFilter(s4);
-            updateSpecimen();
-        }
+        // if ($('#gene_dropdown').val().length == 0) {
+        //     $("#gene_dropdown").val($("#gene_dropdown option:eq(1)").val());
+        //     updateFilter(s2);
+        //     updateSpecimen();
+        // }
+        // if ($('#organ_dropdown').val().length == 0) {
+        //     $("#organ_dropdown").val($("#organ_dropdown option:eq(1)").val());
+        //     updateFilter(s3);
+        //     updateSpecimen();
+        // }
+        // if ($('#experiment_dropdown').val().length == 0) {
+        //     $("#experiment_dropdown").val($("#experiment_dropdown option:eq(1)").val());
+        //     updateFilter(s4);
+        //     updateSpecimen();
+        // }
 
     }
 
@@ -244,7 +244,6 @@ jQuery(function ($) {
         var organs = "<option value=\"\">Select</option>";
         var experiment_arr = [];
         var experiments = "<option value=\"\">Select</option>";
-
         $.ajax({
             type: 'GET',
             url: url,
@@ -355,13 +354,13 @@ jQuery(function ($) {
             }
             show_result();
 
-            $('.selected_slice2').attr('src', pos_tomato_list[index] + "_RI.png");
+            $('.selected_slice2').attr('src', pos_tomato_list[index] + "_RI.webp");
             $('.selected_slice2').attr('data-high-res-src', pos_tomato_list[index] + "_RI");
 
-            $('.selected_slice1').attr('src', pos_tomato_list[index] + ".png");
+            $('.selected_slice1').attr('src', pos_tomato_list[index] + ".webp");
             $('.selected_slice1').attr('data-high-res-src', pos_tomato_list[index]);
 
-            $('.selected_slice3').attr('src', pos_DAPI_list[index] + ".png");
+            $('.selected_slice3').attr('src', pos_DAPI_list[index] + ".webp");
             $('.selected_slice3').attr('data-high-res-src', pos_DAPI_list[index]);
 
             var id = $('._' + index).attr('id');
@@ -381,14 +380,13 @@ jQuery(function ($) {
                 $('.selected_slice5').attr('data-high-res-src', "");
                 $('.selected_slice6').attr('src', "/static/images/na.png");
                 $('.selected_slice6').attr('data-high-res-src', "");
-
             } else {
                 $('.area_B img').css('cursor', 'zoom-in');
-                $('.selected_slice4').attr('src', neg_tomato_list[index] + ".png");
+                $('.selected_slice4').attr('src', neg_tomato_list[index] + ".webp");
                 $('.selected_slice4').attr('data-high-res-src', neg_tomato_list[index]);
-                $('.selected_slice5').attr('src', neg_tomato_list[index] + "_RI.png");
+                $('.selected_slice5').attr('src', neg_tomato_list[index] + "_RI.webp");
                 $('.selected_slice5').attr('data-high-res-src', neg_tomato_list[index] + "_RI");
-                $('.selected_slice6').attr('src', neg_DAPI_list[index] + ".png");
+                $('.selected_slice6').attr('src', neg_DAPI_list[index] + ".webp");
                 $('.selected_slice6').attr('data-high-res-src', neg_DAPI_list[index]);
             }
         }
@@ -547,7 +545,7 @@ jQuery(function ($) {
                     content += "<p><a href=" + data.items[i].tif_url + ">Download TIF file (raw 16 bit)</a></p>";
                     content += "<p>Shareable URL: <button class='glyphicon glyphicon-copy copyUrl btn btn-info' ";
                     content += " title='click here to copy Shareable URL'></button></p>";
-                    content += "<div id='url' style='display:none;'>http://amis.docking.org/img_browser";
+                    content += "<div id='url' style='display:none;'>https://amis.docking.org/img_browser";
                     content += "?";
                     if ($('#gene_dropdown').val().length > 0) {
                         content += "gene=" + $('#gene_dropdown').val();
