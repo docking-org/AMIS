@@ -42,7 +42,6 @@ jQuery(function ($) {
     if ($('#sample_dropdown').val().length + $('#gene_dropdown').val().length +
         $('#organ_dropdown').val().length + $('#experiment_dropdown').val().length > 0) {
         updateFilter(0);
-        // updateFilter(1);
         updateSpecimen();
     } else {
         setDefaultDDlVal(1, 1, 1, 1);
@@ -147,22 +146,6 @@ jQuery(function ($) {
             updateFilter(s1);
             updateSpecimen();
         }
-        // if ($('#gene_dropdown').val().length == 0) {
-        //     $("#gene_dropdown").val($("#gene_dropdown option:eq(1)").val());
-        //     updateFilter(s2);
-        //     updateSpecimen();
-        // }
-        // if ($('#organ_dropdown').val().length == 0) {
-        //     $("#organ_dropdown").val($("#organ_dropdown option:eq(1)").val());
-        //     updateFilter(s3);
-        //     updateSpecimen();
-        // }
-        // if ($('#experiment_dropdown').val().length == 0) {
-        //     $("#experiment_dropdown").val($("#experiment_dropdown option:eq(1)").val());
-        //     updateFilter(s4);
-        //     updateSpecimen();
-        // }
-
     }
 
     function show_table() {
@@ -622,7 +605,7 @@ jQuery(function ($) {
                         }
 
                         content += "'><input type='radio' name='options' ";
-                        content += "value='" + data.items[i].number + "'> " + data.items[i].spec;
+                        content += "value='" + data.items[i].number + "'> ";
 
                         if (data.items[i].sex) {
                             content += " <i class='fas fa-mars'></i> ";
