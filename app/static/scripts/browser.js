@@ -146,7 +146,6 @@ jQuery(function ($) {
             updateFilter(s1);
             updateSpecimen();
         }
-
     }
 
     function show_table() {
