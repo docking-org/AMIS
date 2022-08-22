@@ -43,6 +43,7 @@ jQuery(function ($) {
         $('#organ_dropdown').val().length + $('#experiment_dropdown').val().length > 0) {
         updateFilter(0);
         updateSpecimen();
+        
     } else {
         setDefaultDDlVal(1, 1, 1, 1);
     }
@@ -560,8 +561,9 @@ jQuery(function ($) {
     }
 
     function updateSpecimen() {
+        
         if (check_mandatory_ddl() < 3) {
-            console.log("updateSpeciment");
+            console.log("updateSpecimen");
             no_result();
         } else {
             let uri = "/mice?";

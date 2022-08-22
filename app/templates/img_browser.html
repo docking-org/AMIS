@@ -9,7 +9,7 @@
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
     <link href="{{ url_for('static', filename='styles/browser.css') }}" rel="stylesheet"
           type="text/css"/>
-
+          
     <style>
         .modal-dialog {
             position: relative;
@@ -27,6 +27,10 @@
         .mystyle {
         background-color: #000000;
         }
+
+        .leaflet-tile {
+            background-blend-mode: lighten !important;
+        }
     </style>
 {% endblock %}
 
@@ -37,66 +41,75 @@
                 <div class="form-group row">
                     <label for="sample_type" class="col-sm-4 col-form-label">Sample Type</label>
                     <div class="col-sm-6">
-                        <select name="sample_type" class="form-control" id="sample_dropdown">
-                            <option value="">Select</option>
-                            <option value="Histological"
-                                    {% if sample_type == "Histological" %}
-                                    selected
-                                    {% endif %}
-                            >Histological
-                            </option>
-                            <option value="Cleared"
-                                    {% if sample_type == "Cleared" %}
-                                    selected
-                                    {% endif %}
-                            >Cleared
-                            </option>
-                        </select>
+                        <input list="sample_types" name="sample_type" class="form-control" id="sample_dropdown" placeholder="Select" >
+                            <datalist id="sample_types">
+                                <option value="">Select</option>
+                                <option value="Histological"
+                                        {% if sample_type == "Histological" %}
+                                        selected
+                                        {% endif %}
+                                >Histological
+                                </option>
+                                <option value="Cleared"
+                                        {% if sample_type == "Cleared" %}
+                                        selected
+                                        {% endif %}
+                                >Cleared
+                                </option>
+                            </datalist>
+                        </input>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="gene_dropdown" class="col-sm-4 col-form-label">Gene</label>
                     <div class="col-sm-6">
-                        <select name="gene" class="form-control" id="gene_dropdown">
-                            <option value="">Select</option>
-                            {% for gene_ in genes %}
-                                <option value="{{ gene_.gene_name.name }}"
-                                        {% if gene == gene_.gene_name.name %}
-                                        selected
-                                        {% endif %}
-                                >{{ gene_.gene_name.name }}</option>
-                            {% endfor %}
-                        </select>
+                        <input list="genes" name="genes" class="form-control" id="gene_dropdown" placeholder="Select" >
+                            <datalist id ="genes">
+                                <option value="">Select</option>
+                                {% for gene_ in genes %}
+                                    <option value="{{ gene_.gene_name.name }}"
+                                            {% if gene == gene_.gene_name.name %}
+                                            selected
+                                            {% endif %}
+                                    >{{ gene_.gene_name.name }}</option>
+                                {% endfor %}
+                            </datalist>
+                        </input>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="organ_dropdown" class="col-sm-4 col-form-label">Organ</label>
                     <div class="col-sm-6">
-                        <select name="organ" class="form-control" id="organ_dropdown">
-                            <option value="">Select</option>
-                            {% for organ_ in organs %}
-                                <option value="{{ organ_.name }}"
-                                        {% if organ == organ_.name %}
-                                        selected
-                                        {% endif %}
-                                >{{ organ_.name }}</option>
-                            {% endfor %}
-                        </select>
+                        <input list="organs" name="organ" class="form-control" id="organ_dropdown" placeholder="Select" >
+                            <datalist id="organs">
+                                <option value="">Select</option>
+                                {% for organ_ in organs %}
+                                    <option value="{{ organ_.name }}"
+                                            {% if organ == organ_.name %}
+                                            selected
+                                            {% endif %}
+                                    >{{ organ_.name }}</option>
+                                {% endfor %}
+                            </datalist>
+                        </input>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="experiment_dropdown" class="col-sm-4 col-form-label">Experiment</label>
                     <div class="col-sm-6">
-                        <select name="experiment" class="form-control" id="experiment_dropdown">
-                            <option value="">Select</option>
-                            {% for experiment_ in experiments %}
-                                <option value="{{ experiment_.name }}"
-                                        {% if experiment == experiment_.name %}
-                                        selected
-                                        {% endif %}
-                                >{{ experiment_.name }}</option>
-                            {% endfor %}
-                        </select>
+                        <input list="experiments" name="experiment" class="form-control" id="experiment_dropdown" placeholder="Select" >
+                            <datalist id="experiments">
+                                <option value="">Select</option>
+                                {% for experiment_ in experiments %}
+                                    <option value="{{ experiment_.name }}"
+                                            {% if experiment == experiment_.name %}
+                                            selected
+                                            {% endif %}
+                                    >{{ experiment_.name }}</option>
+                                {% endfor %}
+                            </datalist>
+                           
+                        </input>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -107,74 +120,21 @@
                     </div>
                 </div>
             </form>
+            <div class="controls row">
+                <button type="button" class="btn btn-change-color btn-default">Invert color</button>
+
+                <button type="button" class="btn btn-change-bg-color btn-default">Change background color</button>
+            </div>
             <div class="col-md-10 row slice_details"></div>
         </div>
-        <div class="col-md-6" style="min-height:550px">
-            <table class="image_table" style="display: none">
-                <tr>
-                    <td></td>
-                    <td><span class="img_title">tdTomato</span><br/>(contrast stretched)</td>
-                    <td><span class="img_title">tdTomato RI</span><br/>(relative intensity)</td>
-                    <td></td>
-                    <td><span class="img_title">DAPI </span><br/>(contrast stretched)</td>
-                </tr>
-                <tr>
-                    <td>
-                        <div>Positive Controls</div> <br/>
-                        <div class="btn-group-vertical" id="specimen_above" data-toggle="buttons">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="figure-container area_A">
-                            <img src="" data-high-res-src="" class="selected_slice1 img-fluid gallery-items">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="area_A_loader" style="display: none"></div>
-                        <div class="figure-container area_A">
-                            <img src="" data-high-res-src="" class="selected_slice2 img-fluid gallery-items">
-                        </div>
-                    </td>
-                    <td>
-                        <img id="img_histological"
-                             src="{{ url_for('static', filename='images/LUT_key.png') }}"
-                             style="max-height: 240px; display: none;">
-                        <img id="img_cleared"
-                             src="{{ url_for('static', filename='images/Thalium_LUT.png') }}"
-                             style="max-height: 240px; display: none;">
-                    </td>
-                    <td>
-                        <div class="figure-container area_A">
-                            <img src="" data-high-res-src="" class="selected_slice3 img-fluid gallery-items">
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div>Negative Controls</div> <br/>
-                        <div class="btn-group-vertical" id="specimen_below" data-toggle="buttons">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="figure-container area_B">
-                            <img src="" data-high-res-src="" class="selected_slice4 img-fluid gallery-items">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="area_B_loader" style="display: none"></div>
-                        <div class="figure-container area_B">
-                            <img src="" data-high-res-src="" class="selected_slice5 img-fluid gallery-items">
-                        </div>
-                    </td>
-                    <td></td>
-                    <td>
-                        <div class="figure-container area_B">
-                            <img src="" data-high-res-src="" class="selected_slice6 img-fluid gallery-items">
-                        </div>
-                    </td>
-
-                </tr>
-            </table>
+        <div class="col-md-9" style="min-height:550px">
+            <div class="area_A image_table">
+                <!-- <img src="" data-high-res-src="" class="selected_slice1 img-fluid gallery-items"> -->
+                
+                <div id="map" src="" data-high-res-src="" class="selected_slice1" ></div>
+             
+            </div>
+            
             <div class="row">
                 <div class="loader" style="padding: 50px">
                 </div>
@@ -185,12 +145,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="controls">
-                <button type="button" class="btn btn-change-color btn-default">Invert color</button>
-                <button type="button" class="btn btn-change-bg-color btn-default">Change background color</button>
-            </div>
-        </div>
+        
     </div>
     <div class="wrap">
         <div class="text-center b_w_link"></div>
@@ -254,9 +209,9 @@
             </div>
         </div>
     </div>
-    <div  class="modal fade" id="mapModal" tabindex="-1" role="dialog" aria-labelledby="mapModal" aria-hidden="true">
+    <!-- <div  class="modal fade" id="mapModal" tabindex="-1" role="dialog" aria-labelledby="mapModal" aria-hidden="true">
       <div class="modal-dialog" role="document">
-        <div class="modal-content">
+        <div class="modal-f">
           <div class="modal-header">
               <h5 class="modal-title" id="exampleModalLabel">High resolution image</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -268,7 +223,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 {% endblock %}
 
 {% block scripts %}
@@ -276,9 +231,13 @@
       <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
   crossorigin=""></script>
+    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+    <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
+    
+
     <script src="{{ url_for('static', filename='scripts/sly/sly.min.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/sly/examples/js/vendor/plugins.js') }}"></script>
-
+    
     <script type="text/javascript">
         var pos_mouse_number = {% if pos_mouse_number == None %}''{% else %}{{ pos_mouse_number }}{% endif %};
         var neg_mouse_number = {% if neg_mouse_number == None %}''{% else %}{{ neg_mouse_number }}{% endif %};
@@ -289,24 +248,109 @@
         var img_path = '';
         resize();
         var map = L.map('map').setView([0, 0], 3);
+      
+        // $('#mapModal').on('shown.bs.modal', function (e) {
+        //     map.off();
+        //     map.remove();
+        //     map = L.map('map').setView([0, 0], 3);
+        //     var tile = L.tileLayer(img_path+'/{z}/{x}/{y}.png', {
+        //         minZoom: 0,
+        //         maxZoom: 7,
+        //         tms: true,
+        //         crs: L.CRS.Simple,
+        //         noWrap: true
+        //     }).addTo(map);
 
-        $('#mapModal').on('shown.bs.modal', function (e) {
+        $('#gene_dropdown, #sample_dropdown, #organ_dropdown, #experiment_dropdown').change(function () {
             map.off();
             map.remove();
-            map = L.map('map').setView([0, 0], 3);
-            var tile = L.tileLayer(img_path+'/{z}/{x}/{y}.png', {
-                minZoom: 0,
-                maxZoom: 7,
-                tms: true,
-                crs: L.CRS.Simple,
-                noWrap: true
-            }).addTo(map);
-        })
+           
+            img_path = 'http://localhost:8887/326004_tongue-1_03_composite';
+            img_path2 = 'http://localhost:8887/mask-326004_tongue-1_03_composite';
+            if(img_path !== ""){
+                var tile = L.tileLayer(img_path+'/{z}/{x}/{y}.png', {
+                    minZoom: 2,
+                    maxZoom: 7,
+                    tms: true,
+                    crs: L.CRS.Simple,
+                    noWrap: true,
+                    maxBoundsViscosity: 1.0
+                });
 
-        $(document).on('click', '.gallery-items', function (event) {
-            resize();
-            img_path = $(this).attr('data-high-res-src');
-            $('#mapModal').modal('show');
+                var r = L.tileLayer(img_path+'/{z}/{x}/{y}-r.png', {
+                    minZoom: 2,
+                    maxZoom: 7,
+                    tms: true,
+                    crs: L.CRS.Simple,
+                    noWrap: true,
+                    maxBoundsViscosity: 1.0,
+                    transparent: true,
+                  
+                });
+                var g = L.tileLayer(img_path+'/{z}/{x}/{y}-g.png', {
+                    minZoom: 2,
+                    maxZoom: 7,
+                    tms: true,
+                    crs: L.CRS.Simple,
+                    noWrap: true,
+                    maxBoundsViscosity: 1.0,
+                    transparent: true,
+                   
+                });
+                var b = L.tileLayer(img_path+'/{z}/{x}/{y}-b.png', {
+                    minZoom: 2,
+                    maxZoom: 7,
+                    tms: true,
+                    crs: L.CRS.Simple,
+                    noWrap: true,
+                    maxBoundsViscosity: 1.0,
+                    transparent: true 
+                });
+
+              
+                var annotation = L.tileLayer(img_path2+'/{z}/{x}/{y}.png', {
+                    minZoom: 2,
+                    maxZoom: 7,
+                    tms: true,
+                    crs: L.CRS.Simple,
+                    noWrap: true,
+                    transparent: true,
+                    format: 'image/png',
+                    maxBoundsViscosity: 1.0
+                });
+               
+                map = L.map('map',{
+                    center: [-49, -49],
+                    zoom: 2,
+                    layers: [tile, annotation]
+                });
+
+                var baseMaps = {
+                     
+                    "Annotations": annotation
+                };
+
+                var overlayMaps = {
+                    "RGB Composite": tile,
+                    "R": r,
+                    "G": g,
+                    "B": b,
+                 
+                };
+
+                var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
+                map.addControl(new L.Control.Fullscreen());
+
+                
+                // annotation.getContainer().classList.add('leaflet-tile');
+                // map.on('click', function(e) {
+                //     alert("Lat, Lon : " + e.latlng.lat + ", " + e.latlng.lng)
+                // });
+
+                resize();
+            }
+           
+            // $('#mapModal').modal('show');
         });
 
 
@@ -337,8 +381,8 @@
             var map = document.getElementById("map");
             var header = document.getElementById("header");
             var subheader = document.getElementById("subheader");
-            map.style.height = (getWindowHeight()-160) + "px";
-            map.style.width = (getWindowWidth()-20) + "px";
+            map.style.height = "70vh";
+            map.style.width = "100%";
         }
 
     </script>
