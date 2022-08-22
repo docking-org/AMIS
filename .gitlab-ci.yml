@@ -17,14 +17,14 @@ deploy-dev job:
         - docker build -t "${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}-0.1.${CI_JOB_ID}" .
         - docker stop ${CI_PROJECT_NAME}
         - docker rm ${CI_PROJECT_NAME}
-        - docker run --name ${CI_PROJECT_NAME} -d -p 0.0.0.0:5066:5000 \
-          -e SECRET_KEY=${SECRET_KEY} \
-          -e SQLALCHEMY_DATABASE_URI=${SQLALCHEMY_DATABASE_URI} \ 
-          -e UPLOAD_FOLDER=${UPLOAD_FOLDER} \
-          -e IMAGE_LOAD_FOLDER=${IMAGE_LOAD_FOLDER} \
-          -e IMG_UPLOAD_FOLDER_URL=${IMG_UPLOAD_FOLDER_URL} \
-          -e JPEG_FOLDER=${JPEG_FOLDER} \
-          -e JPG_FOLDER=${JPG_FOLDER} \
+        - docker run --name ${CI_PROJECT_NAME} -d -p 0.0.0.0:5066:5000 
+          -e SECRET_KEY=${SECRET_KEY} 
+          -e SQLALCHEMY_DATABASE_URI=${SQLALCHEMY_DATABASE_URI} 
+          -e UPLOAD_FOLDER=${UPLOAD_FOLDER} 
+          -e IMAGE_LOAD_FOLDER=${IMAGE_LOAD_FOLDER} 
+          -e IMG_UPLOAD_FOLDER_URL=${IMG_UPLOAD_FOLDER_URL} 
+          -e JPEG_FOLDER=${JPEG_FOLDER} 
+          -e JPG_FOLDER=${JPG_FOLDER} 
           ${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}-0.1.${CI_JOB_ID}
        
 deploy-live job:
