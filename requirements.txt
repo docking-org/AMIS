@@ -46,6 +46,7 @@ Flask-Security==3.0.0
 Flask-SQLAlchemy==2.3.2
 Flask-User==1.0.1.5
 Flask-WTF==0.14.2
+gunicorn
 hurry
 hurry.filesize==0.9
 idna==2.6
