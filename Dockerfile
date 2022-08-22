@@ -9,7 +9,7 @@ ENV PATH /opt/conda/envs/amis/bin:$PATH
 
 
 RUN apt-get update
-RUN apt-get install gcc
+RUN apt-get install -y gcc
 RUN apt-get install -y libpq-dev 
 RUN apt-get install -y python-dev 
 RUN apt-get install -y vim
