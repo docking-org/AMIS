@@ -1,0 +1,165 @@
+<div class="col-md-12" id="split-left">
+    <div class="row">
+        <div class="col-sm-12 col-md-3">
+            <form>
+                <div class="form-group row">
+                    <label for="sample_type" class="col-sm-12 col-form-label">Sample Type</label>
+                    <div class="col-sm-12">
+                        <input list="sample_types" name="sample_type" class="form-control" id="sample_dropdown"
+                            value="{% if sample_type %}{{sample_type}}{% endif%}" placeholder="Select">
+                        <datalist id="sample_types">
+                            <option value="">Select</option>
+                            <option value="Histological" {% if sample_type=="Histological" %} selected {% endif %}>
+                                Histological
+                            </option>
+                            <option value="Cleared" {% if sample_type=="Cleared" %} selected {% endif %}>Cleared
+                            </option>
+                        </datalist>
+                        </input>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="gene_dropdown" class="col-sm-4 col-form-label">Gene</label>
+                    <div class="col-sm-12">
+                        <input list="genes" name="genes" class="form-control" id="gene_dropdown"
+                            value="{% if gene %}{{gene}}{% endif%}" placeholder="Select">
+                        <datalist id="genes">
+                            <option value="">Select</option>
+                            {% for gene_ in genes %}
+                            <option value="{{ gene_.gene_name.name }}" {% if gene==gene_.gene_name.name %} selected {%
+                                endif %}>{{ gene_.gene_name.name }}</option>
+                            {% endfor %}
+                        </datalist>
+                        </input>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="organ_dropdown" class="col-sm-4 col-form-label">Organ</label>
+                    <div class="col-sm-12">
+                        <input list="organs" name="organ" class="form-control" id="organ_dropdown"
+                            value="{% if organ %}{{organ}}{% endif%}" placeholder="Select">
+                        <datalist id="organs">
+                            <option value="">Select</option>
+                            {% for organ_ in organs %}
+                            <option value="{{ organ_.name }}" {% if organ==organ_.name %} selected {% endif %}>
+                                {{
+                                organ_.name }}</option>
+                            {% endfor %}
+                        </datalist>
+                        </input>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="experiment_dropdown" class="col-sm-4 col-form-label">Experiment</label>
+                    <div class="col-sm-12">
+                        <input list="experiments" name="experiment" class="form-control" id="experiment_dropdown"
+                            placeholder="Select">
+                        <datalist id="experiments">
+                            <option value="">Select</option>
+                            {% for experiment_ in experiments %}
+                            <option value="{{ experiment_.name }}" {% if experiment==experiment_.name %} selected {%
+                                endif %}>{{ experiment_.name }}</option>
+                            {% endfor %}
+                        </datalist>
+
+                        </input>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="" class="col-sm-4 col-form-label"></label>
+                    <div class="col-sm-12">
+                        <button type="button" class="btn btn-info clear_filter">Clear all filters
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <div class=" row col-form-label">
+                <div class="col-sm-12">
+                    <button type="button" class="btn btn-change-color btn-default">Invert color</button>
+                </div>
+                <br>
+                <br>
+                <div class="col-sm-12">
+                    <button type="button" class="btn btn-change-bg-color btn-default">Change background color</button>
+                </div>
+                <br>
+                <br>
+                <div class="col-sm-12">
+                    <button type="button" class="btn btn-toggle-split btn-default">Toggle Split Screen</button>
+                </div>
+
+            </div>
+            <div class="col-sm-hidden col-md-10 row slice_details"></div>
+        </div>
+        <div class="col-md-9 col-sm-12" style="min-height:550px">
+            <div class="area_A image_table">
+                <div id="map" src="" data-high-res-src="" class="selected_slice1"></div>
+            </div>
+
+            <div class="row">
+                <div class="loader" style="padding: 50px">
+                </div>
+                <div class="no_result controls "
+                    style="display: none; height: 480px;padding-left: 5px; padding-top: 120px;">
+                    <img src="{{ url_for('static', filename='images/no_result.png') }}" height="300px">
+                    <div class="text-center text-danger">Please select "Sample Type" > "Gene" > "Organ"</div>
+                </div>
+            </div>
+            <div class="wrap">
+                <div class="text-center b_w_link"></div>
+                <div class="controls center">
+                    <button class="btn btn-info prev disabled" disabled=""><span
+                            class="glyphicon glyphicon-chevron-left"></span>prev
+                    </button>
+                    <span class="" style="font-weight: bold;color: #0aaaf1;font-size: larger">
+                        (Slice <input class="current_id" type="number" min="0" style="width: 50px;" />
+                        of <span class="total_result">0</span>)
+                    </span>
+                    <button class="btn btn-info next">next <span
+                            class="glyphicon glyphicon-chevron-right"></span></button>
+                </div>
+
+
+                <div class="scrollbar scrollbar_left">
+                    <div class="handle" style="transform: translateZ(0px) translateX(0px); width: 190px;">
+                        <div class="mousearea"></div>
+                    </div>
+                </div>
+
+                <div class="frame" id="forcecentered" style="overflow: hidden;">
+                    <ul class="clearfix"></ul>
+                </div>
+            </div>
+            <!-- <div class="row">
+                <div class="controls">
+                    <div class="btn-group colors" id="wavelength" data-toggle="buttons" style="display: none;">
+                        <label class="btn btn-danger
+                                            {% if wavelength == None or wavelength == 'tdTomato' %}
+                                                active
+                                            {% endif %}
+                                    ">
+                            <input type="radio" name="options" value="tdTomato" autocomplete="off" {% if
+                                wavelength==None or wavelength=='tdTomato' %} checked {% endif %}> tdTomato
+                        </label>
+                        <label class="btn btn-danger
+                                            {% if wavelength == 'tdTomato-RI' %}
+                                                active
+                                            {% endif %}
+                                    ">
+                            <input type="radio" name="options" value="tdTomato-RI" autocomplete="off" {% if
+                                wavelength=="tdTomato-RI" %} checked {% endif %}> tdTomato-RI
+                        </label>
+                        <label class="btn btn-info
+                                            {% if wavelength == 'DAPI' %}
+                                                active
+                                            {% endif %}
+                                    ">
+                            <input type="radio" name="options" value="DAPI" autocomplete="off" {% if wavelength=="DAPI"
+                                %} checked {% endif %}> Dapi
+                        </label>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </div>
+</div>

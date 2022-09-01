@@ -1,390 +1,260 @@
 {% extends "base.html" %}
 
 {% block styles %}
-    {{ super() }}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-  integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-  crossorigin=""/>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
-          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
-    <link href="{{ url_for('static', filename='styles/browser.css') }}" rel="stylesheet"
-          type="text/css"/>
-          
-    <style>
-        .modal-dialog {
-            position: relative;
-            margin: 0;
-            width: 100%;
-            height: 100%;
-            padding: 0;
-        }
-        .v-leaflet {
-            background-color: #000000;
-        }
-        .leaflet-container {
-        background-color: #000000;
-        }
-        .mystyle {
-        background-color: #000000;
-        }
+{{ super() }}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin="" />
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+    integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+<link href="{{ url_for('static', filename='styles/browser.css') }}" rel="stylesheet" type="text/css" />
 
-        .leaflet-tile {
-            background-blend-mode: lighten !important;
-        }
-    </style>
+<style>
+    .modal-dialog {
+        position: relative;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+    }
+
+    .v-leaflet {
+        background-color: #000000;
+    }
+
+    .leaflet-container {
+        background-color: #000000;
+    }
+
+    .mystyle {
+        background-color: #000000;
+    }
+
+    .leaflet-tile {
+        background-blend-mode: lighten !important;
+    }
+</style>
 {% endblock %}
 
 {% block app_content %}
+<div class="container-fluid">
     <div class="row">
-        <div class="col-md-3">
-            <form>
-                <div class="form-group row">
-                    <label for="sample_type" class="col-sm-4 col-form-label">Sample Type</label>
-                    <div class="col-sm-6">
-                        <input list="sample_types" name="sample_type" class="form-control" id="sample_dropdown" placeholder="Select" >
-                            <datalist id="sample_types">
-                                <option value="">Select</option>
-                                <option value="Histological"
-                                        {% if sample_type == "Histological" %}
-                                        selected
-                                        {% endif %}
-                                >Histological
-                                </option>
-                                <option value="Cleared"
-                                        {% if sample_type == "Cleared" %}
-                                        selected
-                                        {% endif %}
-                                >Cleared
-                                </option>
-                            </datalist>
-                        </input>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="gene_dropdown" class="col-sm-4 col-form-label">Gene</label>
-                    <div class="col-sm-6">
-                        <input list="genes" name="genes" class="form-control" id="gene_dropdown" placeholder="Select" >
-                            <datalist id ="genes">
-                                <option value="">Select</option>
-                                {% for gene_ in genes %}
-                                    <option value="{{ gene_.gene_name.name }}"
-                                            {% if gene == gene_.gene_name.name %}
-                                            selected
-                                            {% endif %}
-                                    >{{ gene_.gene_name.name }}</option>
-                                {% endfor %}
-                            </datalist>
-                        </input>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="organ_dropdown" class="col-sm-4 col-form-label">Organ</label>
-                    <div class="col-sm-6">
-                        <input list="organs" name="organ" class="form-control" id="organ_dropdown" placeholder="Select" >
-                            <datalist id="organs">
-                                <option value="">Select</option>
-                                {% for organ_ in organs %}
-                                    <option value="{{ organ_.name }}"
-                                            {% if organ == organ_.name %}
-                                            selected
-                                            {% endif %}
-                                    >{{ organ_.name }}</option>
-                                {% endfor %}
-                            </datalist>
-                        </input>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="experiment_dropdown" class="col-sm-4 col-form-label">Experiment</label>
-                    <div class="col-sm-6">
-                        <input list="experiments" name="experiment" class="form-control" id="experiment_dropdown" placeholder="Select" >
-                            <datalist id="experiments">
-                                <option value="">Select</option>
-                                {% for experiment_ in experiments %}
-                                    <option value="{{ experiment_.name }}"
-                                            {% if experiment == experiment_.name %}
-                                            selected
-                                            {% endif %}
-                                    >{{ experiment_.name }}</option>
-                                {% endfor %}
-                            </datalist>
-                           
-                        </input>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="" class="col-sm-4 col-form-label"></label>
-                    <div class="col-sm-6">
-                        <button type="button" class="btn btn-info clear_filter">Clear all filters
-                        </button>
-                    </div>
-                </div>
-            </form>
-            <div class="controls row">
-                <button type="button" class="btn btn-change-color btn-default">Invert color</button>
-
-                <button type="button" class="btn btn-change-bg-color btn-default">Change background color</button>
-            </div>
-            <div class="col-md-10 row slice_details"></div>
-        </div>
-        <div class="col-md-9" style="min-height:550px">
-            <div class="area_A image_table">
-                <!-- <img src="" data-high-res-src="" class="selected_slice1 img-fluid gallery-items"> -->
-                
-                <div id="map" src="" data-high-res-src="" class="selected_slice1" ></div>
-             
-            </div>
-            
+        <div class="col-md-12">
             <div class="row">
-                <div class="loader" style="padding: 50px">
+                <div class="col-sm-12 col-md-3">
+                    <form>
+                        <div class="form-group row">
+                            <label for="sample_type" class="col-sm-4 col-form-label">Sample Type</label>
+                            <div class="col-sm-6">
+                                <input list="sample_types" name="sample_type" class="form-control" id="sample_dropdown"
+                                    value="{% if sample_type %}{{sample_type}}{% endif%}" placeholder="Select">
+                                <datalist id="sample_types">
+                                    <option value="">Select</option>
+                                    <option value="Histological" {% if sample_type=="Histological" %} selected {% endif
+                                        %}>
+                                        Histological
+                                    </option>
+                                    <option value="Cleared" {% if sample_type=="Cleared" %} selected {% endif %}>Cleared
+                                    </option>
+                                </datalist>
+                                </input>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="gene_dropdown" class="col-sm-4 col-form-label">Gene</label>
+                            <div class="col-sm-6">
+                                <input list="genes" name="genes" class="form-control" id="gene_dropdown"
+                                    value="{% if gene %}{{gene}}{% endif%}" placeholder="Select">
+                                <datalist id="genes">
+                                    <option value="">Select</option>
+                                    {% for gene_ in genes %}
+                                    <option value="{{ gene_.gene_name.name }}" {% if gene==gene_.gene_name.name %}
+                                        selected {% endif %}>{{ gene_.gene_name.name }}</option>
+                                    {% endfor %}
+                                </datalist>
+                                </input>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="organ_dropdown" class="col-sm-4 col-form-label">Organ</label>
+                            <div class="col-sm-6">
+                                <input list="organs" name="organ" class="form-control" id="organ_dropdown"
+                                    value="{% if organ %}{{organ}}{% endif%}" placeholder="Select">
+                                <datalist id="organs">
+                                    <option value="">Select</option>
+                                    {% for organ_ in organs %}
+                                    <option value="{{ organ_.name }}" {% if organ==organ_.name %} selected {% endif %}>
+                                        {{
+                                        organ_.name }}</option>
+                                    {% endfor %}
+                                </datalist>
+                                </input>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="experiment_dropdown" class="col-sm-4 col-form-label">Experiment</label>
+                            <div class="col-sm-6">
+                                <input list="experiments" name="experiment" class="form-control"
+                                    id="experiment_dropdown" placeholder="Select">
+                                <datalist id="experiments">
+                                    <option value="">Select</option>
+                                    {% for experiment_ in experiments %}
+                                    <option value="{{ experiment_.name }}" {% if experiment==experiment_.name %}
+                                        selected {% endif %}>{{ experiment_.name }}</option>
+                                    {% endfor %}
+                                </datalist>
+
+                                </input>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-4 col-form-label"></label>
+                            <div class="col-sm-6">
+                                <button type="button" class="btn btn-info clear_filter">Clear all filters
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="controls row">
+                        <button type="button" class="btn btn-change-color btn-default">Invert color</button>
+
+                        <button type="button" class="btn btn-change-bg-color btn-default">Change background
+                            color</button>
+                    </div>
+                    <div class="col-sm-hidden col-md-10 row slice_details"></div>
                 </div>
-                <div class="no_result controls "
-                     style="display: none; height: 480px;padding-left: 5px; padding-top: 120px;">
-                    <img src="{{ url_for('static', filename='images/no_result.png') }}" height="300px">
-                    <div class="text-center text-danger">Please select "Sample Type" > "Gene" > "Organ"</div>
+                <div class="col-md-9" style="min-height:550px">
+                    <div class="area_A image_table">
+                        <div id="map" src="" data-high-res-src="" class="selected_slice1"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="loader" style="padding: 50px">
+                        </div>
+                        <div class="no_result controls "
+                            style="display: none; height: 480px;padding-left: 5px; padding-top: 120px;">
+                            <img src="{{ url_for('static', filename='images/no_result.png') }}" height="300px">
+                            <div class="text-center text-danger">Please select "Sample Type" > "Gene" > "Organ"</div>
+                        </div>
+                    </div>
+                    <div class="wrap">
+                        <div class="text-center b_w_link"></div>
+                        <div class="controls center">
+                            <button class="btn btn-info prev disabled" disabled=""><span
+                                    class="glyphicon glyphicon-chevron-left"></span>prev
+                            </button>
+                            <span class="" style="font-weight: bold;color: #0aaaf1;font-size: larger">
+                                (Slice <input class="current_id" type="number" min="0" style="width: 50px;" />
+                                of <span class="total_result">0</span>)
+                            </span>
+                            <button class="btn btn-info next">next <span
+                                    class="glyphicon glyphicon-chevron-right"></span></button>
+                        </div>
+
+
+                        <div class="scrollbar">
+                            <div class="handle" style="transform: translateZ(0px) translateX(0px); width: 190px;">
+                                <div class="mousearea"></div>
+                            </div>
+                        </div>
+
+                        <div class="frame" id="forcecentered" style="overflow: hidden;">
+                            <ul class="clearfix"></ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="controls">
+                            <div class="btn-group colors" id="wavelength" data-toggle="buttons" style="display: none;">
+                                <label class="btn btn-danger
+                                                    {% if wavelength == None or wavelength == 'tdTomato' %}
+                                                        active
+                                                    {% endif %}
+                                            ">
+                                    <input type="radio" name="options" value="tdTomato" autocomplete="off" {% if
+                                        wavelength==None or wavelength=='tdTomato' %} checked {% endif %}> tdTomato
+                                </label>
+                                <label class="btn btn-danger
+                                                    {% if wavelength == 'tdTomato-RI' %}
+                                                        active
+                                                    {% endif %}
+                                            ">
+                                    <input type="radio" name="options" value="tdTomato-RI" autocomplete="off" {% if
+                                        wavelength=="tdTomato-RI" %} checked {% endif %}> tdTomato-RI
+                                </label>
+                                <label class="btn btn-info
+                                                    {% if wavelength == 'DAPI' %}
+                                                        active
+                                                    {% endif %}
+                                            ">
+                                    <input type="radio" name="options" value="DAPI" autocomplete="off" {% if
+                                        wavelength=="DAPI" %} checked {% endif %}> Dapi
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        
-    </div>
-    <div class="wrap">
-        <div class="text-center b_w_link"></div>
-        <div class="controls center">
-            <button class="btn btn-info prev disabled" disabled=""><span
-                    class="glyphicon glyphicon-chevron-left"></span>prev
-            </button>
-            <span class="" style="font-weight: bold;color: #0aaaf1;font-size: larger">
-                (Slice  <input class="current_id" type="number" min="0" style="width: 50px;"/>
-                of <span class="total_result">0</span>)
-            </span>
-            <button class="btn btn-info next">next <span class="glyphicon glyphicon-chevron-right"></span></button>
-        </div>
 
-
-        <div class="scrollbar">
-            <div class="handle" style="transform: translateZ(0px) translateX(0px); width: 190px;">
-                <div class="mousearea"></div>
-            </div>
-        </div>
-
-        <div class="frame" id="forcecentered" style="overflow: hidden;">
-            <ul class="clearfix"></ul>
-        </div>
     </div>
-    <div class="row">
-        <div class="controls">
-            <div class="btn-group colors" id="wavelength" data-toggle="buttons" style="display: none;">
-                <label class="btn btn-danger
-                                        {% if wavelength == None or wavelength == 'tdTomato' %}
-                                            active
-                                        {% endif %}
-                                ">
-                    <input type="radio" name="options" value="tdTomato" autocomplete="off"
-                            {% if wavelength == None or wavelength == 'tdTomato' %}
-                           checked
-                            {% endif %}> tdTomato
-                </label>
-                <label class="btn btn-danger
-                                        {% if wavelength == 'tdTomato-RI' %}
-                                            active
-                                        {% endif %}
-                                ">
-                    <input type="radio" name="options" value="tdTomato-RI" autocomplete="off"
-                            {% if wavelength == "tdTomato-RI" %}
-                           checked
-                            {% endif %}
-                    > tdTomato-RI
-                </label>
-                <label class="btn btn-info
-                                        {% if wavelength == 'DAPI' %}
-                                            active
-                                        {% endif %}
-                                ">
-                    <input type="radio" name="options" value="DAPI" autocomplete="off"
-                            {% if wavelength == "DAPI" %}
-                           checked
-                            {% endif %}
-                    > Dapi
-                </label>
-            </div>
-        </div>
-    </div>
-    <!-- <div  class="modal fade" id="mapModal" tabindex="-1" role="dialog" aria-labelledby="mapModal" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-f">
-          <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">High resolution image</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-              </button>
-          </div>
-          <div class="modal-body">
-              <div id="map"></div>
-          </div>
-        </div>
-      </div>
-    </div> -->
+</div>
 {% endblock %}
 
 {% block scripts %}
-    {{ super() }}
-      <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-  integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
-  crossorigin=""></script>
-    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
-    <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
-    
-
-    <script src="{{ url_for('static', filename='scripts/sly/sly.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='scripts/sly/examples/js/vendor/plugins.js') }}"></script>
-    
-    <script type="text/javascript">
-        var pos_mouse_number = {% if pos_mouse_number == None %}''{% else %}{{ pos_mouse_number }}{% endif %};
-        var neg_mouse_number = {% if neg_mouse_number == None %}''{% else %}{{ neg_mouse_number }}{% endif %};
-        var wavelength = {% if wavelength == None %}'tdTomato'{% else %}'{{ wavelength }}'{% endif %};
-        var organ = "{{ organ }}";
-        var selected_slice = {% if selected_slice == None %}0{% else %}{{ selected_slice }}-1{% endif %};
-
-        var img_path = '';
-        resize();
-        var map = L.map('map').setView([0, 0], 3);
-      
-        // $('#mapModal').on('shown.bs.modal', function (e) {
-        //     map.off();
-        //     map.remove();
-        //     map = L.map('map').setView([0, 0], 3);
-        //     var tile = L.tileLayer(img_path+'/{z}/{x}/{y}.png', {
-        //         minZoom: 0,
-        //         maxZoom: 7,
-        //         tms: true,
-        //         crs: L.CRS.Simple,
-        //         noWrap: true
-        //     }).addTo(map);
-
-        $('#gene_dropdown, #sample_dropdown, #organ_dropdown, #experiment_dropdown').change(function () {
-            map.off();
-            map.remove();
-           
-            img_path = 'http://localhost:8887/326004_tongue-1_03_composite';
-            img_path2 = 'http://localhost:8887/mask-326004_tongue-1_03_composite';
-            if(img_path !== ""){
-                var tile = L.tileLayer(img_path+'/{z}/{x}/{y}.png', {
-                    minZoom: 2,
-                    maxZoom: 7,
-                    tms: true,
-                    crs: L.CRS.Simple,
-                    noWrap: true,
-                    maxBoundsViscosity: 1.0
-                });
-
-                var r = L.tileLayer(img_path+'/{z}/{x}/{y}-r.png', {
-                    minZoom: 2,
-                    maxZoom: 7,
-                    tms: true,
-                    crs: L.CRS.Simple,
-                    noWrap: true,
-                    maxBoundsViscosity: 1.0,
-                    transparent: true,
-                  
-                });
-                var g = L.tileLayer(img_path+'/{z}/{x}/{y}-g.png', {
-                    minZoom: 2,
-                    maxZoom: 7,
-                    tms: true,
-                    crs: L.CRS.Simple,
-                    noWrap: true,
-                    maxBoundsViscosity: 1.0,
-                    transparent: true,
-                   
-                });
-                var b = L.tileLayer(img_path+'/{z}/{x}/{y}-b.png', {
-                    minZoom: 2,
-                    maxZoom: 7,
-                    tms: true,
-                    crs: L.CRS.Simple,
-                    noWrap: true,
-                    maxBoundsViscosity: 1.0,
-                    transparent: true 
-                });
-
-              
-                var annotation = L.tileLayer(img_path2+'/{z}/{x}/{y}.png', {
-                    minZoom: 2,
-                    maxZoom: 7,
-                    tms: true,
-                    crs: L.CRS.Simple,
-                    noWrap: true,
-                    transparent: true,
-                    format: 'image/png',
-                    maxBoundsViscosity: 1.0
-                });
-               
-                map = L.map('map',{
-                    center: [-49, -49],
-                    zoom: 2,
-                    layers: [tile, annotation]
-                });
-
-                var baseMaps = {
-                     
-                    "Annotations": annotation
-                };
-
-                var overlayMaps = {
-                    "RGB Composite": tile,
-                    "R": r,
-                    "G": g,
-                    "B": b,
-                 
-                };
-
-                var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
-                map.addControl(new L.Control.Fullscreen());
-
-                
-                // annotation.getContainer().classList.add('leaflet-tile');
-                // map.on('click', function(e) {
-                //     alert("Lat, Lon : " + e.latlng.lat + ", " + e.latlng.lng)
-                // });
-
-                resize();
-            }
-           
-            // $('#mapModal').modal('show');
-        });
+{{ super() }}
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script>
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css'
+    rel='stylesheet' />
 
 
-        $(document).on('click', '.copyUrl', function (event) {
-            $temp = $("<input>");
-            $("body").append($temp);
-            $temp.val($('#url').text()).select();
-            document.execCommand("copy");
-            $temp.remove();
-        });
-        function getWindowHeight() {
-            if (self.innerHeight) return self.innerHeight;
-                if (document.documentElement && document.documentElement.clientHeight)
-                    return document.documentElement.clientHeight;
-                if (document.body) return document.body.clientHeight;
-                    return 0;
-        }
+<script src="{{ url_for('static', filename='scripts/sly/sly.min.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/sly/examples/js/vendor/plugins.js') }}"></script>
 
-        function getWindowWidth() {
-            if (self.innerWidth) return self.innerWidth;
-            if (document.documentElement && document.documentElement.clientWidth)
-                return document.documentElement.clientWidth;
-            if (document.body) return document.body.clientWidth;
-                return 0;
-        }
+<script type="text/javascript">
+    var pos_mouse_number = {% if pos_mouse_number == None %}''{% else %} { { pos_mouse_number } } {% endif %};
+    var neg_mouse_number = {% if neg_mouse_number == None %}''{% else %} { { neg_mouse_number } } {% endif %};
+    var wavelength = {% if wavelength == None %}'tdTomato'{% else %} '{{ wavelength }}'{% endif %};
+    var organ = "{{ organ }}";
+    var selected_slice = {% if selected_slice == None %}0{% else %} { { selected_slice } } -1{% endif %};
 
-        function resize() {
-            var map = document.getElementById("map");
-            var header = document.getElementById("header");
-            var subheader = document.getElementById("subheader");
-            map.style.height = "70vh";
-            map.style.width = "100%";
-        }
 
-    </script>
-    <script src="{{ url_for('static', filename='scripts/browser.js') }}"></script>
+    resize();
+
+
+    $(document).on('click', '.copyUrl', function (event) {
+        $temp = $("<input>");
+        $("body").append($temp);
+        $temp.val($('#url').text()).select();
+        document.execCommand("copy");
+        $temp.remove();
+    });
+    function getWindowHeight() {
+        if (self.innerHeight) return self.innerHeight;
+        if (document.documentElement && document.documentElement.clientHeight)
+            return document.documentElement.clientHeight;
+        if (document.body) return document.body.clientHeight;
+        return 0;
+    }
+
+    function getWindowWidth() {
+        if (self.innerWidth) return self.innerWidth;
+        if (document.documentElement && document.documentElement.clientWidth)
+            return document.documentElement.clientWidth;
+        if (document.body) return document.body.clientWidth;
+        return 0;
+    }
+
+    function resize() {
+        var map = document.getElementById("map");
+        var header = document.getElementById("header");
+        var subheader = document.getElementById("subheader");
+        map.style.height = "70vh";
+        map.style.width = "100%";
+    }
+
+</script>
+<script src="{{ url_for('static', filename='scripts/browser.js') }}"></script>
 {% endblock %}

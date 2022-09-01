@@ -102,7 +102,7 @@ def img_browser():
     genes = GeneModel.find_unique_names()
     organs = OrganModel.find_all()
     experiments = ExperimentModel.find_all()
-    return render_template('img_browser.html', genes=genes, experiments=experiments, organs=organs,
+    return render_template('img_browser_split.html', genes=genes, experiments=experiments, organs=organs,
                            gene=gene, organ=organ, experiment=experiment, sample_type=sample_type,
                            pos_mouse_number=pos_mouse_number, neg_mouse_number=neg_mouse_number, wavelength=wavelength, selected_slice=selected_slice,
                            imgType=imgType)
