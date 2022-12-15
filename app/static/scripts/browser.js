@@ -564,7 +564,6 @@ function loadLayers(toLoad, list) {
         else {
             area_a_url += "&mouse_number=" + neg_mouse_number_female;
         }
-
     }
     else {
         if (sex == 'false') {
