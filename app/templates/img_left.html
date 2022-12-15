@@ -89,11 +89,56 @@
                 </div>
 
             </div>
+            <div class="col">
+                <div class="controls">
+
+                    <div class="btn-group colors" id="control" data-toggle="buttons" style="display: none;">
+                        <label class="btn btn-info active">
+                            <input type="radio" name="options" value="positive" autocomplete="off"> +
+                        </label>
+                        <label class="btn btn-info">
+                            <input type="radio" name="options" value="negative" autocomplete="off"> -
+                        </label>
+
+                    </div>
+                    <br>
+                    <br>
+                    <div class="btn-group colors" id="sex" data-toggle="buttons" style="display: none;">
+                        <label class="btn btn-info active">
+                            <input type="radio" name="options" value="false" autocomplete="off" checked><i
+                                class="fas fa-mars"></i>
+                        </label>
+                        <label class="btn btn-info">
+                            <input type="radio" name="options" value="true" autocomplete="off"> <i
+                                class="fas fa-venus"></i>
+                        </label>
+
+                    </div>
+                </div>
+            </div>
             <div class="col-sm-hidden col-md-10 row slice_details"></div>
+
+
         </div>
         <div class="col-md-9 col-sm-12" style="min-height:550px">
             <div class="area_A image_table">
-                <div id="map" src="" data-high-res-src="" class="selected_slice1"></div>
+                <div id="map" src="" data-high-res-src="" class="selected_slice">
+                    <div id="sliders-container">
+                        <div id="slider">
+                            <span>tdTomato Contrast:</span>
+                            <span id="contrast-value-left-td-tomato">100%</span>
+                            <br>
+                            <input type="range" min="0" max="100" value="100" id="contrast-slider-left-td-tomato">
+                        </div>
+                        <div id="slider">
+                            <span>DAPI Contrast:</span>
+                            <span id="contrast-value-left-dapi">100%</span>
+                            <br>
+                            <input type="range" min="0" max="100" value="100" id="contrast-slider-left-dapi">
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <div class="row">
@@ -130,7 +175,7 @@
                     <ul class="clearfix"></ul>
                 </div>
             </div>
-            <!-- <div class="row">
+            <div class="row">
                 <div class="controls">
                     <div class="btn-group colors" id="wavelength" data-toggle="buttons" style="display: none;">
                         <label class="btn btn-danger
@@ -159,7 +204,7 @@
                         </label>
                     </div>
                 </div>
-            </div> -->
+            </div>
         </div>
     </div>
 </div>

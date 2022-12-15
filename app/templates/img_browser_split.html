@@ -9,6 +9,7 @@
     integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 <link href="{{ url_for('static', filename='styles/browser.css') }}" rel="stylesheet" type="text/css" />
 
+
 <style>
     .modal-dialog {
         position: relative;
@@ -62,6 +63,8 @@
 
 <script src="{{ url_for('static', filename='scripts/sly/sly.min.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/sly/examples/js/vendor/plugins.js') }}"></script>
+<script
+    src="{{ url_for('static', filename='scripts/leaflet-color-filter/leaflet-tilelayer-colorfilter.min.js') }}"></script>
 
 <script type="text/javascript">
     var pos_mouse_number = {% if pos_mouse_number == None %}''{% else %} { { pos_mouse_number } } {% endif %};
@@ -106,8 +109,10 @@
         var map = document.getElementById("map");
         var header = document.getElementById("header");
         var subheader = document.getElementById("subheader");
-        map.style.height = "70vh";
+        map.style.height = "55vh";
         map.style.width = "100%";
+
+
     }
 
 </script>

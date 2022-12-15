@@ -72,13 +72,40 @@
                         </button>
                     </div>
                 </div>
+
             </form>
+            <div class="col">
+                <div class="controls">
+                    <div class="btn-group colors" id="control_right" data-toggle="buttons" style="display: none;">
+                        <label class="btn btn-info btn-positive active">
+                            <input type="radio" name="options" value="positive" autocomplete="off"> +
+                        </label>
+                        <label class="btn btn-info btn-negative ">
+                            <input type="radio" name="options" value="negative" autocomplete="off"> -
+                        </label>
+
+                    </div>
+                    <br>
+                    <br>
+                    <div class="btn-group colors" id="sex_right" data-toggle="buttons" style="display: none;">
+                        <label class="btn btn-info btn-mars active">
+                            <input type="radio" name="options" value="false" autocomplete="off" checked><i
+                                class="fas fa-mars"></i>
+                        </label>
+                        <label class="btn btn-info btn-venus">
+                            <input type="radio" name="options" value="true" autocomplete="off"> <i
+                                class="fas fa-venus"></i>
+                        </label>
+
+                    </div>
+                </div>
+            </div>
 
             <!-- <div class="col-sm-hidden col-md-hidden  slice_details_right"></div> -->
         </div>
         <div class="col-md-9 col-sm-12" style="min-height:550px">
             <div class="area_A_right image_table_right">
-                <div id="map_right" src="" data-high-res-src="" class="selected_slice_right"></div>
+                <div id="map_right" src="" class="selected_slice_right" style="height:55vh"></div>
             </div>
 
             <div class="row">
@@ -111,8 +138,38 @@
                     </div>
                 </div>
 
-                <div class="frame" id="forcecentered2" style="overflow: hidden;">
+                <div class="frame" id="forcecentered_right" style="overflow: hidden;">
                     <ul class="clearfix_right"></ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="controls">
+                    <div class="btn-group colors" id="wavelength_right" data-toggle="buttons" style="display: none;">
+                        <label class="btn btn-danger
+                                            {% if wavelength == None or wavelength == 'tdTomato' %}
+                                                active
+                                            {% endif %}
+                                    ">
+                            <input type="radio" name="options" value="tdTomato" autocomplete="off" {% if
+                                wavelength==None or wavelength=='tdTomato' %} checked {% endif %}> tdTomato
+                        </label>
+                        <label class="btn btn-danger
+                                            {% if wavelength == 'tdTomato-RI' %}
+                                                active
+                                            {% endif %}
+                                    ">
+                            <input type="radio" name="options" value="tdTomato-RI" autocomplete="off" {% if
+                                wavelength=="tdTomato-RI" %} checked {% endif %}> tdTomato-RI
+                        </label>
+                        <label class="btn btn-info
+                                            {% if wavelength == 'DAPI' %}
+                                                active
+                                            {% endif %}
+                                    ">
+                            <input type="radio" name="options" value="DAPI" autocomplete="off" {% if wavelength=="DAPI"
+                                %} checked {% endif %}> Dapi
+                        </label>
+                    </div>
                 </div>
             </div>
 
