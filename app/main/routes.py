@@ -1,5 +1,8 @@
-from flask import render_template, request
-
+from flask import render_template, request, send_file, make_response
+import json
+import cv2
+import urllib
+import numpy as np
 from app.main import application
 from app.helpers.validation import load_images
 from app.data.models.slice import SliceModel
@@ -106,3 +109,23 @@ def img_browser():
                            gene=gene, organ=organ, experiment=experiment, sample_type=sample_type,
                            pos_mouse_number=pos_mouse_number, neg_mouse_number=neg_mouse_number, wavelength=wavelength, selected_slice=selected_slice,
                            imgType=imgType)
+
+
+@application.route('/lut', methods=['POST'])
+def lut():
+    url.replace("https://files.docking.org/", "/nfs/ex9/")
+    url = json.loads(request.data.decode('utf-8'))['body']
+    req = urllib.request.urlopen(url)
+    arr = np.asarray(bytearray(req.read()), dtype=np.uint8)
+    
+    
+    img = cv2.imdecode(arr, -1) # 'Load it as it is'
+    img[:, :, (0, 1)] = 0
+    retval, buffer = cv2.imencode('.png', img)
+    response = make_response(buffer.tobytes())
+    response.headers.set('Content-Type', 'image/png')
+    
+    response.headers.set(
+        'Content-Disposition', 'attachment')
+    return response
+    

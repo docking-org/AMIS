@@ -132,15 +132,13 @@ function updateMap() {
     });
 
     var colorizd = L.tileLayer.lut(img_path + '/{z}/{x}/{y}.png', {
-
-        colorize: function (pixel) {
-            // pixel is an object with red, green, blue and alpha channel like this {r, g, b, a}.
-            return { r: pixel.r, g: pixel.g, b: pixel.b, a: pixel.a };      // for example, to swap the red and green channel
-        },
-
-    })
-
-
+        minZoom: 2,
+        maxZoom: 7,
+        tms: true,
+        crs: L.CRS.Simple,
+        noWrap: true,
+        maxBoundsViscosity: 1.0,
+    });
 
     // var r = L.tileLayer(img_path+'/{z}/{x}/{y}-r.png', {
     //     minZoom: 2,
