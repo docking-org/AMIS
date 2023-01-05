@@ -62,6 +62,7 @@ MarkupSafe==1.1.0
 marshmallow==3.2.2
 numpy
 openpyxl==2.5.4
+opencv-python==4.6.0.66
 paramiko==2.6.0
 passlib==1.7.1
 pathspec==0.5.5
