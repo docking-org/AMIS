@@ -131,6 +131,17 @@ function updateMap() {
         filter: filter_dapi
     });
 
+    var colorizd = L.tileLayer.lut(img_path + '/{z}/{x}/{y}.png', {
+
+        colorize: function (pixel) {
+            // pixel is an object with red, green, blue and alpha channel like this {r, g, b, a}.
+            return { r: pixel.r, g: pixel.g, b: pixel.b, a: pixel.a };      // for example, to swap the red and green channel
+        },
+
+    })
+
+
+
     // var r = L.tileLayer(img_path+'/{z}/{x}/{y}-r.png', {
     //     minZoom: 2,
     //     maxZoom: 7,1
@@ -186,10 +197,12 @@ function updateMap() {
     var overlayMaps = {
         "tdTomato": tile_tomato,
         "DAPI": tile_DAPI,
+        "colorizd": colorizd
     };
 
     // var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
     var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
+
     map.addControl(new L.Control.Fullscreen());
 
     // annotation.getContainer().classList.add('leaflet-tile');
