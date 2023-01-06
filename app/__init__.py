@@ -5,7 +5,7 @@ from flask import Flask
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_bootstrap import Bootstrap
+from flask_bootstrap import Bootstrap5
 import flask_admin
 from app.data.views.model_views import ExperimentView, \
      SliceViewWithImages, GeneView, MouseView
@@ -16,7 +16,7 @@ from flask_admin.contrib.sqla import ModelView
 
 db = SQLAlchemy()
 migrate = Migrate()
-bootstrap = Bootstrap()
+bootstrap = Bootstrap5()
 api = Api()
 
 

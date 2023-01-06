@@ -31,7 +31,7 @@ et-xmlfile==1.0.1
 Flask==1.0.2
 Flask-Admin==1.5.3
 Flask-BabelEx==0.9.3
-Flask-Bootstrap
+
 Flask-CSV==1.2.0
 Flask-Excel==0.0.7
 Flask-HTTPAuth==3.2.4

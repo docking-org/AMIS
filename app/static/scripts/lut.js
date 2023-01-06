@@ -11,11 +11,13 @@ L.TileLayer.Lut = L.TileLayer.extend({
 
         if (img.getAttribute('data-colorized'))
             return;
+        if (this.options.lut == 'white' || this.options.lut == '') {
+            return;
+        }
 
         fetch("/lut", {
             method: "POST",
-            body: JSON.stringify({ body: img.src }),
-
+            body: JSON.stringify({ url: img.src, type: this.options.lut }),
         })
             .then(response => response.blob())
             .then(imageBlob => {

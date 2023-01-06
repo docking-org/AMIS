@@ -3,6 +3,7 @@ import json
 import cv2
 import urllib
 import numpy as np
+from app.data.lut.lookuptables import lookuptables
 from app.main import application
 from app.helpers.validation import load_images
 from app.data.models.slice import SliceModel
@@ -111,20 +112,33 @@ def img_browser():
                            imgType=imgType)
 
 
+
 @application.route('/lut', methods=['POST'])
 def lut():
-    url.replace("https://files.docking.org/", "/nfs/ex9/")
-    url = json.loads(request.data.decode('utf-8'))['body']
+    data = json.loads(request.data.decode('utf-8'))
+    type = data['type']
+    
+    
+    # for local testing
+    url = data['url']
     req = urllib.request.urlopen(url)
-    arr = np.asarray(bytearray(req.read()), dtype=np.uint8)
+    arr = np.asarray(bytearray(req.read()), dtype=np.uint8)  
+    
+    img = cv2.imdecode(arr, -1).astype(np.uint8)
+    img = img[:,:,:3]
+    #url = url.replace("https://files.docking.org/", "/nfs/ex9/")
+    #img = cv2.imread(url)
     
     
-    img = cv2.imdecode(arr, -1) # 'Load it as it is'
-    img[:, :, (0, 1)] = 0
+    
+    try:
+        img = cv2.LUT(img, lookuptables[type])
+    except:
+        pass
+       
     retval, buffer = cv2.imencode('.png', img)
     response = make_response(buffer.tobytes())
     response.headers.set('Content-Type', 'image/png')
-    
     response.headers.set(
         'Content-Disposition', 'attachment')
     return response

@@ -51,7 +51,9 @@ def convert_tif_to_rgb(name):
     
     where name is the name of the file, and filename is the name of the file without the extension.
     make sure the file is a tif file before converting it to rgb.
+    also use a transparency gradient to make the image look better.
     """
+    
   
     if "tdTomato" in name:
         filename = name.split(".")

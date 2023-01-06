@@ -71,23 +71,33 @@ observer.observe(map_right, {
 });
 
 
-let contrastSliderDAPI = document.getElementById('contrast-slider-left-dapi');
-let contrastLabelDAPI = document.getElementById('contrast-value-left-dapi');
-contrastSliderDAPI.addEventListener('input', function (e) {
+// let contrastSliderDAPI = document.getElementById('contrast-slider-left-dapi');
+// let contrastLabelDAPI = document.getElementById('contrast-value-left-dapi');
+// contrastSliderDAPI.addEventListener('input', function (e) {
+//     let value = e.target.value;
+//     contrastLabelDAPI.textContent = value + '%';
+//     contrastDAPI = value + '%';
+//     updateMap();
+// });
+
+// let contrastSliderTomato = document.getElementById('contrast-slider-left-td-tomato');
+// let contrastLabelTomato = document.getElementById('contrast-value-left-td-tomato');
+// contrastSliderTomato.addEventListener('input', function (e) {
+//     let value = e.target.value;
+//     contrastLabelTomato.textContent = value + '%';
+//     contrastTomato = value + '%';
+//     updateMap();
+// });
+
+let lutTomato = '';
+let lutDropdownTomato = document.getElementById('lut-left-td-tomato');
+lutDropdownTomato.addEventListener('input', function (e) {
     let value = e.target.value;
-    contrastLabelDAPI.textContent = value + '%';
-    contrastDAPI = value + '%';
+    lutTomato = value
     updateMap();
 });
 
-let contrastSliderTomato = document.getElementById('contrast-slider-left-td-tomato');
-let contrastLabelTomato = document.getElementById('contrast-value-left-td-tomato');
-contrastSliderTomato.addEventListener('input', function (e) {
-    let value = e.target.value;
-    contrastLabelTomato.textContent = value + '%';
-    contrastTomato = value + '%';
-    updateMap();
-});
+
 
 //updating leaflet map
 function updateMap() {
@@ -111,16 +121,6 @@ function updateMap() {
         'opacity:50%',
     ];
 
-    var tile_tomato = L.tileLayer.colorFilter(img_path + '/{z}/{x}/{y}.png', {
-        minZoom: 2,
-        maxZoom: 7,
-        tms: true,
-        crs: L.CRS.Simple,
-        noWrap: true,
-        maxBoundsViscosity: 1.0,
-        filter: filter_tomato
-    });
-
     var tile_DAPI = L.tileLayer.colorFilter(img_path_DAPI + '/{z}/{x}/{y}.png', {
         minZoom: 2,
         maxZoom: 7,
@@ -131,13 +131,14 @@ function updateMap() {
         filter: filter_dapi
     });
 
-    var colorizd = L.tileLayer.lut(img_path + '/{z}/{x}/{y}.png', {
+    var tile_tomato = L.tileLayer.lut(img_path + '/{z}/{x}/{y}.png', {
         minZoom: 2,
         maxZoom: 7,
         tms: true,
         crs: L.CRS.Simple,
         noWrap: true,
         maxBoundsViscosity: 1.0,
+        lut: lutTomato
     });
 
     // var r = L.tileLayer(img_path+'/{z}/{x}/{y}-r.png', {
@@ -185,7 +186,7 @@ function updateMap() {
     map = L.map('map', {
         center: [-49, -49],
         zoom: 2,
-        layers: [tile_DAPI, tile_tomato]
+        layers: [tile_tomato]
     });
 
     var baseMaps = {
@@ -195,7 +196,6 @@ function updateMap() {
     var overlayMaps = {
         "tdTomato": tile_tomato,
         "DAPI": tile_DAPI,
-        "colorizd": colorizd
     };
 
     // var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
@@ -301,8 +301,10 @@ function reloadMap() {
 
 
 $("#wavelength .btn").on('click', function (event) {
-    console.log("wavelength");
-    wavelength = $(this).find('input').val();
+
+
+    wavelength = $(this).val();
+
     itemIndex = parseInt($('.current_id').val()) - 1;
     slyOptions['startAt'] = itemIndex;
     reloadMap();
