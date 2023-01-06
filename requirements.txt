@@ -10,6 +10,7 @@ blessed==1.15.0
 blinker==1.4
 boto3==1.7.44
 botocore==1.10.44
+bootstrap-flask
 cached-property==1.4.3
 cement==2.8.2
 certifi==2018.4.16
