@@ -116,23 +116,35 @@ def img_browser():
 @application.route('/lut', methods=['POST'])
 def lut():
     data = json.loads(request.data.decode('utf-8'))
-    type = data['type']
-    
-    
+    lut = data['lut']
+    auto = True
+   
     # for local testing
     url = data['url']
     req = urllib.request.urlopen(url)
     arr = np.asarray(bytearray(req.read()), dtype=np.uint8)  
-    
     img = cv2.imdecode(arr, -1).astype(np.uint8)
-    img = img[:,:,:3]
+    
+    # for production
     #url = url.replace("https://files.docking.org/", "/nfs/ex9/")
-    #img = cv2.imread(url)
+    #img = cv2.imread(url).astype(np.uint8)
     
+    img = img[:,:,:3]
     
+    if(auto):
+        Tmin = 10
+        Tmax = 220
+        table = np.arange(256).astype(np.uint8)
+        table[:Tmin] = 0
+        table[Tmax:] = 255
+        table[Tmin:Tmax] = (255/(Tmax-Tmin))*(table[Tmin:Tmax] - Tmin)
+        
+        
+        img = table[img]
+   
     
     try:
-        img = cv2.LUT(img, lookuptables[type])
+        img = cv2.LUT(img, lookuptables[lut])
     except:
         pass
        
