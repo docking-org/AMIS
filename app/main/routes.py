@@ -120,14 +120,14 @@ def lut():
     auto = True
    
     # for local testing
-    url = data['url']
-    req = urllib.request.urlopen(url)
-    arr = np.asarray(bytearray(req.read()), dtype=np.uint8)  
-    img = cv2.imdecode(arr, -1).astype(np.uint8)
+    # url = data['url']
+    # req = urllib.request.urlopen(url)
+    # arr = np.asarray(bytearray(req.read()), dtype=np.uint8)  
+    # img = cv2.imdecode(arr, -1).astype(np.uint8)
     
     # for production
-    #url = url.replace("https://files.docking.org/", "/nfs/ex9/")
-    #img = cv2.imread(url).astype(np.uint8)
+    url = url.replace("https://files.docking.org/", "/nfs/ex9/")
+    img = cv2.imread(url).astype(np.uint8)
     
     img = img[:,:,:3]
     
@@ -138,7 +138,6 @@ def lut():
         table[:Tmin] = 0
         table[Tmax:] = 255
         table[Tmin:Tmax] = (255/(Tmax-Tmin))*(table[Tmin:Tmax] - Tmin)
-        
         
         img = table[img]
    
