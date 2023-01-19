@@ -89,14 +89,13 @@ observer.observe(map_right, {
 //     updateMap();
 // });
 
-let lutTomato = '';
+let lutTomato = 'none';
 let lutDropdownTomato = document.getElementById('lut-left-td-tomato');
 lutDropdownTomato.addEventListener('input', function (e) {
     let value = e.target.value;
     lutTomato = value
     updateMap();
 });
-
 
 
 //updating leaflet map
@@ -107,7 +106,7 @@ function updateMap() {
     var img_path = $('#map').attr('data-high-res-src');
     var query_params = "";
 
-    if (lutTomato !== 'grayscale' || lutTomato !== undefined || lutTomato !== '') {
+    if (lutTomato !== 'grayscale' && lutTomato !== 'none') {
         img_path = "/lut";
         query_params = `?lut=${lutTomato}` + "&url=" + encodeURIComponent($('#map').attr('data-high-res-src'));
     }
@@ -138,6 +137,7 @@ function updateMap() {
         filter: filter_dapi,
         edgeBufferTiles: 1,
         minNativeZoom: 2,
+        bounds: [[-100, -100], [100, 100]],
     });
 
     var tile_tomato = L.tileLayer.lut(img_path + '/{z}/{x}/{y}.png' + query_params, {
@@ -150,57 +150,20 @@ function updateMap() {
         minNativeZoom: 2,
         maxNativeZoom: 7,
         edgeBufferTiles: 1,
+        bounds: [[-100, -100], [100, 100]],
     });
 
-    // var r = L.tileLayer(img_path+'/{z}/{x}/{y}-r.png', {
-    //     minZoom: 2,
-    //     maxZoom: 7,1
-    //     tms: true,
-    //     crs: L.CRS.Simple,
-    //     noWrap: true,
-    //     maxBoundsViscosity: 1.0,
-    //     transparent: true,
 
-    // });
-    // var g = L.tileLayer(img_path+'/{z}/{x}/{y}-g.png', {
-    //     minZoom: 2,
-    //     maxZoom: 7,
-    //     tms: true,
-    //     crs: L.CRS.Simple,
-    //     noWrap: true,
-    //     maxBoundsViscosity: 1.0,
-    //     transparent: true,
-
-    // });
-    // var b = L.tileLayer(img_path+'/{z}/{x}/{y}-b.png', {
-    //     minZoom: 2,
-    //     maxZoom: 7,
-    //     tms: true,
-    //     crs: L.CRS.Simple,
-    //     noWrap: true,
-    //     maxBoundsViscosity: 1.0,
-    //     transparent: true 
-    // });
-
-
-    // var annotation = L.tileLayer(img_path2+'/{z}/{x}/{y}.png', {
-    //     minZoom: 2,
-    //     maxZoom: 7,
-    //     tms: true,
-    //     crs: L.CRS.Simple,
-    //     noWrap: true,
-    //     transparent: true,
-    //     format: 'image/png',
-    //     maxBoundsViscosity: 1.0
-    // });
 
     map = L.map('map', {
         center: [-49, -49],
         zoom: 2,
         layers: [tile_tomato],
         maxBoundsViscosity: 1.0,
-
+        bounceAtZoomLimits: false,
     });
+
+
 
     var baseMaps = {
 
@@ -215,7 +178,6 @@ function updateMap() {
     var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
 
     map.addControl(new L.Control.Fullscreen());
-
 
 
     // annotation.getContainer().classList.add('leaflet-tile');
