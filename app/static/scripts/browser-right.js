@@ -169,7 +169,7 @@ jQuery(function ($) {
             crs: L.CRS.Simple,
             noWrap: true,
             maxBoundsViscosity: 1.0,
-            filter: filter_tomato
+            filter: filter_tomato,
         });
 
         var tile_right_DAPI = L.tileLayer.colorFilter(img_path_right_DAPI + '/{z}/{x}/{y}.png', {
@@ -179,7 +179,7 @@ jQuery(function ($) {
             crs: L.CRS.Simple,
             noWrap: true,
             maxBoundsViscosity: 1.0,
-            filter: filter_dapi
+            filter: filter_dapi,
         });
 
         map2 = L.map('map_right', {

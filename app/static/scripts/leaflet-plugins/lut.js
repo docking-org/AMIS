@@ -1,3 +1,5 @@
+// Grabs the LUT-ized image from the server and replaces the tile image with it, in the case of a LUT being selected.
+
 L.TileLayer.Lut = L.TileLayer.extend({
     initialize: function (url, options) {
         L.TileLayer.prototype.initialize.call(this, url, options);
@@ -15,17 +17,6 @@ L.TileLayer.Lut = L.TileLayer.extend({
             return;
         }
 
-        fetch("/lut", {
-            method: "POST",
-            body: JSON.stringify({ url: img.src, lut: this.options.lut }),
-        })
-            .then(response => response.blob())
-            .then(imageBlob => {
-                console.log(imageBlob);
-                const imageObjectURL = URL.createObjectURL(imageBlob);
-                img.src = imageObjectURL;
-                img.setAttribute('data-colorized', true);
-            });
 
     },
     _initContainer: function () {

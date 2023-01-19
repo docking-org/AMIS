@@ -1,6 +1,7 @@
-from flask import render_template, request, send_file, make_response
+from flask import render_template, request, send_file, make_response, jsonify
 import json
 import cv2
+import json
 import urllib
 import numpy as np
 from app.data.lut.lookuptables import lookuptables
@@ -113,21 +114,27 @@ def img_browser():
 
 
 
-@application.route('/lut', methods=['POST'])
-def lut():
-    data = json.loads(request.data.decode('utf-8'))
-    lut = data['lut']
+@application.route('/lut/<z>/<x>/<y>', methods=['GET'])
+def lut(z,x,y):
+    ycord = y.split(".")[0]
+    if int(z) < 0 or int(x) < 0 or int(ycord) < 0:
+        return make_response(jsonify({'error': 'Invalid coordinates'}), 400)
+    lut = request.args.get("lut")
+    url = request.args.get('url') + "/{}/{}/{}".format(z,x,y)
+   
     auto = True
    
     # for local testing
-    # url = data['url']
-    # req = urllib.request.urlopen(url)
-    # arr = np.asarray(bytearray(req.read()), dtype=np.uint8)  
-    # img = cv2.imdecode(arr, -1).astype(np.uint8)
+    
+    req = urllib.request.urlopen(url)
+    if req.getcode() != 200:
+        return make_response(jsonify({'error': 'Could not download image'}), 400)
+    arr = np.asarray(bytearray(req.read()), dtype=np.uint8)  
+    img = cv2.imdecode(arr, -1).astype(np.uint8)
     
     # for production
-    url = url.replace("https://files.docking.org/", "/nfs/ex9/")
-    img = cv2.imread(url).astype(np.uint8)
+    # url = url.replace("https://files.docking.org/", "/nfs/ex9/")
+    # img = cv2.imread(url).astype(np.uint8)
     
     img = img[:,:,:3]
     

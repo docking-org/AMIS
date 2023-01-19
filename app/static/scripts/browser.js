@@ -103,8 +103,15 @@ lutDropdownTomato.addEventListener('input', function (e) {
 function updateMap() {
     map.off();
     map.remove();
+
     var img_path = $('#map').attr('data-high-res-src');
-    //var img_path = "/666/GPR85_Ai9_1_1_2505_f_p30_reporter-gene-cross_brain_955_c_1_00009_10x_Olympus_tdTomato_2984fc7f4ce470bef52c83f067179d9d_Simple Segmentation"
+    var query_params = "";
+
+    if (lutTomato !== 'grayscale' || lutTomato !== undefined || lutTomato !== '') {
+        img_path = "/lut";
+        query_params = `?lut=${lutTomato}` + "&url=" + encodeURIComponent($('#map').attr('data-high-res-src'));
+    }
+
     var img_path_DAPI = $('#map').attr('data-high-res-src-DAPI');
 
     let filter_tomato = [
@@ -121,24 +128,28 @@ function updateMap() {
         'opacity:50%',
     ];
 
-    var tile_DAPI = L.tileLayer.colorFilter(img_path_DAPI + '/{z}/{x}/{y}.png', {
+    var tile_DAPI = L.tileLayer.colorFilter(img_path_DAPI + '/{z}/{x}/{y}', {
         minZoom: 2,
         maxZoom: 7,
         tms: true,
         crs: L.CRS.Simple,
         noWrap: true,
         maxBoundsViscosity: 1.0,
-        filter: filter_dapi
+        filter: filter_dapi,
+        edgeBufferTiles: 1,
+        minNativeZoom: 2,
     });
 
-    var tile_tomato = L.tileLayer.lut(img_path + '/{z}/{x}/{y}.png', {
+    var tile_tomato = L.tileLayer.lut(img_path + '/{z}/{x}/{y}.png' + query_params, {
         minZoom: 2,
         maxZoom: 7,
         tms: true,
         crs: L.CRS.Simple,
         noWrap: true,
         maxBoundsViscosity: 1.0,
-        lut: lutTomato
+        minNativeZoom: 2,
+        maxNativeZoom: 7,
+        edgeBufferTiles: 1,
     });
 
     // var r = L.tileLayer(img_path+'/{z}/{x}/{y}-r.png', {
@@ -186,7 +197,9 @@ function updateMap() {
     map = L.map('map', {
         center: [-49, -49],
         zoom: 2,
-        layers: [tile_tomato]
+        layers: [tile_tomato],
+        maxBoundsViscosity: 1.0,
+
     });
 
     var baseMaps = {
@@ -202,6 +215,8 @@ function updateMap() {
     var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
 
     map.addControl(new L.Control.Fullscreen());
+
+
 
     // annotation.getContainer().classList.add('leaflet-tile');
     // map.on('click', function(e) {
