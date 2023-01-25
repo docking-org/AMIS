@@ -125,15 +125,15 @@ def lut(z,x,y):
     autobrightness = request.args.get("autobrightness")
    
     # for local testing    
-    # req = urllib.request.urlopen(url)
-    # if req.getcode() != 200:
-    #     return make_response(jsonify({'error': 'Could not download image'}), 400)
-    # arr = np.asarray(bytearray(req.read()), dtype=np.uint8)  
-    # img = cv2.imdecode(arr, -1).astype(np.uint8)
+    req = urllib.request.urlopen(url)
+    if req.getcode() != 200:
+        return make_response(jsonify({'error': 'Could not download image'}), 400)
+    arr = np.asarray(bytearray(req.read()), dtype=np.uint8)  
+    img = cv2.imdecode(arr, -1).astype(np.uint8)
     
     # for production
-    url = url.replace("https://files.docking.org/", "/nfs/ex9/")
-    img = cv2.imread(url).astype(np.uint8)
+    # url = url.replace("https://files.docking.org/", "/nfs/ex9/")
+    # img = cv2.imread(url).astype(np.uint8)
     
     img = img[:,:,:3]
     blend = int(request.args.get("blend"))
@@ -166,18 +166,18 @@ def lut(z,x,y):
         img = np.clip(img, cliplow, cliphigh)
     
     else:
-        # if autobrightness is true, calculate a balance between the brightness and contrast
-        # the brightness is calculated by finding the mean pixel value
-        # the contrast is calculated by finding the standard deviation of the pixel values
-        # the contrast is then adjusted by the ratio of the standard deviation to the mean
-        # the brightness is then adjusted by the mean minus the contrast factor times the mean
-        mean = np.mean(img)
+        contrast  = 20
+        brightness = -15
+        
+        contrast_factor = (259 * (contrast + 255)) / (255 * (259 - contrast))
 
-        std = np.std(img)
-        contrast_factor = std / mean
-        brightness_factor = mean - contrast_factor * mean
+
+        # calculate the brightness by adding the brightness value to the pixel values
+        brightness_factor = brightness - 128 * (contrast_factor - 1)
+        
         img = img * contrast_factor + brightness_factor
-            
+        
+        img = np.clip(img, 0, 255)
             
     
         

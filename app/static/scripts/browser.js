@@ -135,34 +135,34 @@ function updateMap() {
     var query_params_tomato = "";
     var query_params_DAPI = "";
 
-    if (lutTomato !== 'grayscale' && lutTomato !== 'none' || autobrightness === true) {
-        img_path = "/lut";
-        //balance between tomato and DAPI
-        var localblend = 128 - blend;
-        query_params_tomato = `?lut=${lutTomato}` +
-            "&autobrightness=" + autobrightness +
-            "&url=" + encodeURIComponent($('#map').attr('data-high-res-src')) +
-            "&brightness=" + brightness +
-            "&contrast=" + contrast +
-            "&cliplow=" + cliplow +
-            "&cliphigh=" + cliphigh +
-            "&blend=" + localblend
-            ;
-    }
 
-    if (lutDAPI !== 'grayscale' && lutDAPI !== 'none' || autobrightness === true) {
-        img_path_DAPI = "/lut";
-        var localblend = 128 + blend;
-        query_params_DAPI = `?lut=${lutDAPI}` +
-            "&autobrightness=" + autobrightness +
-            "&url=" + encodeURIComponent($('#map').attr('data-high-res-src-DAPI')) +
-            "&brightness=" + brightness +
-            "&contrast=" + contrast +
-            "&cliplow=" + cliplow +
-            "&cliphigh=" + cliphigh +
-            "&blend=" + localblend
-            ;
-    }
+    img_path = "/lut";
+    //balance between tomato and DAPI
+    var tomatoblend = 128 - blend;
+    query_params_tomato = `?lut=${lutTomato}` +
+        "&autobrightness=" + autobrightness +
+        "&url=" + encodeURIComponent($('#map').attr('data-high-res-src')) +
+        "&brightness=" + brightness +
+        "&contrast=" + contrast +
+        "&cliplow=" + cliplow +
+        "&cliphigh=" + cliphigh +
+        "&blend=" + tomatoblend
+        ;
+
+
+
+    img_path_DAPI = "/lut";
+    var dapiblend = 128;
+    query_params_DAPI = `?lut=${lutDAPI}` +
+        "&autobrightness=" + autobrightness +
+        "&url=" + encodeURIComponent($('#map').attr('data-high-res-src-DAPI')) +
+        "&brightness=" + brightness +
+        "&contrast=" + contrast +
+        "&cliplow=" + cliplow +
+        "&cliphigh=" + cliphigh +
+        "&blend=" + dapiblend
+        ;
+
 
 
     if (tiles_loaded === false) {
@@ -303,9 +303,10 @@ function updateMap() {
         map.addControl(new L.Control.Fullscreen());
         map.addControl(new L.Control.Brightness({ 'position': 'topleft' }));
         //add control to reset all sliders
+        resetButton = L.control.reset({ 'position': 'bottomleft' }).addTo(map);
         toggleAutoBrightness();
-        resetButton = L.control.reset({ 'position': 'bottomleft' });
-        map.addControl(resetButton);
+
+
 
         // annotation.getContainer().classList.add('leaflet-tile');
         // map.on('click', function(e) {
