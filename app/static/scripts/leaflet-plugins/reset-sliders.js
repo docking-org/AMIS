@@ -11,6 +11,12 @@ L.Control.Reset = L.Control.extend({
         });
         return container;
     },
+    hide: function () {
+        this._container.style.display = 'none';
+    },
+    show: function () {
+        this._container.style.display = 'block';
+    }
 
 
 });

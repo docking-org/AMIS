@@ -176,10 +176,11 @@ def lut(z,x,y):
     except:
         pass
     
-    #set alpha channel to blend value
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2BGRA)
+    # convert image to rgba for transparency, then set every pixel to the blend value
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2RGBA)
     img[:,:,3] = blend
-
+    
+    
        
     retval, buffer = cv2.imencode('.png', img)
     response = make_response(buffer.tobytes())

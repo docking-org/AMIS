@@ -30,6 +30,13 @@ L.Control.Brightness = L.Control.extend({
         // Nothing to do here
     },
 
+    hide: function () {
+        this._container.style.display = 'none';
+    },
+    show: function () {
+        this._container.style.display = 'block';
+    }
+
 });
 
 L.control.brightness = function () {

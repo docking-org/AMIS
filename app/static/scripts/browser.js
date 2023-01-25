@@ -113,7 +113,7 @@ let brightness = 0;
 let contrast = 0;
 let cliplow = 0;
 let cliphigh = 256;
-let blend = 0;
+let blend = -127;
 
 
 
@@ -994,6 +994,22 @@ function toggle_split() {
 
 function toggleAutoBrightness() {
     autobrightness = !autobrightness;
+
+    if (autobrightness) {
+        brightnessSlider.hide()
+        contrastSlider.hide()
+        maxSlider.hide()
+        minSlider.hide()
+        blendSlider.hide()
+    }
+    else {
+        brightnessSlider.show()
+        contrastSlider.show()
+        maxSlider.show()
+        minSlider.show()
+        blendSlider.show()
+    }
+
     updateMap();
 }
 
