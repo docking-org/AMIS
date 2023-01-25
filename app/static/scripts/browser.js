@@ -16,7 +16,7 @@ var pos_tomato_list = [];
 var neg_DAPI_list = [];
 var neg_tomato_list = [];
 var split = false;
-
+var autobrightness = true;
 var $frame = $('#forcecentered');
 var $wrap = $frame.parent();
 
@@ -56,7 +56,9 @@ if ($('#sample_dropdown').val().length + $('#gene_dropdown').val().length +
     setDefaultDDlVal(1, 1, 1, 1);
 }
 
-var map = L.map('map').setView([0, 0], 3);
+
+
+var map = L.map('map').setView([-50, -50], 3);
 
 
 var map_right = document.getElementById('map');
@@ -98,93 +100,204 @@ lutDropdownTomato.addEventListener('input', function (e) {
 });
 
 
+let lutDAPI = 'none';
+let lutDropdownDAPI = document.getElementById('lut-left-DAPI');
+lutDropdownDAPI.addEventListener('input', function (e) {
+    let value = e.target.value;
+    lutDAPI = value
+    updateMap();
+});
+
+
+let brightness = 0;
+let contrast = 0;
+let cliplow = 0;
+let cliphigh = 256;
+
+
+
+
 //updating leaflet map
+
+var tiles_loaded = false;
+var tile_tomato = undefined;
+var tile_DAPI = undefined;
+var brightnessSlider = undefined;
+var contrastSlider = undefined;
+var minSlider = undefined;
+var maxSlider = undefined;
+
+
 function updateMap() {
-    map.off();
-    map.remove();
-
     var img_path = $('#map').attr('data-high-res-src');
-    var query_params = "";
+    var img_path_DAPI = $('#map').attr('data-high-res-src-DAPI');
+    var query_params_tomato = "";
+    var query_params_DAPI = "";
 
-    if (lutTomato !== 'grayscale' && lutTomato !== 'none') {
+    if (lutTomato !== 'grayscale' && lutTomato !== 'none' || autobrightness === true) {
         img_path = "/lut";
-        query_params = `?lut=${lutTomato}` + "&url=" + encodeURIComponent($('#map').attr('data-high-res-src'));
+        query_params_tomato = `?lut=${lutTomato}` + "&autobrightness=" + autobrightness + "&url=" + encodeURIComponent($('#map').attr('data-high-res-src')) + "&brightness=" + brightness + "&contrast=" + contrast + "&cliplow=" + cliplow + "&cliphigh=" + cliphigh;
     }
 
-    var img_path_DAPI = $('#map').attr('data-high-res-src-DAPI');
-
-    let filter_tomato = [
-        'brightness:100%',
-        `contrast:${contrastTomato}`,
-        'grayscale:0%',
-        'opacity:50%',
-    ];
-
-    let filter_dapi = [
-        'brightness:100%',
-        `contrast:${contrastDAPI}`,
-        'grayscale:0%',
-        'opacity:50%',
-    ];
-
-    var tile_DAPI = L.tileLayer.colorFilter(img_path_DAPI + '/{z}/{x}/{y}', {
-        minZoom: 2,
-        maxZoom: 7,
-        tms: true,
-        crs: L.CRS.Simple,
-        noWrap: true,
-        maxBoundsViscosity: 1.0,
-        filter: filter_dapi,
-        edgeBufferTiles: 1,
-        minNativeZoom: 2,
-        bounds: [[-100, -100], [100, 100]],
-    });
-
-    var tile_tomato = L.tileLayer.lut(img_path + '/{z}/{x}/{y}.png' + query_params, {
-        minZoom: 2,
-        maxZoom: 7,
-        tms: true,
-        crs: L.CRS.Simple,
-        noWrap: true,
-        maxBoundsViscosity: 1.0,
-        minNativeZoom: 2,
-        maxNativeZoom: 7,
-        edgeBufferTiles: 1,
-        bounds: [[-100, -100], [100, 100]],
-    });
+    if (lutDAPI !== 'grayscale' && lutDAPI !== 'none' || autobrightness === true) {
+        img_path_DAPI = "/lut";
+        query_params_DAPI = `?lut=${lutDAPI}` + "&autobrightness=" + autobrightness + "&url=" + encodeURIComponent($('#map').attr('data-high-res-src-DAPI')) + "&brightness=" + brightness + "&contrast=" + contrast + "&cliplow=" + cliplow + "&cliphigh=" + cliphigh;
+    }
 
 
+    if (tiles_loaded === false) {
+        tile_DAPI = L.tileLayer.lut(img_path_DAPI + '/{z}/{x}/{y}.png' + query_params_DAPI, {
+            minZoom: 2,
+            maxZoom: 7,
+            tms: true,
+            crs: L.CRS.Simple,
+            noWrap: true,
+            maxBoundsViscosity: 1.0,
+            minNativeZoom: 2,
+            maxNativeZoom: 7,
+            edgeBufferTiles: 1,
+            bounds: [[-150, -150], [150, 150]],
+        });
 
-    map = L.map('map', {
-        center: [-49, -49],
-        zoom: 2,
-        layers: [tile_tomato],
-        maxBoundsViscosity: 1.0,
-        bounceAtZoomLimits: false,
-    });
+        tile_tomato = L.tileLayer.lut(img_path + '/{z}/{x}/{y}.png' + query_params_tomato, {
+            minZoom: 2,
+            maxZoom: 7,
+            tms: true,
+            crs: L.CRS.Simple,
+            noWrap: true,
+            maxBoundsViscosity: 1.0,
+            minNativeZoom: 2,
+            maxNativeZoom: 7,
+            edgeBufferTiles: 1,
+            bounds: [[-150, -150], [500, 150]],
+        });
+
+        tiles_loaded = true;
+
+        map.off();
+        map.remove();
+
+        map = L.map('map', {
+            zoom: 2,
+            center: [-50, -50],
+
+
+            layers: [tile_tomato],
+            maxBoundsViscosity: 1.0,
+            bounceAtZoomLimits: false,
+        });
+
+
+        var baseMaps = {
+
+        };
+
+        var overlayMaps = {
+            "tdTomato": tile_tomato,
+            "DAPI": tile_DAPI,
+        };
+
+        // var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
+        var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
+
+        brightnessSlider = L.control.slider(function (value) {
+            brightness = value;
+        }, {
+            id: 'slider',
+            min: -255,
+            max: 255,
+            value: brightness,
+            step: 1,
+            position: 'bottomleft',
+            orientation: 'horizontal',
+            logo: "<i class='fas fa-sun'></i>",
+            title: 'Brightness',
+            layer: tile_tomato,
+            syncSlider: true,
+        }).addTo(map);
+
+        contrastSlider = L.control.slider(function (value) {
+            contrast = value;
+        }, {
+            id: 'slider',
+            min: -255,
+            max: 255,
+            value: contrast,
+            step: 1,
+            position: 'bottomleft',
+            orientation: 'horizontal',
+            logo: "<i class='fas fa-adjust'></i>",
+            title: 'Contrast',
+            layer: tile_tomato,
+            syncSlider: true,
+        }).addTo(map);
+
+        minSlider = L.control.slider(function (value) {
+            cliplow = value;
+        }, {
+            id: 'slider',
+            min: 0,
+            max: 255,
+            value: cliplow,
+            step: 1,
+            position: 'bottomleft',
+            orientation: 'horizontal',
+            logo: "Min",
+            title: 'Min',
+            layer: tile_tomato,
+            syncSlider: true,
+        }).addTo(map);
+
+        maxSlider = L.control.slider(function (value) {
+            cliphigh = value;
+        }, {
+            id: 'slider',
+            min: 0,
+            max: 255,
+            value: cliphigh,
+            step: 1,
+            position: 'bottomleft',
+            orientation: 'horizontal',
+            logo: "Max",
+            title: 'Max',
+            layer: tile_tomato,
+            syncSlider: true,
+        }).addTo(map);
 
 
 
-    var baseMaps = {
+        map.addControl(new L.Control.Fullscreen());
+        map.addControl(new L.Control.Brightness({ 'position': 'topleft' }));
+        //add control to reset all sliders
+        map.addControl(new L.Control.Reset({ 'position': 'bottomleft' }));
 
-    };
+        // annotation.getContainer().classList.add('leaflet-tile');
+        // map.on('click', function(e) {
+        //     alert("Lat, Lon : " + e.latlng.lat + ", " + e.latlng.lng)
+        // });
+        resize();
+    }
+    else {
+        map.invalidateSize();
+        //set map center and zoom
+        //reset all slider values
 
-    var overlayMaps = {
-        "tdTomato": tile_tomato,
-        "DAPI": tile_DAPI,
-    };
 
-    // var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
-    var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
-
-    map.addControl(new L.Control.Fullscreen());
+        tile_DAPI.setUrl(img_path_DAPI + '/{z}/{x}/{y}.png' + query_params_DAPI);
+        tile_tomato.setUrl(img_path + '/{z}/{x}/{y}.png' + query_params_tomato);
 
 
-    // annotation.getContainer().classList.add('leaflet-tile');
-    // map.on('click', function(e) {
-    //     alert("Lat, Lon : " + e.latlng.lat + ", " + e.latlng.lng)
-    // });
-    resize();
+        resize();
+    }
+}
+
+function resetSliders() {
+    brightnessSlider.resetSlider();
+    contrastSlider.resetSlider();
+    maxSlider.resetSlider();
+    minSlider.resetSlider();
+
+
 }
 
 
@@ -682,7 +795,7 @@ function updateSliceDetail(id) {
             var content = "";
             for (var i in data.items) {
                 content += "<br/><br/><p>Probe: " + data.items[i].gene + "</p>";
-                content += "<p>MD5: <b>" + data.items[i].checksum + "</b></p>";
+                content += "<p style='word-wrap: break-word;'>MD5: <b>" + data.items[i].checksum + "</b></p>";
                 content += "<p><a href=" + data.items[i].tif_url + ">Download TIF file (raw 16 bit)</a></p>";
                 content += "<p>Shareable URL: <button class='glyphicon glyphicon-copy copyUrl btn btn-info' ";
                 content += " title='click here to copy Shareable URL'></button></p>";
@@ -845,6 +958,12 @@ function toggle_split() {
         split = true;
     }
 }
+
+function toggleAutoBrightness() {
+    autobrightness = !autobrightness;
+    updateMap();
+}
+
 
 function change_bg() {
     if (bg_color == 1) {

@@ -8,7 +8,8 @@
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
     integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 <link href="{{ url_for('static', filename='styles/browser.css') }}" rel="stylesheet" type="text/css" />
-
+<link href="{{ url_for('static', filename='scripts/leaflet-plugins/leaflet-slider.css') }}" rel="stylesheet"
+    type="text/css" />
 
 <style>
     .modal-dialog {
@@ -62,7 +63,11 @@
 <script src="{{ url_for('static', filename='scripts/sly/sly.min.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/sly/examples/js/vendor/plugins.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/leaflet-plugins/lut.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/leaflet-plugins/auto-brightness.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/leaflet-plugins/edge-buffer.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/leaflet-plugins/leaflet-slider.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/leaflet-plugins/reset-sliders.js') }}"></script>
+
 <script
     src="{{ url_for('static', filename='scripts/leaflet-color-filter/leaflet-tilelayer-colorfilter.min.js') }}"></script>
 
@@ -111,9 +116,8 @@
         var subheader = document.getElementById("subheader");
         map.style.height = "55vh";
         map.style.width = "100%";
-
-
     }
+
 
 </script>
 <script src="{{ url_for('static', filename='scripts/browser.js') }}"></script>

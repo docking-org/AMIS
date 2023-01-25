@@ -17,7 +17,6 @@ L.TileLayer.Lut = L.TileLayer.extend({
             return;
         }
 
-
     },
     _initContainer: function () {
         let tile = L.TileLayer.prototype._initContainer.call(this);
