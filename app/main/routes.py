@@ -136,40 +136,41 @@ def lut(z,x,y):
     img = cv2.imread(url).astype(np.uint8)
     
     img = img[:,:,:3]
+    
+    
+    if autobrightness == "true":
+        brightness = int(request.args.get("brightness"))
+        contrast = int(request.args.get("contrast"))
+        cliplow = int(request.args.get("cliplow"))
+        cliphigh = int(request.args.get("cliphigh"))
+        blend = int(request.args.get("blend"))
+        
+        # adjust the brightness by adding the brightness value to each pixel in the image
+        # the limits of the pixel values are 0 to 255, so if the brightness is set to 255, the image will be completely white
+        # the contrast can be a number from 0 to 254, where 0 is no contrast and 254 is the maximum contrast
+        # the contrast affects the limits of the pixel values. If the contrast is set to 2, the pixel values will be limited to 2 to 253
 
-    brightness = int(request.args.get("brightness"))
-    contrast = int(request.args.get("contrast"))
-    cliplow = int(request.args.get("cliplow"))
-    cliphigh = int(request.args.get("cliphigh"))
-    blend = int(request.args.get("blend"))
-    
-    # adjust the brightness by adding the brightness value to each pixel in the image
-    # the limits of the pixel values are 0 to 255, so if the brightness is set to 255, the image will be completely white
-    # the contrast can be a number from 0 to 254, where 0 is no contrast and 254 is the maximum contrast
-    # the contrast affects the limits of the pixel values. If the contrast is set to 2, the pixel values will be limited to 2 to 253
-
-    # calculate the min and max pixel values
-    
-    # reduce the contrast by limiting the pixel values on both ends of the range
-    # the contrast factor is the ratio of the new range to the old range
-    contrast_factor = (259 * (contrast + 255)) / (255 * (259 - contrast))
+        # calculate the min and max pixel values
+        
+        # reduce the contrast by limiting the pixel values on both ends of the range
+        # the contrast factor is the ratio of the new range to the old range
+        contrast_factor = (259 * (contrast + 255)) / (255 * (259 - contrast))
 
 
-    # calculate the brightness by adding the brightness value to the pixel values
-    brightness_factor = brightness - 128 * (contrast_factor - 1)
+        # calculate the brightness by adding the brightness value to the pixel values
+        brightness_factor = brightness - 128 * (contrast_factor - 1)
+        
+        img = img * contrast_factor + brightness_factor
+        
+        
+        img = np.clip(img, cliplow, cliphigh)
     
-    img = img * contrast_factor + brightness_factor
-    
-    
-    img = np.clip(img, cliplow, cliphigh)
-    
+    else:
+        
     img = img.astype(np.uint8)
     
     if lut == "inverted":
         img = cv2.bitwise_not(img)
-        
-    
-    
     
     try:
         img = cv2.LUT(img, lookuptables[lut])

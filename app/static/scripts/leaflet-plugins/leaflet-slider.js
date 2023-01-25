@@ -154,6 +154,14 @@ L.Control.Slider = L.Control.extend({
     resetSlider: function () {
         this.slider.value = this.options.value;
         this._updateValue();
+    },
+
+
+    hide: function () {
+        this._container.style.display = 'none';
+    },
+    show: function () {
+        this._container.style.display = 'block';
     }
 
 
