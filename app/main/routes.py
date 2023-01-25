@@ -152,11 +152,13 @@ def lut(z,x,y):
     min = np.min(img)
     max = np.max(img)
     
-    contrast_factor = (259 * (contrast + 255)) / (255 * (259 - contrast))
-
-    brightness_factor = brightness - contrast_factor * min
+    # reduce the contrast by limiting the pixel values
+    contrast_factor = (contrast + 1) / 255
+    # calculate the brightness by adding the brightness value to the pixel values
+    brightness_factor = brightness - 128
     
-    img = contrast_factor * img + brightness_factor
+    img = img * contrast_factor + brightness_factor
+    
     
     img = np.clip(img, cliplow, cliphigh)
     
@@ -176,7 +178,7 @@ def lut(z,x,y):
     #set alpha channel to blend value
     img = cv2.cvtColor(img, cv2.COLOR_BGR2BGRA)
     img[:,:,3] = blend
-        
+
        
     retval, buffer = cv2.imencode('.png', img)
     response = make_response(buffer.tobytes())
