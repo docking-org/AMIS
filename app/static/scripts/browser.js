@@ -126,7 +126,7 @@ var brightnessSlider = undefined;
 var contrastSlider = undefined;
 var minSlider = undefined;
 var maxSlider = undefined;
-
+var blendSlider = undefined;
 
 function updateMap() {
     var img_path = $('#map').attr('data-high-res-src');
@@ -136,7 +136,8 @@ function updateMap() {
 
     if (lutTomato !== 'grayscale' && lutTomato !== 'none' || autobrightness === true) {
         img_path = "/lut";
-        var localblend = 128 + blend;
+        //balance between tomato and DAPI
+        var localblend = 128 - blend;
         query_params_tomato = `?lut=${lutTomato}` +
             "&autobrightness=" + autobrightness +
             "&url=" + encodeURIComponent($('#map').attr('data-high-res-src')) +
@@ -144,13 +145,13 @@ function updateMap() {
             "&contrast=" + contrast +
             "&cliplow=" + cliplow +
             "&cliphigh=" + cliphigh +
-            "&blend=" + blend
+            "&blend=" + localblend
             ;
     }
 
     if (lutDAPI !== 'grayscale' && lutDAPI !== 'none' || autobrightness === true) {
         img_path_DAPI = "/lut";
-        var localblend = 128 - blend;
+        var localblend = 128 + blend;
         query_params_DAPI = `?lut=${lutDAPI}` +
             "&autobrightness=" + autobrightness +
             "&url=" + encodeURIComponent($('#map').attr('data-high-res-src-DAPI')) +
