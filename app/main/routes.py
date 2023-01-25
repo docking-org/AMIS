@@ -141,6 +141,7 @@ def lut(z,x,y):
     contrast = int(request.args.get("contrast"))
     cliplow = int(request.args.get("cliplow"))
     cliphigh = int(request.args.get("cliphigh"))
+    blend = int(request.args.get("blend"))
     
     # adjust the brightness by adding the brightness value to each pixel in the image
     # the limits of the pixel values are 0 to 255, so if the brightness is set to 255, the image will be completely white
@@ -165,10 +166,17 @@ def lut(z,x,y):
         img = cv2.bitwise_not(img)
         
     
+    
+    
     try:
         img = cv2.LUT(img, lookuptables[lut])
     except:
         pass
+    
+    #set alpha channel to blend value
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2BGRA)
+    img[:,:,3] = blend
+        
        
     retval, buffer = cv2.imencode('.png', img)
     response = make_response(buffer.tobytes())

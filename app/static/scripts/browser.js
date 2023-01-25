@@ -113,7 +113,7 @@ let brightness = 0;
 let contrast = 0;
 let cliplow = 0;
 let cliphigh = 256;
-
+let blend = 50;
 
 
 
@@ -136,12 +136,28 @@ function updateMap() {
 
     if (lutTomato !== 'grayscale' && lutTomato !== 'none' || autobrightness === true) {
         img_path = "/lut";
-        query_params_tomato = `?lut=${lutTomato}` + "&autobrightness=" + autobrightness + "&url=" + encodeURIComponent($('#map').attr('data-high-res-src')) + "&brightness=" + brightness + "&contrast=" + contrast + "&cliplow=" + cliplow + "&cliphigh=" + cliphigh;
+        query_params_tomato = `?lut=${lutTomato}` +
+            "&autobrightness=" + autobrightness +
+            "&url=" + encodeURIComponent($('#map').attr('data-high-res-src')) +
+            "&brightness=" + brightness +
+            "&contrast=" + contrast +
+            "&cliplow=" + cliplow +
+            "&cliphigh=" + cliphigh +
+            "&blend=" + blend
+            ;
     }
 
     if (lutDAPI !== 'grayscale' && lutDAPI !== 'none' || autobrightness === true) {
         img_path_DAPI = "/lut";
-        query_params_DAPI = `?lut=${lutDAPI}` + "&autobrightness=" + autobrightness + "&url=" + encodeURIComponent($('#map').attr('data-high-res-src-DAPI')) + "&brightness=" + brightness + "&contrast=" + contrast + "&cliplow=" + cliplow + "&cliphigh=" + cliphigh;
+        query_params_DAPI = `?lut=${lutDAPI}` +
+            "&autobrightness=" + autobrightness +
+            "&url=" + encodeURIComponent($('#map').attr('data-high-res-src-DAPI')) +
+            "&brightness=" + brightness +
+            "&contrast=" + contrast +
+            "&cliplow=" + cliplow +
+            "&cliphigh=" + cliphigh +
+            "&blend=" + blend
+            ;
     }
 
 
@@ -264,7 +280,21 @@ function updateMap() {
             syncSlider: true,
         }).addTo(map);
 
-
+        blendSlider = L.control.slider(function (value) {
+            blend = value;
+        }, {
+            id: 'slider',
+            min: 0,
+            max: 100,
+            value: blend,
+            step: 1,
+            position: 'bottomleft',
+            orientation: 'horizontal',
+            logo: "<i class='fas fa-mix'></i>",
+            title: 'Blend',
+            layer: tile_tomato,
+            syncSlider: true,
+        }).addTo(map);
 
         map.addControl(new L.Control.Fullscreen());
         map.addControl(new L.Control.Brightness({ 'position': 'topleft' }));
@@ -296,9 +326,9 @@ function resetSliders() {
     contrastSlider.resetSlider();
     maxSlider.resetSlider();
     minSlider.resetSlider();
-
-
 }
+
+
 
 
 $('#sample_dropdown').change(function () {
