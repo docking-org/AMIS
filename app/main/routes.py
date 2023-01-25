@@ -136,14 +136,14 @@ def lut(z,x,y):
     img = cv2.imread(url).astype(np.uint8)
     
     img = img[:,:,:3]
-    
+    blend = int(request.args.get("blend"))
     
     if autobrightness != "true":
         brightness = int(request.args.get("brightness"))
         contrast = int(request.args.get("contrast"))
         cliplow = int(request.args.get("cliplow"))
         cliphigh = int(request.args.get("cliphigh"))
-        blend = int(request.args.get("blend"))
+        
         
         # adjust the brightness by adding the brightness value to each pixel in the image
         # the limits of the pixel values are 0 to 255, so if the brightness is set to 255, the image will be completely white
@@ -189,6 +189,7 @@ def lut(z,x,y):
         img = cv2.LUT(img, lookuptables[lut])
     except:
         pass
+    
     
     # convert image to rgba for transparency, then set every pixel to the blend value
     img = cv2.cvtColor(img, cv2.COLOR_RGB2RGBA)
