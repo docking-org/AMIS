@@ -149,13 +149,14 @@ def lut(z,x,y):
     # the contrast affects the limits of the pixel values. If the contrast is set to 2, the pixel values will be limited to 2 to 253
 
     # calculate the min and max pixel values
-    min = np.min(img)
-    max = np.max(img)
     
-    # reduce the contrast by limiting the pixel values
-    contrast_factor = (contrast + 1) / 255
+    # reduce the contrast by limiting the pixel values on both ends of the range
+    # the contrast factor is the ratio of the new range to the old range
+    contrast_factor = (259 * (contrast + 255)) / (255 * (259 - contrast))
+
+
     # calculate the brightness by adding the brightness value to the pixel values
-    brightness_factor = brightness - 128
+    brightness_factor = brightness - 128 * (contrast_factor - 1)
     
     img = img * contrast_factor + brightness_factor
     
