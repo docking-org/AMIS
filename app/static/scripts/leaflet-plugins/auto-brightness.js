@@ -6,7 +6,7 @@ L.Control.Brightness = L.Control.extend({
 
 
         link.setAttribute('title', 'Toggle Auto Brightness');
-        toggleAutoBrightness();
+
         if (autobrightness) {
             link.style.backgroundColor = 'rgb(200, 200, 200)';
         }

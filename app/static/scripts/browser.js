@@ -303,6 +303,7 @@ function updateMap() {
         map.addControl(new L.Control.Fullscreen());
         map.addControl(new L.Control.Brightness({ 'position': 'topleft' }));
         //add control to reset all sliders
+        toggleAutoBrightness();
         resetButton = L.control.reset({ 'position': 'bottomleft' }).addTo(map);
 
 
