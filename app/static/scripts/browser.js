@@ -113,7 +113,7 @@ let brightness = 0;
 let contrast = 0;
 let cliplow = 0;
 let cliphigh = 256;
-let blend = 256;
+let blend = 0;
 
 
 
@@ -136,7 +136,7 @@ function updateMap() {
 
     if (lutTomato !== 'grayscale' && lutTomato !== 'none' || autobrightness === true) {
         img_path = "/lut";
-        localblend = 0 + blend;
+        localblend = 128 + blend;
         query_params_tomato = `?lut=${lutTomato}` +
             "&autobrightness=" + autobrightness +
             "&url=" + encodeURIComponent($('#map').attr('data-high-res-src')) +
@@ -150,7 +150,7 @@ function updateMap() {
 
     if (lutDAPI !== 'grayscale' && lutDAPI !== 'none' || autobrightness === true) {
         img_path_DAPI = "/lut";
-
+        localblend = 128 - blend;
         query_params_DAPI = `?lut=${lutDAPI}` +
             "&autobrightness=" + autobrightness +
             "&url=" + encodeURIComponent($('#map').attr('data-high-res-src-DAPI')) +
@@ -286,8 +286,8 @@ function updateMap() {
             blend = value;
         }, {
             id: 'slider',
-            min: 0,
-            max: 512,
+            min: -127,
+            max: 127,
             value: blend,
             step: 1,
             position: 'bottomleft',
