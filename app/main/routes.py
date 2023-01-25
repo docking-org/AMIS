@@ -138,7 +138,7 @@ def lut(z,x,y):
     img = img[:,:,:3]
     
     
-    if autobrightness == "true":
+    if autobrightness != "true":
         brightness = int(request.args.get("brightness"))
         contrast = int(request.args.get("contrast"))
         cliplow = int(request.args.get("cliplow"))
@@ -166,6 +166,19 @@ def lut(z,x,y):
         img = np.clip(img, cliplow, cliphigh)
     
     else:
+        # if autobrightness is true, calculate the brightness and contrast values based on the image
+        # the brightness is the average pixel value
+        # the contrast is the standard deviation of the pixel values
+        brightness = np.mean(img)
+        contrast = np.std(img)
+        contrast_factor = (259 * (contrast + 255)) / (255 * (259 - contrast))
+
+
+        # calculate the brightness by adding the brightness value to the pixel values
+        brightness_factor = brightness - 128 * (contrast_factor - 1)
+        
+        img = img * contrast_factor + brightness_factor
+    
         
     img = img.astype(np.uint8)
     
