@@ -302,7 +302,8 @@ function updateMap() {
         map.addControl(new L.Control.Fullscreen());
         map.addControl(new L.Control.Brightness({ 'position': 'topleft' }));
         //add control to reset all sliders
-        map.addControl(new L.Control.Reset({ 'position': 'bottomleft' }));
+        resetButton = L.control.reset({ 'position': 'bottomleft' }).addTo(map);
+
 
         // annotation.getContainer().classList.add('leaflet-tile');
         // map.on('click', function(e) {
@@ -1001,13 +1002,15 @@ function toggleAutoBrightness() {
         maxSlider.hide()
         minSlider.hide()
         blendSlider.hide()
+        resetButton.hide()
     }
     else {
-        brightnessSlider.show()
-        contrastSlider.show()
-        maxSlider.show()
-        minSlider.show()
-        blendSlider.show()
+        brightnessSlider.show();
+        contrastSlider.show();
+        maxSlider.show();
+        minSlider.show();
+        blendSlider.show();
+        resetButton.show();
     }
 
     updateMap();
