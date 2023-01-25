@@ -16,7 +16,7 @@ var pos_tomato_list = [];
 var neg_DAPI_list = [];
 var neg_tomato_list = [];
 var split = false;
-var autobrightness = true;
+var autobrightness = false;
 var $frame = $('#forcecentered');
 var $wrap = $frame.parent();
 

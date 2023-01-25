@@ -6,6 +6,7 @@ L.Control.Brightness = L.Control.extend({
 
 
         link.setAttribute('title', 'Toggle Auto Brightness');
+        toggleAutoBrightness();
         if (autobrightness) {
             link.style.backgroundColor = 'rgb(200, 200, 200)';
         }
@@ -19,6 +20,13 @@ L.Control.Brightness = L.Control.extend({
             L.DomEvent.stopPropagation;
             L.DomEvent.preventDefault;
             toggleAutoBrightness();
+
+            if (autobrightness) {
+                link.style.backgroundColor = 'rgb(200, 200, 200)';
+            }
+            else {
+                link.style.backgroundColor = 'rgb(255, 255, 255)';
+            }
         });
 
 
