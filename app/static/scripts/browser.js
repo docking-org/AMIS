@@ -127,6 +127,7 @@ var contrastSlider = undefined;
 var minSlider = undefined;
 var maxSlider = undefined;
 var blendSlider = undefined;
+var resetButton = undefined;
 
 function updateMap() {
     var img_path = $('#map').attr('data-high-res-src');
