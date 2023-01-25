@@ -51,7 +51,12 @@ L.Control.Slider = L.Control.extend({
             this._sliderValue.innerHTML = this.options.getValue(this.value);
         }
         this.update(this.value);
-        updateMap();
+        if (this.options.side === 'right') {
+            updateMap_right();
+        }
+        else {
+            updateMap();
+        }
     },
     _initLayout: function () {
         var className = 'leaflet-control-slider';

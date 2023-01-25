@@ -20,6 +20,22 @@ var autobrightness = false;
 var $frame = $('#forcecentered');
 var $wrap = $frame.parent();
 
+let brightness = 0;
+let contrast = 0;
+let cliplow = 0;
+let cliphigh = 256;
+let blend = -127;
+
+var tiles_loaded = false;
+var tile_tomato = undefined;
+var tile_DAPI = undefined;
+var brightnessSlider = undefined;
+var contrastSlider = undefined;
+var minSlider = undefined;
+var maxSlider = undefined;
+var blendSlider = undefined;
+var resetButton = undefined;
+
 var slyOptions = {
     horizontal: 1,
     itemNav: 'forceCentered',
@@ -73,25 +89,8 @@ observer.observe(map_right, {
 });
 
 
-// let contrastSliderDAPI = document.getElementById('contrast-slider-left-dapi');
-// let contrastLabelDAPI = document.getElementById('contrast-value-left-dapi');
-// contrastSliderDAPI.addEventListener('input', function (e) {
-//     let value = e.target.value;
-//     contrastLabelDAPI.textContent = value + '%';
-//     contrastDAPI = value + '%';
-//     updateMap();
-// });
 
-// let contrastSliderTomato = document.getElementById('contrast-slider-left-td-tomato');
-// let contrastLabelTomato = document.getElementById('contrast-value-left-td-tomato');
-// contrastSliderTomato.addEventListener('input', function (e) {
-//     let value = e.target.value;
-//     contrastLabelTomato.textContent = value + '%';
-//     contrastTomato = value + '%';
-//     updateMap();
-// });
-
-let lutTomato = 'none';
+let lutTomato = 'grayscale';
 let lutDropdownTomato = document.getElementById('lut-left-td-tomato');
 lutDropdownTomato.addEventListener('input', function (e) {
     let value = e.target.value;
@@ -100,7 +99,7 @@ lutDropdownTomato.addEventListener('input', function (e) {
 });
 
 
-let lutDAPI = 'none';
+let lutDAPI = 'grayscale';
 let lutDropdownDAPI = document.getElementById('lut-left-DAPI');
 lutDropdownDAPI.addEventListener('input', function (e) {
     let value = e.target.value;
@@ -109,25 +108,7 @@ lutDropdownDAPI.addEventListener('input', function (e) {
 });
 
 
-let brightness = 0;
-let contrast = 0;
-let cliplow = 0;
-let cliphigh = 256;
-let blend = -127;
 
-
-
-//updating leaflet map
-
-var tiles_loaded = false;
-var tile_tomato = undefined;
-var tile_DAPI = undefined;
-var brightnessSlider = undefined;
-var contrastSlider = undefined;
-var minSlider = undefined;
-var maxSlider = undefined;
-var blendSlider = undefined;
-var resetButton = undefined;
 
 function updateMap() {
     var img_path = $('#map').attr('data-high-res-src');
@@ -284,27 +265,30 @@ function updateMap() {
             syncSlider: true,
         }).addTo(map);
 
-        blendSlider = L.control.slider(function (value) {
-            blend = value;
-        }, {
-            id: 'slider',
-            min: -127,
-            max: 127,
-            value: blend,
-            step: 1,
-            position: 'bottomleft',
-            orientation: 'horizontal',
-            logo: "<i class='fas fa-mixer'></i>",
-            title: 'Blend',
-            layer: tile_tomato,
-            syncSlider: true,
-        }).addTo(map);
+        // blendSlider = L.control.slider(function (value) {
+        //     blend = value;
+        // }, {
+        //     id: 'slider',
+        //     min: -127,
+        //     max: 127,
+        //     value: blend,
+        //     step: 1,
+        //     position: 'bottomleft',
+        //     orientation: 'horizontal',
+        //     logo: "<i class='fas fa-mixer'></i>",
+        //     title: 'Blend',
+        //     layer: tile_tomato,
+        //     syncSlider: true,
+        // }).addTo(map);
+
+
 
         map.addControl(new L.Control.Fullscreen());
         map.addControl(new L.Control.Brightness({ 'position': 'topleft' }));
         //add control to reset all sliders
-        resetButton = L.control.reset({ 'position': 'bottomleft' }).addTo(map);
-        toggleAutoBrightness();
+        resetButton = new L.Control.Reset({ 'position': 'bottomleft' });
+        map.addControl(resetButton);
+
 
 
 
@@ -334,8 +318,6 @@ function resetSliders() {
     maxSlider.resetSlider();
     minSlider.resetSlider();
 }
-
-
 
 
 $('#sample_dropdown').change(function () {
@@ -1004,7 +986,7 @@ function toggleAutoBrightness() {
         contrastSlider.hide()
         maxSlider.hide()
         minSlider.hide()
-        blendSlider.hide()
+
         resetButton.hide()
     }
     else {
@@ -1012,7 +994,7 @@ function toggleAutoBrightness() {
         contrastSlider.show();
         maxSlider.show();
         minSlider.show();
-        blendSlider.show();
+
         resetButton.show();
     }
 

@@ -18,11 +18,26 @@ jQuery(function ($) {
     var pos_tomato_list_right = [];
     var neg_DAPI_list_right = [];
     var neg_tomato_list_right = [];
-
-
     var $frame_right = $('#forcecentered_right');
-
     var $wrap_right = $frame_right.parent();
+    var autobrightness_right = false;
+
+    let brightness_right = 0;
+    let contrast_right = 0;
+    let cliplow_right = 0;
+    let cliphigh_right = 256;
+    let blend_right = -127;
+
+    var tiles_loaded_right = false;
+    var tile_tomato_right = undefined;
+    var tile_DAPI_right = undefined;
+    var brightnessSlider_right = undefined;
+    var contrastSlider_right = undefined;
+    var minSlider_right = undefined;
+    var maxSlider_right = undefined;
+    var blendSlider_right = undefined;
+    var resetButton_right = undefined;
+
 
     var slyOptions_right = {
         horizontal: 1,
@@ -72,6 +87,8 @@ jQuery(function ($) {
         itemIndex_right = itemIndex;
         total_result_right = total_result;
         selected_slice_right = selected_slice;
+
+
 
         if (control_right === 'positive') {
             $('.btn-positive').addClass('active');
@@ -141,71 +158,219 @@ jQuery(function ($) {
         attributeFilter: ['data-high-res-src-right']
     });
 
+    let lutTomato_right = 'grayscale';
+    let lutDropdownTomato_right = document.getElementById('lut-right-td-tomato');
+    lutDropdownTomato_right.addEventListener('input', function (e) {
+        let value = e.target.value;
+        lutTomato_right = value
+        updateMap_right();
+    });
+
+
+    let lutDAPI_right = 'grayscale';
+    let lutDropdownDAPI_right = document.getElementById('lut-right-DAPI');
+    lutDropdownDAPI_right.addEventListener('input', function (e) {
+        let value = e.target.value;
+        lutDAPI_right = value
+        updateMap_right();
+    });
 
     function updateMap_right() {
-        map2.off();
-        map2.remove();
         var img_path_right = $('#map_right').attr('data-high-res-src-right');
-        var img_path_right_DAPI = $('#map_right').attr('data-high-res-src-right-DAPI');
+        var img_path_DAPI_right = $('#map_right').attr('data-high-res-src-right-DAPI');
+        var query_params_tomato_right = "";
+        var query_params_DAPI_right = "";
 
-        let filter_tomato = [
-            'brightness:100%',
-            `contrast:${contrastTomato_right}`,
-            'grayscale:0%',
-            'opacity:50%',
-        ];
+        img_path_right = "/lut";
 
-        let filter_dapi = [
-            'brightness:100%',
-            `contrast:${contrastDAPI_right}`,
-            'grayscale:0%',
-            'opacity:50%',
-        ];
+        var tomatoblend_right = 128 - blend_right;
+        query_params_tomato_right = `?lut=${lutTomato_right}` +
+            "&autobrightness=" + autobrightness_right +
+            "&url=" + encodeURIComponent($('#map_right').attr('data-high-res-src-right')) +
+            "&brightness=" + brightness_right +
+            "&contrast=" + contrast_right +
+            "&cliplow=" + cliplow_right +
+            "&cliphigh=" + cliphigh_right +
+            "&blend=" + tomatoblend_right
+            ;
 
-        var tile_right_tomato = L.tileLayer.colorFilter(img_path_right + '/{z}/{x}/{y}.png', {
-            minZoom: 2,
-            maxZoom: 7,
-            tms: true,
-            crs: L.CRS.Simple,
-            noWrap: true,
-            maxBoundsViscosity: 1.0,
-            filter: filter_tomato,
-        });
 
-        var tile_right_DAPI = L.tileLayer.colorFilter(img_path_right_DAPI + '/{z}/{x}/{y}.png', {
-            minZoom: 2,
-            maxZoom: 7,
-            tms: true,
-            crs: L.CRS.Simple,
-            noWrap: true,
-            maxBoundsViscosity: 1.0,
-            filter: filter_dapi,
-        });
 
-        map2 = L.map('map_right', {
-            center: [-49, -49],
-            zoom: 2,
-            layers: [tile_right_DAPI, tile_right_tomato]
-        });
+        img_path_DAPI_right = "/lut";
+        var dapiblend_right = 128;
+        query_params_DAPI_right = `?lut=${lutDAPI_right}` +
+            "&autobrightness=" + autobrightness_right +
+            "&url=" + encodeURIComponent($('#map_right').attr('data-high-res-src-right-DAPI')) +
+            "&brightness=" + brightness_right +
+            "&contrast=" + contrast_right +
+            "&cliplow=" + cliplow_right +
+            "&cliphigh=" + cliphigh_right +
+            "&blend=" + dapiblend_right
+            ;
 
-        var baseMaps = {
+        if (tiles_loaded_right === false) {
+            tile_DAPI_right = L.tileLayer.colorFilter(img_path_DAPI_right + '/{z}/{x}/{y}.png' + query_params_DAPI_right, {
+                minZoom: 2,
+                maxZoom: 7,
+                tms: true,
+                crs: L.CRS.Simple,
+                noWrap: true,
+                maxBoundsViscosity: 1.0,
+                minNativeZoom: 2,
+                maxNativeZoom: 7,
+                edgeBufferTiles: 1,
+                bounds: [[-150, -150], [150, 150]],
+            });
+            tile_tomato_right = L.tileLayer.colorFilter(img_path_right + '/{z}/{x}/{y}.png' + query_params_tomato_right, {
+                minZoom: 2,
+                maxZoom: 7,
+                tms: true,
+                crs: L.CRS.Simple,
+                noWrap: true,
+                maxBoundsViscosity: 1.0,
+                minNativeZoom: 2,
+                maxNativeZoom: 7,
+                edgeBufferTiles: 1,
+                bounds: [[-150, -150], [150, 150]],
+            });
 
-        };
 
-        var overlayMaps = {
-            "tdTomato": tile_right_tomato,
-            "DAPI": tile_right_DAPI,
-        };
 
-        // var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
-        var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map2);
-        map2.addControl(new L.Control.Fullscreen());
+            tiles_loaded_right = true;
+            map2.off();
+            map2.remove();
 
-        // annotation.getContainer().classList.add('leaflet-tile');
-        // map.on('click', function(e) {
-        //     alert("Lat, Lon : " + e.latlng.lat + ", " + e.latlng.lng)
-        // });
-        resize_right();
+            map2 = L.map('map_right', {
+                zoom: 2,
+                center: [-50, -50],
+
+
+                layers: [tile_tomato_right],
+                maxBoundsViscosity: 1.0,
+                bounceAtZoomLimits: false,
+            });
+
+            var baseMaps = {
+
+            };
+
+            var overlayMaps = {
+                "tdTomato": tile_tomato_right,
+                "DAPI": tile_DAPI_right,
+            };
+
+            // var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
+            var layerControl_right = L.control.layers(baseMaps, overlayMaps).addTo(map2);
+
+            brightnessSlider_right = L.control.slider(function (value) {
+                brightness_right = value;
+            }, {
+                id: 'slider',
+                min: -255,
+                max: 255,
+                value: brightness_right,
+                step: 1,
+                position: 'bottomleft',
+                orientation: 'horizontal',
+                logo: "<i class='fas fa-sun'></i>",
+                title: 'Brightness',
+                layer: tile_tomato_right,
+                side: 'right',
+                syncSlider: true,
+            }).addTo(map2);
+
+            contrastSlider_right = L.control.slider(function (value) {
+                contrast_right = value;
+            }, {
+                side: 'right',
+                id: 'slider',
+                min: -255,
+                max: 255,
+                value: contrast_right,
+                step: 1,
+                position: 'bottomleft',
+                orientation: 'horizontal',
+                logo: "<i class='fas fa-adjust'></i>",
+                title: 'Contrast',
+                layer: tile_tomato_right,
+                syncSlider: true,
+            }).addTo(map2);
+
+            minSlider_right = L.control.slider(function (value) {
+                cliplow_right = value;
+            }, {
+                side: 'right',
+                id: 'slider',
+                min: 0,
+                max: 255,
+                value: cliplow_right,
+                step: 1,
+                position: 'bottomleft',
+                orientation: 'horizontal',
+                logo: "Min",
+                title: 'Min',
+                layer: tile_tomato,
+                syncSlider: true,
+            }).addTo(map2);
+
+            maxSlider_right = L.control.slider(function (value) {
+                cliphigh_right = value;
+            }, {
+                side: 'right',
+                id: 'slider',
+                min: 0,
+                max: 255,
+                value: cliphigh_right,
+                step: 1,
+                position: 'bottomleft',
+                orientation: 'horizontal',
+                logo: "Max",
+                title: 'Max',
+                layer: tile_tomato,
+                syncSlider: true,
+            }).addTo(map2);
+
+            // blendSlider_right = L.control.slider(function (value) {
+            //     blend_right = value;
+            // }, {
+            //     id: 'slider',
+            //     min: -127,
+            //     max: 127,
+            //     value: blend_right,
+            //     step: 1,
+            //     position: 'bottomleft',
+            //     orientation: 'horizontal',
+            //     logo: "<i class='fas fa-mixer'></i>",
+            //     title: 'Blend',
+            //     layer: tile_tomato,
+            //     syncSlider: true,
+            // }).addTo(map2);
+
+            map2.addControl(new L.Control.Fullscreen());
+            map2.addControl(new L.Control.Brightness({ 'position': 'topleft' }));
+            //add control to reset all sliders
+            resetButton_right = new L.Control.Reset({ 'position': 'bottomleft', side: 'right' });
+            map2.addControl(resetButton_right);
+
+            resize_right();
+        }
+        else {
+            map2.invalidateSize();
+            //set map center and zoom
+            //reset all slider values
+            tile_DAPI_right.setUrl(img_path_DAPI_right + '/{z}/{x}/{y}.png' + query_params_DAPI_right);
+            tile_tomato_right.setUrl(img_path_right + '/{z}/{x}/{y}.png' + query_params_tomato_right);
+
+
+            resize_right();
+        }
+    }
+
+    function resetSliders_right() {
+        brightnessSlider_right.resetSlider();
+        contrastSlider_right.resetSlider();
+        maxSlider_right.resetSlider();
+        minSlider_right.resetSlider();
     }
 
 
@@ -478,7 +643,9 @@ jQuery(function ($) {
 
     function updateAreaA_right(index) {
         console.log("updateareaa right");
-        if (index != -1) {
+
+        if (index != -1 && index != undefined
+        ) {
             if (total_result_right == 0) {
                 $('.current_id_right').val(0);
             } else {
@@ -497,9 +664,11 @@ jQuery(function ($) {
 
             element.setAttribute('data-high-res-src-right', pos_tomato_list_right[index]);
             element.setAttribute('data-high-res-src-right-DAPI', pos_DAPI_list_right[index]);
-            var id = $('._' + index + "-right").attr('id');
+
+            var id = $('._' + index + "right");
             show_result_right();
-            updateSliceDetail_right(id);
+
+            updateSliceDetail_right(id.attr('id'));
         }
     }
 
@@ -610,7 +779,7 @@ jQuery(function ($) {
                     total_result_right = 0;
                     for (var i in data.items) {
                         total_result_right++;
-                        content += "<li class='_" + i + "' id='" + data.items[i].id + "-right'><img src='";
+                        content += "<li class='_" + i + "right' id='" + data.items[i].id + "'><img src='";
                         if (wavelength_right === "tdTomato-RI") {
                             content += data.items[i].img_small_RI;
                         } else {
@@ -656,7 +825,7 @@ jQuery(function ($) {
                 var content = "";
                 for (var i in data.items) {
                     content += "<br/><br/><p>Probe: " + data.items[i].gene + "</p>";
-                    content += "<p>MD5: <b>" + data.items[i].checksum + "</b></p>";
+                    content += "<p style='word-wrap: break-word;'>MD5: <b>" + data.items[i].checksum + "</b></p>";
                     content += "<p><a href=" + data.items[i].tif_url + ">Download TIF file (raw 16 bit)</a></p>";
                     content += "<p>Shareable URL: <button class='glyphicon glyphicon-copy copyUrl_right btn btn-info' ";
                     content += " title='click here to copy Shareable URL'></button></p>";
@@ -802,6 +971,28 @@ jQuery(function ($) {
     });
 
 
+
+    function toggleAutoBrightness_right() {
+        autobrightness_right = !autobrightness_right;
+
+        if (autobrightness_right) {
+            brightnessSlider_right.hide()
+            contrastSlider_right.hide()
+            maxSlider_right.hide()
+            minSlider_right.hide()
+
+            resetButton_right.hide()
+        }
+        else {
+            brightnessSlider_right.show();
+            contrastSlider_right.show();
+            maxSlider_right.show();
+            minSlider_right.show();
+            resetButton_right.show();
+        }
+
+        updateMap_right();
+    }
 
     function change_bg() {
         if (bg_color == 1) {

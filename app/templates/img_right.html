@@ -1,6 +1,6 @@
 <div class="col-md-6 split" id="split-right" style="display: none;">
     <div class="row">
-        <div class="col-sm-12 col-md-3">
+        <div class="col-sm-12 col-md-2">
             <form>
                 <div class="form-group row">
                     <label for="sample_type" class="col-sm-12 col-form-label">Sample Type</label>
@@ -49,7 +49,7 @@
                         </input>
                     </div>
                 </div>
-                <div class="form-group row">
+                <div class="form-group row" style="display: none;">
                     <label for="experiment_dropdown_right" class="col-sm-4 col-form-label">Experiment</label>
                     <div class="col-sm-12">
                         <input list="experiments" name="experiment" class="form-control" id="experiment_dropdown_right"
@@ -65,13 +65,7 @@
                         </input>
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label for="" class="col-sm-4 col-form-label"></label>
-                    <div class="col-sm-12">
-                        <button type="button" class="btn btn-info clear_filter_right">Clear all filters
-                        </button>
-                    </div>
-                </div>
+
 
             </form>
             <div class="col">
@@ -103,76 +97,98 @@
 
             <!-- <div class="col-sm-hidden col-md-hidden  slice_details_right"></div> -->
         </div>
-        <div class="col-md-9 col-sm-12" style="min-height:550px">
+        <div class="col-md-10 col-sm-12" style="min-height:550px">
             <div class="area_A_right image_table_right">
-                <div id="map_right" src="" class="selected_slice_right" style="height:55vh"></div>
-            </div>
+                <div id="map_right" src="" class="selected_slice _right">
+                    <div id="sliders-container">
+                        <div class="dropdown">
+                            <select class="form-select" aria-label="Select lookup table" id='lut-right-td-tomato'>
+                                <option selected value="grayscale">grayscale</option>
+                                <option value="red">red</option>
+                                <option value="blue">blue</option>
+                                <option value="green">green</option>
+                                <option value="inverted">B&W inverted</option>
+                            </select>
+                            <br>
+                            <select class="form-select" aria-label="Select lookup table" id='lut-right-DAPI'>
+                                <option selected value="grayscale">grayscale</option>
+                                <option value="red">red</option>
+                                <option value="blue">blue</option>
+                                <option value="green">green</option>
+                                <option value="inverted">B&W inverted</option>
+                            </select>
 
-            <div class="row">
-                <div class="loader loader_right" style="padding: 50px">
-                </div>
-                <div class="no_result_right controls "
-                    style="display: none; height: 480px;padding-left: 5px; padding-top: 120px;">
-                    <img src="{{ url_for('static', filename='images/no_result.png') }}" height="300px">
-                    <div class="text-center text-danger">Please select "Sample Type" > "Gene" > "Organ"</div>
-                </div>
-            </div>
-            <div class="wrap_right">
-                <div class="text-center b_w_link"></div>
-                <div class="controls center">
-                    <button class="btn btn-info prev_right disabled" disabled=""><span
-                            class="glyphicon glyphicon-chevron-left"></span>prev
-                    </button>
-                    <span class="" style="font-weight: bold;color: #0aaaf1;font-size: larger">
-                        (Slice <input class="current_id_right" type="number" min="0" style="width: 50px;" />
-                        of <span class="total_result_right">0</span>)
-                    </span>
-                    <button class="btn btn-info next_right">next <span
-                            class="glyphicon glyphicon-chevron-right"></span></button>
+                        </div>
+                    </div>
+
                 </div>
 
-
-                <div class="scrollbar scrollbar_right">
-                    <div class="handle" style="transform: translateZ(0px) translateX(0px); width: 190px;">
-                        <div class="mousearea"></div>
+                <div class="row">
+                    <div class="loader loader_right" style="padding: 50px">
+                    </div>
+                    <div class="no_result_right controls "
+                        style="display: none; height: 480px;padding-left: 5px; padding-top: 120px;">
+                        <img src="{{ url_for('static', filename='images/no_result.png') }}" height="300px">
+                        <div class="text-center text-danger">Please select "Sample Type" > "Gene" > "Organ"</div>
                     </div>
                 </div>
+                <div class="wrap_right">
+                    <div class="text-center b_w_link"></div>
+                    <div class="controls center">
+                        <button class="btn btn-info prev_right disabled" disabled=""><span
+                                class="glyphicon glyphicon-chevron-left"></span>prev
+                        </button>
+                        <span class="" style="font-weight: bold;color: #0aaaf1;font-size: larger">
+                            (Slice <input class="current_id_right" type="number" min="0" style="width: 50px;" />
+                            of <span class="total_result_right">0</span>)
+                        </span>
+                        <button class="btn btn-info next_right">next <span
+                                class="glyphicon glyphicon-chevron-right"></span></button>
+                    </div>
 
-                <div class="frame" id="forcecentered_right" style="overflow: hidden;">
-                    <ul class="clearfix_right"></ul>
+
+                    <div class="scrollbar scrollbar_right">
+                        <div class="handle" style="transform: translateZ(0px) translateX(0px); width: 190px;">
+                            <div class="mousearea"></div>
+                        </div>
+                    </div>
+
+                    <div class="frame" id="forcecentered_right" style="overflow: hidden;">
+                        <ul class="clearfix_right"></ul>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="controls">
-                    <div class="btn-group colors" id="wavelength_right" data-toggle="buttons" style="display: none;">
-                        <label class="btn btn-danger
+                <div class="row">
+                    <div class="controls">
+                        <div class="btn-group colors" id="wavelength_right" data-toggle="buttons"
+                            style="display: none;">
+                            <label class="btn btn-danger
                                             {% if wavelength == None or wavelength == 'tdTomato' %}
                                                 active
                                             {% endif %}
                                     ">
-                            <input type="radio" name="options" value="tdTomato" autocomplete="off" {% if
-                                wavelength==None or wavelength=='tdTomato' %} checked {% endif %}> tdTomato
-                        </label>
-                        <label class="btn btn-danger
+                                <input type="radio" name="options" value="tdTomato" autocomplete="off" {% if
+                                    wavelength==None or wavelength=='tdTomato' %} checked {% endif %}> tdTomato
+                            </label>
+                            <label class="btn btn-danger
                                             {% if wavelength == 'tdTomato-RI' %}
                                                 active
                                             {% endif %}
                                     ">
-                            <input type="radio" name="options" value="tdTomato-RI" autocomplete="off" {% if
-                                wavelength=="tdTomato-RI" %} checked {% endif %}> tdTomato-RI
-                        </label>
-                        <label class="btn btn-info
+                                <input type="radio" name="options" value="tdTomato-RI" autocomplete="off" {% if
+                                    wavelength=="tdTomato-RI" %} checked {% endif %}> tdTomato-RI
+                            </label>
+                            <label class="btn btn-info
                                             {% if wavelength == 'DAPI' %}
                                                 active
                                             {% endif %}
                                     ">
-                            <input type="radio" name="options" value="DAPI" autocomplete="off" {% if wavelength=="DAPI"
-                                %} checked {% endif %}> Dapi
-                        </label>
+                                <input type="radio" name="options" value="DAPI" autocomplete="off" {% if
+                                    wavelength=="DAPI" %} checked {% endif %}> Dapi
+                            </label>
+                        </div>
                     </div>
                 </div>
-            </div>
 
+            </div>
         </div>
     </div>
-</div>
