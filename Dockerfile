@@ -10,7 +10,7 @@ RUN yarn build
 
 FROM continuumio/anaconda3:latest 
 WORKDIR /home/amis
-COPY  /app/build ../build
+COPY --from=0 /app/build ../build
 COPY ./backend ./
 ADD backend/application.py backend/config.py backend/boot.sh backend/requirements.txt ./
 RUN conda create -n amis -y
