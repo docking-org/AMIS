@@ -4,9 +4,9 @@ FROM node:16-alpine as frontend
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json package-lock.json ./
+RUN npm install
 COPY ./src ./src
 COPY ./public ./public
-RUN npm install
 RUN yarn build
 
 

@@ -187,7 +187,7 @@ function ImageRenderer(props) {
                 var res = response.data.items
 
 
-                res = res.map(res => res.img_no_ext)
+
 
                 wavelength === "DAPI" ? updateSlicesDAPI(res) : updateSlicesTomato(res)
 
@@ -350,10 +350,10 @@ function ImageRenderer(props) {
     function getAutoValues() {
         var selectedUrl = "";
         if (selectedWavelength === "tdTomato") {
-            selectedUrl = slicesTomato[selectedSlice]
+            selectedUrl = slicesTomato[selectedSlice] ? selectedUrl = slicesTomato[selectedSlice].img_no_ext : null
         }
         if (selectedWavelength === "DAPI") {
-            selectedUrl = slicesDAPI[selectedSlice]
+            selectedUrl = slicesDAPI[selectedSlice] ? slicesDAPI[selectedSlice].img_no_ext : null
         }
 
 
@@ -423,7 +423,7 @@ function ImageRenderer(props) {
                                 isDisabled={mice.length === 0 || !selectedOrgan} isClearable={props.renderSize === 12 ? true : false} options={
 
                                     mice.map(mouse => ({
-                                        "value": mouse.number, "label": (mouse.sex === true ? "♀" : "♂") + "  " + mouse.number + "  " +
+                                        "value": mouse.number, "label": (mouse.sex !== true ? "♀" : "♂") + "  " + mouse.number + "  " +
                                             (mouse.spec === "+" ? "pos" : "neg")
 
 
@@ -437,6 +437,22 @@ function ImageRenderer(props) {
 
                             <div className="col-sm-hidden col-md-10 row slice_details"></div>
                         </div>
+                        {selectedMouse ?
+
+                            <div className='select-card'>
+                                <b>Experiment</b>
+                                <br></br>
+                                <br></br>
+                                Mouse Id: {selectedMouse ? selectedMouse.value : null}
+
+                                <br></br>
+                                Age: {slicesTomato[selectedSlice] ? slicesTomato[selectedSlice].age : null}
+                                <br></br>
+                                Sex: {slicesTomato[selectedSlice] ? slicesTomato[selectedSlice].sex : null}
+
+                            </div>
+                            : null}
+
 
                     </Col>
 
@@ -506,7 +522,7 @@ function ImageRenderer(props) {
                                         crs={CRS.Simple}
                                         bounds={[[-150, -150], [500, 180]]}
 
-                                        url={"http://localhost:5000/lut" + '/{z}/{x}/{y}.png' + "?lut=" + lut['DAPI'] + "&url=" + encodeURIComponent(slicesDAPI[selectedSlice]) + "&brightness=" + options.brightness +
+                                        url={"http://localhost:5000/lut" + '/{z}/{x}/{y}.png' + "?lut=" + lut['DAPI'] + "&url=" + encodeURIComponent(slicesDAPI[selectedSlice] ? slicesDAPI[selectedSlice].img_no_ext : null) + "&brightness=" + options.brightness +
                                             "&contrast=" + options.contrast +
                                             "&cliplow=" + options.min +
                                             "&cliphigh=" + options.max}
