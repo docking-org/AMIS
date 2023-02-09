@@ -119,6 +119,59 @@ def img_browser():
     #                        imgType=imgType)
 
 
+@application.route('/getAutoValues', methods=['GET'])
+def getAutoValues(clip_hist_percent=2):
+    url = request.args.get('url') + ".webp"
+   
+    
+    # req = urllib.request.urlopen(url)
+    # if req.getcode() != 200:
+    #     return make_response(jsonify({'error': 'Could not download image'}), 400)
+    # arr = np.asarray(bytearray(req.read()), dtype=np.uint8)  
+    # img = cv2.imdecode(arr, -1).astype(np.uint8)
+    url = url.replace("https://files.docking.org/", "/nfs/ex9/")
+    img = cv2.imread(url).astype(np.uint8)
+    
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    
+    # Calculate grayscale histogram
+    hist = cv2.calcHist([gray],[0],None,[256],[0,256])
+    hist_size = len(hist)
+    
+    # Calculate cumulative distribution from the histogram
+    accumulator = []
+    accumulator.append(float(hist[0]))
+    for index in range(1, hist_size):
+        accumulator.append(accumulator[index -1] + float(hist[index]))
+    
+    # Locate points to clip
+    maximum = accumulator[-1]
+    clip_hist_percent *= (maximum/100.0)
+    clip_hist_percent /= 2.0
+    
+    # Locate left cut
+    minimum_gray = 0
+    while accumulator[minimum_gray] < clip_hist_percent:
+        minimum_gray += 1
+    
+    # Locate right cut
+    maximum_gray = hist_size -1
+    while accumulator[maximum_gray] >= (maximum - clip_hist_percent):
+        maximum_gray -= 1
+    
+    # Calculate alpha and beta values
+    alpha = 255 / (maximum_gray - minimum_gray)
+    beta = -minimum_gray * alpha
+    
+    
+
+    auto_result = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
+    newmin = auto_result.min()
+    newmax= auto_result.max()
+  
+    
+    return jsonify({'min': int(newmin), "max": int(newmax), "contrast":str(alpha), "brightness": str(beta)})
+
 
 @application.route('/lut/<z>/<x>/<y>', methods=['GET'])
 def lut(z,x,y):
