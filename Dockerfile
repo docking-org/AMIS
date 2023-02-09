@@ -1,4 +1,4 @@
-FROM node:16-alpine as frontend-amis
+FROM node:16-alpine
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json yarn.lock ./
@@ -8,9 +8,9 @@ RUN yarn install
 RUN yarn build
 
 
-FROM continuumio/anaconda3:latest as backend-amis
+FROM continuumio/anaconda3:latest 
 WORKDIR /home/amis
-COPY --from=frontend-amis /app/build ../build
+COPY  /app/build ../build
 COPY ./backend ./
 ADD backend/application.py backend/config.py backend/boot.sh backend/requirements.txt ./
 RUN conda create -n amis -y
