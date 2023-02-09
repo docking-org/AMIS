@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.4
+
 FROM node:16-alpine
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
