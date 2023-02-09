@@ -5,18 +5,12 @@ import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import { useState, useEffect, useRef, createRef } from 'react';
+import { useState, useEffect, createRef } from 'react';
 import axios from "axios";
-import Select, { components, DropdownIndicatorProps } from 'react-select';
-import { MapContainer, TileLayer, useMap, LayersControl, LayerGroup, Circle, Rectangle, Popup, FeatureGroup } from 'react-leaflet';
-import { CRS, setOptions } from 'leaflet';
-import {
-    ScrollMenu,
-    VisibilityContext,
-    getItemsPos,
-    slidingWindow
-} from "react-horizontal-scrolling-menu";
-import { Accordion, Button } from 'react-bootstrap';
+import Select from 'react-select';
+import { MapContainer, TileLayer, LayersControl } from 'react-leaflet';
+import { CRS } from 'leaflet';
+import { Button } from 'react-bootstrap';
 import $ from 'jquery';
 import Sly from 'sly-scroll';
 import LUTSelector from './LUTSelector';
