@@ -2,18 +2,14 @@
 variables:
     CI_PROJECT_NAME: amis
 
-services:
-  - redis:latest
-
 deploy-dev job:
     only:
         - dev
     stage: deploy
-    services:
-        - redis:latest
     tags:
         - amis-dev
     script:
+        - docker buildx create --use
         - docker buildx build -t "${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}-0.1.${CI_JOB_ID}" .
         - docker stop ${CI_PROJECT_NAME}
         - docker rm ${CI_PROJECT_NAME}
