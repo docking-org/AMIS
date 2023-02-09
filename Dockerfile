@@ -12,8 +12,6 @@ RUN yarn build
 
 FROM continuumio/anaconda3:latest as backend
 WORKDIR /home/amis
-
-COPY ./backend ./
 ADD backend/application.py backend/config.py backend/boot.sh backend/requirements.txt ./
 RUN conda create -n amis -y
 RUN echo "conda activate amis" > ~/.bashrc
@@ -35,11 +33,8 @@ RUN apt-get install -y vim
 
 RUN pip install -r ./requirements.txt
 RUN apt-get install ffmpeg libsm6 libxext6  -y
-
-ADD backend/app ./app
-COPY --from=frontend /app/build ../build
 RUN chmod +x boot.sh
+COPY --from=frontend /app/build ../build
+ADD backend ./
 EXPOSE 5000
-
-
 ENTRYPOINT ["./boot.sh"]
