@@ -414,7 +414,7 @@ function ImageRenderer(props) {
                                     organs.map(organ => ({ "value": organ, "label": organ }))
                                 } onChange={(option) => updateSelectedOrgan(option ? option : null)} />
 
-                            <label className="col-sm-4 col-form-label">Mice</label>
+                            <label className="col-sm-4 col-form-label">Mouse</label>
 
                             <Select
                                 components={{ DropdownIndicator }}
