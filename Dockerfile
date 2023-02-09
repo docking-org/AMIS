@@ -33,8 +33,9 @@ RUN apt-get install -y vim
 
 RUN pip install -r ./requirements.txt
 RUN apt-get install ffmpeg libsm6 libxext6  -y
-RUN chmod +x boot.sh
+
 COPY --from=frontend /app/build ../build
 ADD backend ./
+RUN chmod +x boot.sh
 EXPOSE 5000
 ENTRYPOINT ["./boot.sh"]
