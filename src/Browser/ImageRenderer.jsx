@@ -586,7 +586,7 @@ function ImageRenderer(props) {
                                                     slider.activate(index)
 
                                                 }}  >
-                                                <img src={slice + ".webp"} className="slice" />
+                                                <img src={slice.img_no_ext + ".webp"} className="slice" />
                                             </li>
                                         })
                                     }
