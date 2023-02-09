@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.4
 
-FROM node:16-alpine
+FROM node:16-alpine as frontend
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json package-lock.json ./
@@ -10,9 +10,9 @@ RUN npm install
 RUN yarn build
 
 
-FROM continuumio/anaconda3:latest 
+FROM continuumio/anaconda3:latest as backend
 WORKDIR /home/amis
-COPY --from=0 /app/build ../build
+
 COPY ./backend ./
 ADD backend/application.py backend/config.py backend/boot.sh backend/requirements.txt ./
 RUN conda create -n amis -y
@@ -37,6 +37,7 @@ RUN pip install -r ./requirements.txt
 RUN apt-get install ffmpeg libsm6 libxext6  -y
 
 ADD backend/app ./app
+COPY --from=frontend /app/build ../build
 RUN chmod +x boot.sh
 EXPOSE 5000
 
