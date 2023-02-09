@@ -1,11 +1,11 @@
 FROM node:16-alpine
-WORKDIR /home/amis
+WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json package-lock.json ./
 COPY ./src ./src
 COPY ./public ./public
 RUN npm install
-RUN npm build
+RUN yarn build
 
 
 FROM continuumio/anaconda3:latest 
