@@ -505,7 +505,7 @@ function ImageRenderer(props) {
                                         crs={CRS.Simple}
                                         bounds={[[-150, -150], [500, 180]]}
 
-                                        url={"http://localhost:5000/lut" + '/{z}/{x}/{y}.png' + "?lut=" + lut['tdTomato'] + "&url=" + encodeURIComponent(slicesTomato[selectedSlice]) + "&brightness=" + options.brightness +
+                                        url={"http://localhost:5000/lut" + '/{z}/{x}/{y}.png' + "?lut=" + lut['tdTomato'] + "&url=" + encodeURIComponent(slicesTomato[selectedSlice] ? slicesTomato[selectedSlice].img_no_ext : null) + "&brightness=" + options.brightness +
                                             "&contrast=" + options.contrast +
                                             "&cliplow=" + options.min +
                                             "&cliphigh=" + options.max}
