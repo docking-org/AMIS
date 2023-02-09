@@ -1,0 +1,100 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.leaflet-container{
+  height: 550px;
+}
+
+.slice{
+  width: 180px;
+}
+
+.scrollbar .handle .mousearea {
+  position: absolute;
+  top: -9px;
+  left: 0;
+  width: 80%;
+  height: 20px;
+}
+
+.scrollbar .handle {
+  height: 100%;
+  background: #0aaaf1;
+  cursor: pointer;
+  transform: translateZ(0px) translateX(0px); 
+  width: 190px;
+}
+
+.scrollbar {
+  margin: 0 0 1em 0;
+  height: 2px;
+  background: #ccc;
+  line-height: 0;
+}
+
+.imageBrowser{
+  background: black;
+  height: 100vh;
+} 
+.frame ul li {
+  background: none;
+}
+
+.leaflet-container {
+  background: black;
+  outline: 0;
+}
+
+.col-form-label{
+  margin-left: 5px;  
+  color:black
+}
+
+.slider {
+  padding: 2px;
+  display: flex;
+  margin: auto;
+}
+.select-card{
+  margin: 5px;
+  padding: 10px;
+  border-radius: 10px;
+
+  background-color: white;
+}

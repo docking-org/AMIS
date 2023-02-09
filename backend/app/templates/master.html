@@ -1,0 +1,6 @@
+{% extends 'admin/base.html' %}
+
+{% block tail %}
+<link href="{{ url_for('static', filename='styles/sticky-footer-navbar.css')}}" rel="stylesheet">
+{% include "footer.html" %}
+{% endblock %}

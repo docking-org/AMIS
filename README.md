@@ -1,46 +1,70 @@
-# AMIS
-A Mouse Image Server
+# Getting Started with Create React App
 
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-1. http://amis.docking.org/loadimages
-This script will load all tif files from ‘/nfs/ex9/idg-images/’  including all sub folders. If .tif file is already in our database it sill skip those files. If .tif file is new and not stored our database, it will store data by parsing file name. If there is no jpg file with same file name in the same directory, script will lookup jpg file from ‘/nfs/ex9/idg-images/jpegs/’ folder and it will move the jpeg files from this directory if there is jpeg file with same name.  
+## Available Scripts
 
-2. http://amis.docking.org/TAS2R4/thymus or http://amis.docking.org?gene=TAS2R4&organ=thymus 
-It will automatically select gene and organ that specified in the URL http://amis.docking.org/{gene}/{organ}
+In the project directory, you can run:
 
+### `npm start`
 
-Returns all data without any pagination
-http://amis.docking.org/slices?per_page=-1
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-Returns all data without any pagination and filter by gene
-http://amis.docking.org/slices?per_page=-1&gene=GPR85
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
 
+### `npm test`
 
-There are 2 types of format that script loads.
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
- #| Histological | | Cleared |  |
---- | --- | --- | --- |--- |
- #| nomenclature | Value | nomenclature | Value | 
-1 | gene | GPR85 | gene | GPR85 | 
-2 | experiment | Ai9 | experiment | Ai9 |
-3 | genotype_gene | 1 | genotype_gene | 1 |
-4 | genotype_reporter | 1 | genotype_reporter | 1 |
-5 | mouse_number | 1540 | mouse_number | 1 |
-6 | sex | m | sex | M |
-7 | age | p30 | age | p30 |
-8 | manipulation_type | reporter-gene-cross | manipulation_type | reporter-gene-cross |
-9 | organ | heart | organ | brain | 
-10 | UBERON | 948 | UBERON | 955 |
-11 | orientation | nd | orientation | c |
-12 | slde_number | 00001 | slice_id | 812 |
-13 | slice_id | 3 | z_step_size | 1 .26675|
-14 | objective | 10x | objective | 20x |
-15 | instrument | Olympus | instrument | LSM |
-16 | wavelength | DAPI | wavelength | tdTomato |
-17 | checksum | md5 | checksum | md5 |
+### `npm run build`
 
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
-If you want to download as a json format. You need to add .json after slices as below.
-http://amis.docking.org/slices.json?per_page=-1
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
+### `npm run eject`
+
+**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+
+If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+
+You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+
+## Learn More
+
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+
+To learn React, check out the [React documentation](https://reactjs.org/).
+
+### Code Splitting
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+
+### Analyzing the Bundle Size
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+
+### Making a Progressive Web App
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+
+### Advanced Configuration
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+
+### Deployment
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+
+### `npm run build` fails to minify
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
