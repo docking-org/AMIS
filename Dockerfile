@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1
+# syntax=docker/dockerfile:1.4
 
 FROM node:16-alpine
 WORKDIR /app
@@ -33,7 +33,7 @@ RUN apt-get install -y libpq-dev
 RUN apt-get install -y python-dev 
 RUN apt-get install -y vim
 
-RUN pip install -r backend/requirements.txt
+RUN pip install -r ./requirements.txt
 RUN apt-get install ffmpeg libsm6 libxext6  -y
 
 ADD backend/app ./app
