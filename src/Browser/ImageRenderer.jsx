@@ -9,7 +9,7 @@ import { useState, useEffect, createRef } from 'react';
 import axios from "axios";
 import Select from 'react-select';
 import { MapContainer, TileLayer, LayersControl } from 'react-leaflet';
-import { CRS } from 'leaflet';
+import { CRS, setOptions } from 'leaflet';
 import { Button } from 'react-bootstrap';
 import $ from 'jquery';
 import Sly from 'sly-scroll';
@@ -337,6 +337,17 @@ function ImageRenderer(props) {
         return selectedWavelength === 'tdTomato' ? slicesTomato : slicesDAPI
 
     }
+    function resetValues() {
+
+        updateOptions({
+            'brightness': 0,
+            'contrast': 0,
+            'min': 0,
+            'max': 255,
+            'blend': 100
+        })
+
+    }
 
     return (
         <Container fluid className="imageBrowser">
@@ -416,11 +427,15 @@ function ImageRenderer(props) {
                                 logo={"Color Options"}
                                 className="color-accordion"
                             >
+
                                 <Slider label="min" value='min' updateOption={updateOption} defaultValue={options['min']} onChange={() => console.log()} tooltip='Adjust Min Value' min={0} max={255} delta={10} />
                                 <Slider label="max" value='max' updateOption={updateOption} defaultValue={options['max']} onChange={() => console.log()} tooltip='Adjust Max Value' min={0} max={255} delta={10} />
                                 <Slider icon='tint' value='blend' updateOption={updateOption} defaultValue={options['blend']} onChange={() => console.log()} tooltip='Adjust Alpha Blend' min={0} max={100} delta={15} />
                                 <Slider icon='sun' value='brightness' updateOption={updateOption} defaultValue={options['brightness']} onChange={() => console.log()} tooltip='Adjust Brightness' min={-255} max={255} delta={10} />
                                 <Slider icon='adjust' value='contrast' updateOption={updateOption} defaultValue={options['contrast']} onChange={() => console.log()} tooltip='Adjust Contrast' min={-255} max={255} delta={10} />
+                                <br></br>
+                                <Button size='sm' onClick={() => resetValues()}> Reset Values</Button>
+
                             </SliderMenu>
                             <SliderMenu position="bottomright" closeAccordions={closeAccordions} active={lutAccordion} toggleAccordion={togglelutAccordion}
                                 className="lut-accordion"
