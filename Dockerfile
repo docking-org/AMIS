@@ -1,9 +1,9 @@
 FROM node:16-alpine
-WORKDIR /app
+WORKDIR /home/amis
 ENV PATH /app/node_modules/.bin:$PATH
-ADD package.json yarn.lock ./
-ADD ./src ./src
-ADD ./public ./public
+COPY package.json yarn.lock ./
+COPY ./src ./src
+COPY ./public ./public
 RUN yarn install
 RUN yarn build
 
@@ -11,6 +11,7 @@ RUN yarn build
 FROM continuumio/anaconda3:latest 
 WORKDIR /home/amis
 COPY  /app/build ../build
+COPY ./backend ./
 ADD backend/application.py backend/config.py backend/boot.sh backend/requirements.txt ./
 RUN conda create -n amis -y
 RUN echo "conda activate amis" > ~/.bashrc
