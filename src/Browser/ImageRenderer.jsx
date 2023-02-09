@@ -338,7 +338,6 @@ function ImageRenderer(props) {
 
     }
     function resetValues() {
-
         updateOptions({
             'brightness': 0,
             'contrast': 0,
@@ -346,7 +345,36 @@ function ImageRenderer(props) {
             'max': 255,
             'blend': 100
         })
+    }
 
+    function getAutoValues() {
+        var selectedUrl = "";
+        if (selectedWavelength === "tdTomato") {
+            selectedUrl = slicesTomato[selectedSlice]
+        }
+        if (selectedWavelength === "DAPI") {
+            selectedUrl = slicesDAPI[selectedSlice]
+        }
+
+
+        axios({
+            method: "GET",
+            url: "http://localhost:5000/getAutoValues?url=" + encodeURIComponent(selectedUrl),
+            dataType: "json",
+            dataSrc: "items",
+        }).then((response) => {
+            var res = response.data
+            updateOptions({
+                brightness: parseInt(res.brightness),
+                contrast: Math.round(parseFloat(res.contrast) / 3 * 100),
+                min: res.min,
+                max: res.max,
+                blend: options.blend
+            })
+            console.log(options)
+
+
+        })
     }
 
     return (
@@ -435,7 +463,8 @@ function ImageRenderer(props) {
                                 <Slider icon='adjust' value='contrast' updateOption={updateOption} defaultValue={options['contrast']} onChange={() => console.log()} tooltip='Adjust Contrast' min={-255} max={255} delta={10} />
                                 <br></br>
                                 <Button size='sm' onClick={() => resetValues()}> Reset Values</Button>
-
+                                &nbsp;
+                                <Button size='sm' onClick={() => getAutoValues()}> Auto</Button>
                             </SliderMenu>
                             <SliderMenu position="bottomright" closeAccordions={closeAccordions} active={lutAccordion} toggleAccordion={togglelutAccordion}
                                 className="lut-accordion"
