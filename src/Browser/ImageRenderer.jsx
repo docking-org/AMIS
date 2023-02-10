@@ -4,6 +4,7 @@ import './App.css';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
+import Spinner from 'react-bootstrap/Spinner';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import { useState, useEffect, createRef } from 'react';
 import axios from "axios";
@@ -30,6 +31,7 @@ const DropdownIndicator = (
 function ImageRenderer(props) {
     const lutRef = createRef(null);
     const colorRef = createRef(null);
+    const [sampleTypes, updateSampleTypes] = useState(props.state.sampleTypes)
     const [genes, updateGenes] = useState(props.state.genes)
     const [organs, updateOrgans] = useState(props.state.organs)
     const [mice, updateMice] = useState(props.state.mice)
@@ -45,9 +47,9 @@ function ImageRenderer(props) {
     const [lutAccordion, setlutAccordion] = useState(false);
     const [slider, setSlider] = useState(null);
     const [loaded, setLoaded] = useState(null);
-
+    const [optionsLoaded, setOptionsLoaded] = useState(false);
     const [options, updateOptions] = useState(props.state.options)
-
+    const [selections, updateSelections] = useState(props.state.selections)
     const [lut, updateLut] = useState(props.state.lut)
 
 
@@ -73,7 +75,7 @@ function ImageRenderer(props) {
         dragHandle: 1,
         dynamicHandle: 1,
         clickBar: 1,
-
+        
 
     };
 
@@ -95,55 +97,7 @@ function ImageRenderer(props) {
         e.returnValue = false
     }
 
-    useEffect(() => {
-        updateSelectedGene(null)
-        updateSelectedOrgan(null)
-        updateGenes([])
-        updateOrgans([])
-        if (selectedSampleType) {
-            var url = "/filters?";
-            url += "&instrument=" + selectedSampleType['value'];
-            axios({
-                method: "GET",
-                url: url,
-                dataType: "json",
-                dataSrc: "items",
-            }).then((response) => {
-                var res = response.data.items
 
-                res = Array.from(new Set(res = res.map(res => res.gene)))
-                res.sort()
-                updateGenes(res)
-
-            })
-        }
-    }, [selectedSampleType])
-
-
-
-    useEffect(() => {
-        if (selectedGene) {
-            updateSelectedOrgan(null)
-            updateOrgans([])
-
-            var url = "/filters?";
-            url += "&instrument=" + selectedSampleType['value'];
-            url += "&gene=" + selectedGene['value'];
-            axios({
-                method: "GET",
-                url: url,
-                dataType: "json",
-                dataSrc: "items",
-            }).then((response) => {
-                var res = response.data.items
-
-                res = Array.from(new Set(res = res.map(res => res.organ)))
-                res.sort()
-                updateOrgans(res)
-
-            })
-        }
-    }, [selectedGene])
 
 
 
@@ -217,7 +171,8 @@ function ImageRenderer(props) {
 
     useEffect(() => {
         updateSelectedMouse(null);
-        updateMice([])
+        updateMice([]);
+        console.log("selectedOrgan changed")
         if (selectedGene && selectedOrgan && selectedSampleType) {
             let url = "/mice?";
 
@@ -232,12 +187,13 @@ function ImageRenderer(props) {
                 dataSrc: "items",
             }).then((response) => {
                 var res = response.data.items
-
+                
                 updateMice(res)
-
+                if(props.state.selectedMouse){
+                    updateSelectedMouse(props.state.selectedMouse)
+                }
             })
         }
-
     }, [selectedOrgan])
 
     function updateOption(key, value) {
@@ -263,9 +219,13 @@ function ImageRenderer(props) {
     function handleClickOutside(event) {
 
         // if classname is not lut-accordion or color-accordion, or if the event target does not contain a parent with the class lut-accordion or color-accordion, close the accordions
+        try{
         if (!event.target.className.includes("accordion") && !event.target.closest(".accordion")) {
             closeAccordions()
         }
+    }catch(e){
+        console.log()
+    }
 
 
 
@@ -274,7 +234,14 @@ function ImageRenderer(props) {
     }
 
 
+    //on load, load selections
+    useEffect(() => {
+        if (!optionsLoaded) {
+            loadAllFilters()
+            
+        }
 
+    }, [props.main, optionsLoaded])
 
     function togglelutAccordion() {
         setlutAccordion(!lutAccordion)
@@ -310,7 +277,10 @@ function ImageRenderer(props) {
             selectedWavelength: selectedWavelength,
             loaded: loaded,
             options: options,
-            lut: lut
+            lut: lut,
+            selections:selections,
+            sampleTypes:sampleTypes,
+            optionsLoaded:optionsLoaded,
         }
     }
 
@@ -332,6 +302,12 @@ function ImageRenderer(props) {
             slider.activate(selectedSlice)
         }
     }, [selectedWavelength])
+
+
+    useEffect(() => {
+        console.log(selectedSampleType  )
+    }, [selectedSampleType])
+
 
     function getSliceThumbnails() {
         return selectedWavelength === 'tdTomato' ? slicesTomato : slicesDAPI
@@ -377,22 +353,79 @@ function ImageRenderer(props) {
         })
     }
 
+    function loadAllFilters(){
+        
+        //loads all available filters from /filters endpoint
+        //sample return line {"experiment":"Ai9","gene":"GPR68","organ":"heart","sample_type":"Histological","unique":"GPR68Ai9heartHistological"},
+        // the filters are unique to the combination of gene, organ, and sample type
+        
+        axios({
+            method: "GET",
+            url: "http://localhost:5000/filters",
+            dataType: "json",
+            dataSrc: "items",
+        }).then((response) => {
+            var res = response.data.items
+
+            var genes = []
+            var organs = []
+            
+            var response = []
+            //sample line in res {"experiment":"Ai9","gene":"GPR85","organ":"kidney","sample_type":"Cleared","unique":"GPR85Ai9kidneyCleared"},
+            var sampleTypes = {}  
+            res.forEach(filter => {
+                //convert res to format
+                //[{sampleType: "Histological", genes: {"GPR68": {organs: {"heart" : {'mice': []}}}}}]
+              
+                if(!sampleTypes[filter.sample_type]){
+                    sampleTypes[filter.sample_type] = {genes: []}
+                }
+                if(genes.length == 0 || !genes.includes(filter.gene)){
+                    genes.push(filter.gene)
+                }
+                
+                if(!sampleTypes[filter.sample_type].genes[filter.gene]){
+                    
+                    sampleTypes[filter.sample_type].genes[filter.gene] = {organs: []}
+                }
+                if(organs.length == 0 || !organs.includes(filter.organ)){
+                    organs.push(filter.organ)
+                }
+                if(!sampleTypes[filter.sample_type].genes[filter.gene].organs[filter.organ]){
+                    sampleTypes[filter.sample_type].genes[filter.gene].organs[filter.organ] = {mice: []}
+                }
+                
+                
+            })    
+           
+            //remove 0 entries from sampleTypes, which are created by the [{}]
+          
+
+            console.log(sampleTypes)
+            updateSelections(sampleTypes)
+            setOptionsLoaded(true)
+        })          
+    }
+
+
+
     return (
         <Container fluid className="imageBrowser">
             <Col>
                 <Row className='justify-content-center'>
                     <Col lg={2}>
                         <div className='select-card'>
+                            {optionsLoaded ?                            
+                            (
+                                <div>
                             <label className="col-sm-12 col-form-label">Sample Type</label>
                             <Select
                                 components={{ DropdownIndicator }}
                                 defaultValue={selectedSampleType}
                                 value={selectedSampleType}
                                 isClearable={props.renderSize === 12 ? true : false} options={
-                                    [
-                                        { "value": "histological", "label": "Histological" },
-                                        { "value": "cleared", "label": "Cleared" },
-                                    ]
+                                    //use the selections keys to get the sample types
+                                    Object.keys(selections).map(selection => ({ "value": selection, "label": selection }))
                                 } onChange={(option) => updateSelectedSampleType(option ? option : null)} />
 
                             <label className="col-sm-4 col-form-label">Gene</label>
@@ -401,8 +434,10 @@ function ImageRenderer(props) {
                                 components={{ DropdownIndicator }}
                                 defaultValue={selectedGene}
                                 value={selectedGene}
-                                isDisabled={genes.length === 0 || !selectedSampleType} isClearable={props.renderSize === 12 ? true : false} options={
-                                    genes.map(gene => ({ "value": gene, "label": gene }))
+                                isDisabled={!selectedSampleType} isClearable={props.renderSize === 12 ? true : false} options={
+                                    
+                                    selectedSampleType ? Object.keys(selections[selectedSampleType['value']].genes).map(gene => ({ "value": gene, "label": gene })): []
+                                    
                                 } onChange={(option) => updateSelectedGene(option ? option : null)} />
 
                             <label className="col-sm-4 col-form-label">Organ</label>
@@ -410,8 +445,8 @@ function ImageRenderer(props) {
                                 components={{ DropdownIndicator }}
                                 defaultValue={selectedOrgan}
                                 value={selectedOrgan}
-                                isDisabled={organs.length === 0} isClearable={props.renderSize === 12 ? true : false} options={
-                                    organs.map(organ => ({ "value": organ, "label": organ }))
+                                isDisabled={!selectedGene} isClearable={props.renderSize === 12 ? true : false} options={
+                                    selectedGene ? Object.keys(selections[selectedSampleType['value']].genes[selectedGene['value']].organs).map(organ => ({ "value": organ, "label": organ })): []
                                 } onChange={(option) => updateSelectedOrgan(option ? option : null)} />
 
                             <label className="col-sm-4 col-form-label">Mouse</label>
@@ -420,14 +455,13 @@ function ImageRenderer(props) {
                                 components={{ DropdownIndicator }}
                                 defaultValue={selectedMouse}
                                 value={selectedMouse}
-                                isDisabled={mice.length === 0 || !selectedOrgan} isClearable={props.renderSize === 12 ? true : false} options={
+                                isDisabled={!selectedOrgan} isClearable={props.renderSize === 12 ? true : false} options={
 
-                                    mice.map(mouse => ({
+                                    selectedOrgan ? mice.map(mouse => ({
                                         "value": mouse.number, "label": (mouse.sex !== true ? "♀" : "♂") + "  " + mouse.number + "  " +
                                             (mouse.spec === "+" ? "pos" : "neg")
+                                    })) : []
 
-
-                                    }))
                                 } onChange={(option) => updateSelectedMouse(option ? option : null)} />
 
                             <br />
@@ -436,6 +470,15 @@ function ImageRenderer(props) {
                             {props.main ? <button type="button" className="btn btn-toggle-split btn-dark" onClick={() => { props.splitScreen(buildState()) }}>Toggle Split Screen</button> : null}
 
                             <div className="col-sm-hidden col-md-10 row slice_details"></div>
+
+                            </div> ) :   
+                            (
+                            <div className='select-card'>
+                                <Spinner animation="border" role="status">
+                                    <span className="sr-only">Loading...</span>
+                                </Spinner>
+                            </div>
+                            )}
                         </div>
                         {selectedMouse ?
 
@@ -451,7 +494,11 @@ function ImageRenderer(props) {
                                 Sex: {slicesTomato[selectedSlice] ? slicesTomato[selectedSlice].sex : null}
 
                             </div>
-                            : null}
+                            : 
+
+                          null
+                            
+                            }
 
 
                     </Col>
@@ -505,10 +552,12 @@ function ImageRenderer(props) {
                                         crs={CRS.Simple}
                                         bounds={[[-150, -150], [500, 180]]}
 
-                                        url={"http://localhost:5000/lut" + '/{z}/{x}/{y}.png' + "?lut=" + lut['tdTomato'] + "&url=" + encodeURIComponent(slicesTomato[selectedSlice] ? slicesTomato[selectedSlice].img_no_ext : null) + "&brightness=" + options.brightness +
+                                        url={ selectedMouse?
+                                            
+                                            "http://localhost:5000/lut" + '/{z}/{x}/{y}.png' + "?lut=" + lut['tdTomato'] + "&url=" + encodeURIComponent(slicesTomato[selectedSlice] ? slicesTomato[selectedSlice].img_no_ext : null) + "&brightness=" + options.brightness +
                                             "&contrast=" + options.contrast +
                                             "&cliplow=" + options.min +
-                                            "&cliphigh=" + options.max}
+                                            "&cliphigh=" + options.max : ""}
                                     />
                                 </LayersControl.Overlay>
                                 <LayersControl.Overlay name="DAPI">
@@ -522,10 +571,11 @@ function ImageRenderer(props) {
                                         crs={CRS.Simple}
                                         bounds={[[-150, -150], [500, 180]]}
 
-                                        url={"http://localhost:5000/lut" + '/{z}/{x}/{y}.png' + "?lut=" + lut['DAPI'] + "&url=" + encodeURIComponent(slicesDAPI[selectedSlice] ? slicesDAPI[selectedSlice].img_no_ext : null) + "&brightness=" + options.brightness +
+                                        url={ selectedMouse?
+                                            "http://localhost:5000/lut" + '/{z}/{x}/{y}.png' + "?lut=" + lut['DAPI'] + "&url=" + encodeURIComponent(slicesDAPI[selectedSlice] ? slicesDAPI[selectedSlice].img_no_ext : null) + "&brightness=" + options.brightness +
                                             "&contrast=" + options.contrast +
                                             "&cliplow=" + options.min +
-                                            "&cliphigh=" + options.max}
+                                            "&cliphigh=" + options.max : ""}
                                     />
                                 </LayersControl.Overlay>
                             </LayersControl>

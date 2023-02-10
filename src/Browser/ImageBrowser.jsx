@@ -12,6 +12,7 @@ function ImageBrowser() {
     const [update, setUpdate] = useState(null)
     const [clone, setClone] = useState(false)
     const [state, setState] = useState({
+        sampleTypes: [],
         genes: [],
         organs: [],
         mice: [],
@@ -22,7 +23,8 @@ function ImageBrowser() {
         selectedOrgan: null,
         selectedMouse: null,
         selectedSlice: 1,
-
+        selections: [],
+        optionsLoaded: false,
         selectedWavelength: "tdTomato",
         colorAccordion: false,
         options: {

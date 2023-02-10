@@ -84,6 +84,8 @@
 .frame ul li.active {
 	color: #fff;
 	background: #a03232;
+	border-radius: 20px;
+	
 }
 
 /* Scrollbar */
