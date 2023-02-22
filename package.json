@@ -22,7 +22,6 @@
     "react-router-dom": "^6.8.0",
     "react-scripts": "5.0.1",
     "react-select": "^5.7.0",
-    "react-sly-scroll": "^0.1.0",
     "react-tooltip": "^5.7.4",
     "sly-scroll": "^0.1.0",
     "sort-by": "^1.2.0",
