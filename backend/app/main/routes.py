@@ -12,7 +12,15 @@ from app.data.models.gene import GeneModel
 from app.data.models.gene_name import GeneNameModel
 from app.data.models.organ import OrganModel
 from app.data.models.experiment import ExperimentModel
-
+from app.data.models.genotype import GenotypeModel
+from app.data.models.mouse import MouseModel
+from app.data.models.mani_type import ManipulationTypeModel
+from flask import current_app
+import os
+import shutil
+import glob
+from pathlib import Path
+from PIL import Image
 
 # @application.route('/', methods=['GET'])
 # def index(gene_name=None, organ_name=None):
@@ -84,7 +92,160 @@ def image_load():
     # file_dir = os.path.realpath(os.path.dirname(folder))
     # lst = os.listdir(file_dir)
     # ret = save_file_list(lst)
-    return load_images()
+    
+    skipped = 0
+    new_files = 0
+    jpegs = 0
+    moved_jpegs = 0
+    p_denied = 0
+    missing_jpegs = []
+    folder = current_app.config['IMAGE_LOAD_FOLDER']
+    path = os.path.realpath(os.path.dirname(folder))
+    print("Path: {}".format(path))
+    files = [f for f in glob.glob(path + "/**/*.tif", recursive=True)]
+    for file in files:
+        file_name = Path(file).stem
+        file_name_with_ext = Path(file).name
+        file_sub_folder = str(Path(file).parent)[len(path):]
+
+
+        # print("File: {}".format(file))
+        # print("File name: {}".format(file_name))
+        # print("File name with extention: {}".format(file_name_with_ext))
+        # print("File sub folder: {}".format(file_sub_folder))
+
+        if "hidden" in file_sub_folder:
+            # print("_______________Skipped the file in HIDDEN dir: {}/{}".
+            #       format(file_sub_folder, file_name_with_ext))
+            continue
+
+        full_path_without_ext = "{}{}/{}".format(path, file_sub_folder, file_name)
+        print("full_path_without_ext", full_path_without_ext)
+        # It converts png to resized .webp file if there is now *.webp file
+        for type in ["_RI.", "."]:
+            if not os.path.isfile('{}{}webp'.format(full_path_without_ext, type)) and \
+                    os.path.isfile('{}{}png'.format(full_path_without_ext, type)):
+                fixed_height = 350
+                image = Image.open("{}{}png".format(full_path_without_ext, type))
+                height_percent = (fixed_height / float(image.size[1]))
+                width_size = int((float(image.size[0]) * float(height_percent)))
+
+                image = image.resize((width_size, fixed_height), Image.NEAREST)
+                image.save('{}{}webp'.format(full_path_without_ext, type), optimize=True, quality=50)
+
+        if SliceModel.isRegistered(file_name):
+            destination = "{}{}/".format(path, file_sub_folder)
+            dest_file_with_jpeg = "{}{}.jpg".format(destination, file_name)
+            # print("DEST:"+destination+file_name)
+            # print("dest_file_with_jpeg:" + dest_file_with_jpeg)
+            if not os.path.isfile(dest_file_with_jpeg):
+                jpegs += 1
+                jpeg_folder = current_app.config['JPEG_FOLDER']
+                jpeg_path = os.path.realpath(os.path.dirname(jpeg_folder))
+                print("jpeg_path:" + jpeg_path)
+                source = "{}/{}.jpg".format(jpeg_path, file_name)
+                print("SOURCE:" + source)
+                try:
+                    if os.path.isfile(source):
+                        moved_jpegs += 1
+                        print("DEST:" + destination)
+                        print("SOURCE:" + source)
+                        shutil.move(source, destination)
+                        print("JPEG file has been moved to " + destination)
+                    else:
+                        missing_jpegs.append(dest_file_with_jpeg)
+                except Exception as e:
+                    print(e)
+            skipped += 1
+            print("_______________Skipped the file: {}".format(
+                file_name_with_ext))
+            continue
+
+        values = file_name.replace('_RI', '').split('_')
+        try:
+            genotype_gene = GenotypeModel.find_by_id(values[2])
+            if genotype_gene is None:
+                genotype_gene = GenotypeModel(values[2], None)
+                genotype_gene.save_to_db()
+            genotype_reporter = GenotypeModel.find_by_id(values[3])
+            if genotype_reporter is None:
+                genotype_reporter = GenotypeModel(values[3], None)
+                genotype_reporter.save_to_db()
+            gene_name = GeneNameModel.find_by_name(values[0])
+            if gene_name is None:
+                gene_name = GeneNameModel(values[0])
+                gene_name.save_to_db()
+            gene = GeneModel.find_by_gene_name_ids(gene_name, genotype_gene,
+                                                   genotype_reporter)
+            if gene is None:
+                gene = GeneModel(gene_name, genotype_gene, genotype_reporter)
+            experiment = ExperimentModel.find_by_name(values[1])
+            if experiment is None:
+                experiment = ExperimentModel(values[1])
+            mani_type = ManipulationTypeModel.find_by_name(values[7])
+            if mani_type is None:
+                mani_type = ManipulationTypeModel(values[7])
+            sex = 1
+            if values[5].lower() == "f" or values[5].lower() == "female":
+                sex = 0
+            mouse = MouseModel.find_by_number(values[4])
+            if mouse is None:
+                mouse = MouseModel(values[4], sex, values[6], gene, mani_type)
+            organ = OrganModel.find_by_name(values[8])
+            if organ is None:
+                organ = OrganModel(values[8])
+            if values[14].upper() != "LSM":
+                # uberon, orientation, slide_number, slice_id,
+                # z_step_size=None, objective, instrument,
+                # wavelength, checksum, organ, mouse,
+                # experiment, combined_data, sub_folder
+                slice = SliceModel(values[9], values[10], values[11],
+                                   values[12], None,
+                                   values[13], values[14], values[15],
+                                   values[16],
+                                   organ, mouse, experiment, file_name,
+                                   file_sub_folder)
+                slice.save_to_db()
+            else:
+                # uberon, orientation, slide_number=None, slice_id,
+                # z_step_size, objective, instrument,
+                # wavelength, checksum, organ, mouse, experiment,
+                # combined_data, sub_folder
+                slice = SliceModel(values[9], values[10], None, values[11],
+                                   values[12],
+                                   values[13], values[14], values[15],
+                                   values[16],
+                                   organ, mouse, experiment, file_name,
+                                   file_sub_folder)
+                slice.save_to_db()
+            new_files += 1
+            print(file)
+
+        except PermissionError:
+            p_denied += 1
+            slice.delete_from_db()
+        except Exception as e:
+            # return "Please check the file name:
+            # {}\n Exception {}\n".format(name[0:-4], str(e))
+            skipped += 1
+            print("Skipped the file: {}".format(file_name_with_ext))
+            print("Please check the file name: {}/{}\n Exception {}\n".format(
+                file_sub_folder, file_name, str(e)))
+
+    with open(path + '/missing_jpeg_paths.txt', 'w') as file_handler:
+        for item in missing_jpegs:
+            file_handler.write("{}\n".format(item))
+
+    return "<h1>Status:</h1> <br/> <h3>Skipped old files:{}</h3> <br/>" \
+           "<h3>Added new files:{}</h3> <br/> " \
+           "<h3>Permission denied:{}</h3><br/> <h3>JPEG(s) not found:{}</h3>" \
+           "<br/> <h3>JPEG(s) has been moved to RIGHT directory:{}</h3>" \
+        .format(skipped,
+                new_files,
+                p_denied,
+                jpegs,
+                moved_jpegs)
+
 
 
 @application.route('/details/<id>/<from_url>', methods=['GET', 'POST'])

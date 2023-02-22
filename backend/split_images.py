@@ -6,17 +6,6 @@ from pathlib import Path
 import glob
 import multiprocessing
 
-# multiprocessing.cpu_count()
-# print(path)
-# path = os.getcwd()
-# path = '{}/input'.format(path)
-# options = {'zoom': (0, 7), 'resampling': 'average', 'resume': True,
-#            'profile': 'raster'}
-# , 'tmscompatible': True
-
-# gdal2tiles.generate_tiles(
-#     '{}/input/pic4.jpEg'.format(path), '{}/output/'.format(path), **options)
-
 
 def split(file, tile_size=256, overlap=0, format='PNG', quality=100):
     options = {

@@ -36,74 +36,31 @@ def convert_png_to_white_pixel(name):
     im.save(filename+".png", "png")
     
 
-#convert tif to rgb based on format
-def convert_tif_to_rgb(name):
-    """a function to convert a tif file to rgb. there are 3 different kinds of tif files
-    1. contains 'tdTomato' in the name, convert the image to red
-    2. contains 'DAPI' in the name, convert the image to blue
-    3. contains 'GFP' in the name, convert the image to green
-    
-    here is a sample code to convert a tif image to red:
-    img = cv2.imread(name)
-    img[:, :, (0, 1)] = 0
-        
-    cv2.imwrite(filename+"."+fileext, img)
-    
-    where name is the name of the file, and filename is the name of the file without the extension.
-    make sure the file is a tif file before converting it to rgb.
-    also use a transparency gradient to make the image look better.
-    """
-    
-  
-    if "tdTomato" in name:
-        filename = name.split(".")
-        fileext = filename[1]
-        filename = filename[0]
-        
-        img = cv2.imread(name)
-        img[:, :, (0, 1)] = 0
-        
-        cv2.imwrite(filename+"."+fileext, img)
-    elif "DAPI" in name:
-        filename = name.split(".")
-        fileext = filename[1]
-        filename = filename[0]
-        
-        img = cv2.imread(name)
-        img[:, :, (1, 2)] = 0
-        
-        cv2.imwrite(filename+"."+fileext, img)
-    elif "GFP" in name:
-        filename = name.split(".")
-        fileext = filename[1]
-        filename = filename[0]
-        
-        img = cv2.imread(name)
-        img[:, :, (0, 2)] = 0
-        
-        cv2.imwrite(filename+"."+fileext, img)
        
 def process(file):
     """calls the appropriate function to convert the file to rgb. if the file is a png file, convert it to white pixel image. then, split the image."""
     if ".png" in file:
         convert_png_to_white_pixel(file)
-    elif ".tif" in file:
-        convert_tif_to_rgb(file)
+   
 
     split(file)
     
 
 
 def split(file, tile_size=256, overlap=0, format='PNG', quality=100):
+    # split into tiles, 16 bit tif files are kept as 16 bit
     options = {
         'zoom': (0, 7),
-        'resampling': 'average',
-        'resume': True,
-        'profile': 'raster',
-        'webviewer': 'none',
-        'nb_processes': multiprocessing.cpu_count(),
         'tile_size': tile_size,
-    }
+        'overlap': overlap,
+        'format': format,
+        'quality': quality,
+        'resampling': 'average',
+        's_srs': 'EPSG:3857',
+        'profile': 'mercator',
+        'processes': 4,
+        'resume': True,
+        }
 
     # PATH is the path to the folder where the images are located, locate the root folder of the file variable
     path =  Path(file.replace('\n', '')).parent

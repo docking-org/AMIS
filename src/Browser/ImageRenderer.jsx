@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 import './App.css';
 import Col from 'react-bootstrap/Col';
@@ -6,7 +7,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Spinner from 'react-bootstrap/Spinner';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import { useState, useEffect, createRef } from 'react';
+import { useState, useEffect, createRef, useMemo } from 'react';
 import axios from "axios";
 import Select from 'react-select';
 import { MapContainer, TileLayer, LayersControl } from 'react-leaflet';
@@ -14,11 +15,14 @@ import { CRS, setOptions } from 'leaflet';
 import { Button } from 'react-bootstrap';
 import $ from 'jquery';
 import Sly from 'sly-scroll';
-import LUTSelector from './LUTSelector';
-import Slider from './Slider';
-import SliderMenu from './SliderMenu';
+import LUTSelector from './LeafletControls/LUTSelector';
+import Slider from './LeafletControls/Slider';
+import SliderMenu from './LeafletControls/SliderMenu';
 import 'leaflet-fullscreen/dist/Leaflet.fullscreen.js';
 import 'leaflet-fullscreen/dist/leaflet.fullscreen.css';
+import OpenPopup from './LeafletControls/OpenPopup';
+import { render, createPortal } from "react-dom";
+import ViewSlices from "./ViewSlices";
 
 const DropdownIndicator = (
     props
@@ -29,8 +33,11 @@ const DropdownIndicator = (
 };
 
 function ImageRenderer(props) {
+    
     const lutRef = createRef(null);
     const colorRef = createRef(null);
+    const [windowOpen, setWindowOpen] = useState(false);
+    const [folded, setFolded] = useState(false);
     const [sampleTypes, updateSampleTypes] = useState(props.state.sampleTypes)
     const [genes, updateGenes] = useState(props.state.genes)
     const [organs, updateOrgans] = useState(props.state.organs)
@@ -56,7 +63,7 @@ function ImageRenderer(props) {
 
 
     var $frame = $('#forcecentered ' + (props.main ? 1 : 2));
-    var $wrap = $frame.parent();
+
     var slyOptions = {
         horizontal: 1,
         itemNav: 'forceCentered',
@@ -111,9 +118,6 @@ function ImageRenderer(props) {
         }
     }, [props.renderSize, slider, slicesTomato, slicesDAPI])
 
-    useEffect(() => {
-
-    }, [selectedSlice])
 
 
 
@@ -262,6 +266,8 @@ function ImageRenderer(props) {
     }
 
 
+
+
     function buildState() {
         return {
             genes: genes,
@@ -303,10 +309,14 @@ function ImageRenderer(props) {
         }
     }, [selectedWavelength])
 
+    
 
     useEffect(() => {
         console.log(selectedSampleType  )
     }, [selectedSampleType])
+
+  
+
 
 
     function getSliceThumbnails() {
@@ -407,10 +417,95 @@ function ImageRenderer(props) {
         })          
     }
 
+    function fold(){
+        setFolded(!folded)
+    }
 
+    
+    const NewWindow = ({ children, close }) => {
+        const newWindow = useMemo(() =>
+            window.open(
+                "about:blank",
+                "newWin",
+                `width=800,height=400`
+            )
+        );
+        newWindow.onbeforeunload = () => {
+            setWindowOpen(false)
+          
+        };
+        copyStyles(document, newWindow.document);
+        //copy javascript 
+        const script = document.createElement("script");
+        script.src = "http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery.min.js";
+        script.async = true;
+        newWindow.document.head.appendChild(script);
+
+        const script4 = document.createElement("script");
+        script.src = "http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js";
+        script.async = true;
+        newWindow.document.head.appendChild(script4);
+
+        //bootstrap js
+        const script2 = document.createElement("script");
+        script2.src = "https://cdn.jsdelivr.net/npm/react-bootstrap@next/dist/react-bootstrap.min.js";
+        script2.async = true;
+        newWindow.document.head.appendChild(script2);
+
+        //bootstrap css
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = "https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css";
+        newWindow.document.head.appendChild(link);
+        
+        //close window
+        useEffect(() => {
+            return () => {
+                newWindow.close();
+            };
+        }, []);
+
+
+        return createPortal(children, newWindow.document.body, "newWin");
+    };
+
+    useEffect(() => {
+        console.log(selectedMouse)
+    }, [windowOpen])
+
+    
+    function copyStyles(sourceDoc, targetDoc) {
+        Array.from(sourceDoc.styleSheets).forEach(styleSheet => {
+        if (styleSheet.cssRules) { // for <style> elements
+            const newStyleEl = sourceDoc.createElement('style');
+    
+            Array.from(styleSheet.cssRules).forEach(cssRule => {
+            // write the text of each rule into the body of the style element
+            newStyleEl.appendChild(sourceDoc.createTextNode(cssRule.cssText));
+            });
+    
+            targetDoc.head.appendChild(newStyleEl);
+        } else if (styleSheet.href) { // for <link> elements loading CSS from a URL
+            const newLinkEl = sourceDoc.createElement('link');
+    
+            newLinkEl.rel = 'stylesheet';
+            newLinkEl.href = styleSheet.href;
+            targetDoc.head.appendChild(newLinkEl);
+        }
+        });
+    }
+    function selectImage(i){
+        selectSlice(i)
+        slider.activate(i)
+        console.log(windowOpen)
+    }
 
     return (
+        <div>
+    
+      
         <Container fluid className="imageBrowser">
+      
             <Col>
                 <Row className='justify-content-center'>
                     <Col lg={2}>
@@ -468,6 +563,8 @@ function ImageRenderer(props) {
 
 
                             {props.main ? <button type="button" className="btn btn-toggle-split btn-dark" onClick={() => { props.splitScreen(buildState()) }}>Toggle Split Screen</button> : null}
+                            
+                          
 
                             <div className="col-sm-hidden col-md-10 row slice_details"></div>
 
@@ -513,7 +610,13 @@ function ImageRenderer(props) {
                         <MapContainer
                             fullscreenControl={true}
                             center={[-50, -50]} maxBoundsViscosity={1.0} nowrap={true} scrollWheelZoom zoom={2} >
+                            
+                            <OpenPopup  position="topright" selectedWavelength={selectedWavelength} selectedGene={selectedGene} selectedMouse={selectedMouse} 
+                            slicesTomato={slicesTomato} slicesDAPI={slicesDAPI} selectedOrgan={selectedOrgan} selectedSampleType={selectedSampleType}
+                            setWindowOpen={setWindowOpen}
+                            >
 
+                            </OpenPopup>
                             <SliderMenu position="bottomleft" active={colorAccordion} closeAccordions={closeAccordions} toggleAccordion={toggleColorAccordion}
                                 logo={"Color Options"}
                                 className="color-accordion"
@@ -649,6 +752,13 @@ function ImageRenderer(props) {
                 </Row>
             </Col >
         </Container >
+        {selectedMouse&&windowOpen && (
+        <NewWindow >
+            <ViewSlices selectedSampleType={selectedSampleType.value} selectedOrgan={selectedOrgan.value} selectedGene={selectedGene.value} selectedMouse={selectedMouse.value} selectImage={selectImage}
+            ></ViewSlices>
+        </NewWindow>
+      )}
+        </div>
     );
 }
 
