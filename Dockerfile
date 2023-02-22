@@ -38,5 +38,4 @@ COPY --from=frontend /app/build ../build
 ADD backend ./
 RUN chmod +x boot.sh
 EXPOSE 5000
-RUN ls
-ENTRYPOINT ["boot.sh"]
+ENTRYPOINT ["/home/amis/boot.sh"]
