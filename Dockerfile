@@ -38,4 +38,5 @@ COPY --from=frontend /app/build ../build
 ADD backend ./
 RUN chmod +x boot.sh
 EXPOSE 5000
+RUN pwd
 ENTRYPOINT ["/home/amis/boot.sh"]
