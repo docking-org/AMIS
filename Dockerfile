@@ -36,7 +36,6 @@ RUN apt-get install ffmpeg libsm6 libxext6  -y
 
 COPY --from=frontend /app/build ../build
 ADD backend ./
-RUN chmod +x boot.sh
+RUN chmod 777 boot.sh
 EXPOSE 5000
-RUN pwd
-ENTRYPOINT ["/home/amis/boot.sh"]
+ENTRYPOINT ["./boot.sh"]
