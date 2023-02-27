@@ -42,8 +42,10 @@ function ImageRenderer(props) {
     const [genes, updateGenes] = useState(props.state.genes)
     const [organs, updateOrgans] = useState(props.state.organs)
     const [mice, updateMice] = useState(props.state.mice)
-    const [slicesTomato, updateSlicesTomato] = useState(props.state.slicesTomato)
-    const [slicesDAPI, updateSlicesDAPI] = useState(props.state.slicesDAPI)
+
+
+    const [slices, updateSlices] = useState(props.state.slices)
+
     const [selectedSampleType, updateSelectedSampleType] = useState(props.state.selectedSampleType)
     const [selectedGene, updateSelectedGene] = useState(props.state.selectedGene)
     const [selectedOrgan, updateSelectedOrgan] = useState(props.state.selectedOrgan)
@@ -87,7 +89,17 @@ function ImageRenderer(props) {
     };
 
 
+    useEffect(() => {
+        return () => {
+            if (slider) {
+                slider.destroy()
 
+                window.removeEventListener('wheel', preventDefault, { passive: false })
+                window.removeEventListener('touchmove', preventDefault, { passive: false })
+                window.removeEventListener('mousewheel', preventDefault, { passive: false })
+            }
+        }
+    }, [])
 
     function selectSlice(id) {
 
@@ -116,24 +128,24 @@ function ImageRenderer(props) {
             slider.reload()
 
         }
-    }, [props.renderSize, slider, slicesTomato, slicesDAPI])
+    }, [props.renderSize, slider])
 
 
 
 
     useEffect(() => {
-        loadSlices("DAPI")
-        loadSlices("tdTomato")
+        loadSlices()
+        
 
     }, [selectedMouse])
 
-    function loadSlices(wavelength) {
+    function loadSlices() {
         if (selectedMouse) {
             var url = "/slices?per_page=-1&order_by=slice_id";
             url += "&instrument=" + selectedSampleType['value'];
             url += "&gene=" + selectedGene['value'];
             url += "&organ=" + selectedOrgan['value'];
-            url += "&wavelength=" + wavelength;
+            
             url += "&mouse_number=" + selectedMouse['value'];
 
             axios({
@@ -144,10 +156,18 @@ function ImageRenderer(props) {
             }).then((response) => {
                 var res = response.data.items
 
-
-
-
-                wavelength === "DAPI" ? updateSlicesDAPI(res) : updateSlicesTomato(res)
+                console.log(res)
+             
+                var slices = {}
+                res.forEach((slice) => {
+                    if (!slices[slice.wavelength]) {
+                        slices[slice.wavelength] = []
+                    }
+                    slices[slice.wavelength].push(slice)
+                })
+                console.log(slices)
+                updateSlices(slices)
+                updateselectedWavelength(Object.keys(slices)[0])
 
                 if (!slider) {
                     try {
@@ -273,8 +293,6 @@ function ImageRenderer(props) {
             genes: genes,
             organs: organs,
             mice: mice,
-            slicesTomato: slicesTomato,
-            slicesDAPI: slicesDAPI,
             selectedSampleType: selectedSampleType,
             selectedGene: selectedGene,
             selectedOrgan: selectedOrgan,
@@ -283,6 +301,7 @@ function ImageRenderer(props) {
             selectedWavelength: selectedWavelength,
             loaded: loaded,
             options: options,
+            slices: slices,
             lut: lut,
             selections:selections,
             sampleTypes:sampleTypes,
@@ -320,9 +339,13 @@ function ImageRenderer(props) {
 
 
     function getSliceThumbnails() {
-        return selectedWavelength === 'tdTomato' ? slicesTomato : slicesDAPI
-
+        if (slices[selectedWavelength]) {
+            return slices[selectedWavelength]    
+        }
+        else return []
+        
     }
+
     function resetValues() {
         updateOptions({
             'brightness': 0,
@@ -335,12 +358,9 @@ function ImageRenderer(props) {
 
     function getAutoValues() {
         var selectedUrl = "";
-        if (selectedWavelength === "tdTomato") {
-            selectedUrl = slicesTomato[selectedSlice] ? selectedUrl = slicesTomato[selectedSlice].img_no_ext : null
-        }
-        if (selectedWavelength === "DAPI") {
-            selectedUrl = slicesDAPI[selectedSlice] ? slicesDAPI[selectedSlice].img_no_ext : null
-        }
+
+        selectedUrl = slices[selectedWavelength][selectedSlice].img_no_ext
+        
 
 
         axios({
@@ -586,9 +606,9 @@ function ImageRenderer(props) {
                                 Mouse Id: {selectedMouse ? selectedMouse.value : null}
 
                                 <br></br>
-                                Age: {slicesTomato[selectedSlice] ? slicesTomato[selectedSlice].age : null}
+                                {/* Age: {slices[selectedWavelength] ? slices[selectedWavelength][selectedSlice].age : null}
                                 <br></br>
-                                Sex: {slicesTomato[selectedSlice] ? slicesTomato[selectedSlice].sex : null}
+                                Sex: {slices[selectedWavelength]? slices[selectedWavelength][selectedSlice].sex : null} */}
 
                             </div>
                             : 
@@ -611,8 +631,7 @@ function ImageRenderer(props) {
                             fullscreenControl={true}
                             center={[-50, -50]} maxBoundsViscosity={1.0} nowrap={true} scrollWheelZoom zoom={2} >
                             
-                            <OpenPopup  position="topright" selectedWavelength={selectedWavelength} selectedGene={selectedGene} selectedMouse={selectedMouse} 
-                            slicesTomato={slicesTomato} slicesDAPI={slicesDAPI} selectedOrgan={selectedOrgan} selectedSampleType={selectedSampleType}
+                            <OpenPopup  position="topright" 
                             setWindowOpen={setWindowOpen}
                             >
 
@@ -637,50 +656,42 @@ function ImageRenderer(props) {
                                 description={''}
                                 logo={"LUT"}
                             >
-                                <LUTSelector layer={'tdTomato'} changeLut={changeLut} option={lut['tdTomato']} />
+                                {
+                                    Object.keys(slices).length >=1 ?
+                                    Object.keys(slices).map((wavelength, index) => {
+                                        return <LUTSelector layer={wavelength} changeLut={changeLut} option={lut[wavelength]} />
+                                    }): ""
+                                }
 
-                                <LUTSelector layer={'DAPI'} changeLut={changeLut} option={lut['DAPI']} />
+
+                                
                             </SliderMenu>
 
-                            <LayersControl position="topright">
+                            <LayersControl position="topright" >
+                                {
+                                    Object.keys(slices).length >=1 ?
+                                    Object.keys(slices).map((wavelength, index) => {
+                                        return <LayersControl.Overlay name={wavelength} checked={index === 0 ? true : false}>
+                                            <TileLayer
+                                               
+                                                opacity={options.blend / 100}
+                                                tms={true}
+                                                minZoom={2}
+                                                maxZoom={7}
+                                                noWrap={true}
 
-                                <LayersControl.Overlay checked name="tdTomato">
-                                    <TileLayer
-                                        opacity={options.blend / 100}
-                                        tms={true}
-                                        minZoom={2}
-                                        maxZoom={7}
-                                        noWrap={true}
+                                                crs={CRS.Simple}
+                                                bounds={[[-200, -200], [500, 180]]}
 
-                                        crs={CRS.Simple}
-                                        bounds={[[-150, -150], [500, 180]]}
-
-                                        url={ selectedMouse?
-                                            
-                                            "http://localhost:5000/lut" + '/{z}/{x}/{y}.png' + "?lut=" + lut['tdTomato'] + "&url=" + encodeURIComponent(slicesTomato[selectedSlice] ? slicesTomato[selectedSlice].img_no_ext : null) + "&brightness=" + options.brightness +
-                                            "&contrast=" + options.contrast +
-                                            "&cliplow=" + options.min +
-                                            "&cliphigh=" + options.max : ""}
-                                    />
-                                </LayersControl.Overlay>
-                                <LayersControl.Overlay name="DAPI">
-                                    <TileLayer
-                                        opacity={options.blend / 100}
-                                        tms={true}
-                                        minZoom={2}
-                                        maxZoom={7}
-                                        noWrap={true}
-
-                                        crs={CRS.Simple}
-                                        bounds={[[-150, -150], [500, 180]]}
-
-                                        url={ selectedMouse?
-                                            "http://localhost:5000/lut" + '/{z}/{x}/{y}.png' + "?lut=" + lut['DAPI'] + "&url=" + encodeURIComponent(slicesDAPI[selectedSlice] ? slicesDAPI[selectedSlice].img_no_ext : null) + "&brightness=" + options.brightness +
-                                            "&contrast=" + options.contrast +
-                                            "&cliplow=" + options.min +
-                                            "&cliphigh=" + options.max : ""}
-                                    />
-                                </LayersControl.Overlay>
+                                                url={ selectedMouse?
+                                                    "http://localhost:5000/lut" + '/{z}/{x}/{y}.png' + "?lut=" + lut[wavelength] + "&url=" + encodeURIComponent(slices[wavelength][selectedSlice] ? slices[wavelength][selectedSlice].img_no_ext : null) + "&brightness=" + options.brightness +
+                                                        "&contrast=" + options.contrast +
+                                                        "&cliplow=" + options.min +
+                                                        "&cliphigh=" + options.max : ""}
+                                            />
+                                        </LayersControl.Overlay>
+                                    }): ""
+                                }
                             </LayersControl>
 
                         </MapContainer>
@@ -692,14 +703,12 @@ function ImageRenderer(props) {
                                 <Col lg={1}>
                                     <div className="controls center" >
                                         <ButtonGroup aria-label="Basic example">
-                                            <Button variant="danger"
-                                                disabled={selectedWavelength === "tdTomato"}
-                                                onClick={() => updateselectedWavelength("tdTomato")}
-                                            >tdTomato</Button>
-                                            <Button variant="info"
-                                                disabled={selectedWavelength === "DAPI"}
-                                                onClick={() => updateselectedWavelength("DAPI")}
-                                            >DAPI</Button>
+                                            {
+                                                Object.keys(slices).length >=1 ?
+                                                Object.keys(slices).map((wavelength, index) => {
+                                                    return <Button variant="secondary" onClick={() => { updateselectedWavelength(wavelength) }} active={selectedWavelength === wavelength ? true : false}>{wavelength}</Button>
+                                                }): ""
+                                            }
                                         </ButtonGroup>
                                     </div>
                                 </Col>
@@ -715,7 +724,7 @@ function ImageRenderer(props) {
 
                                             Slice <input className="current_id" type="number" min="0" style={{ width: '50px' }}
                                                 value={selectedSlice === 0 ? 1 : selectedSlice + 1} onChange={() => console.log()} />
-                                            &nbsp; of <span className="total_result">{slicesTomato.length}</span>
+                                            &nbsp; of <span className="total_result">{slices[selectedWavelength] ? slices[selectedWavelength].length : 0}</span>
                                         </span>
                                         &nbsp;
                                         &nbsp;
@@ -754,7 +763,13 @@ function ImageRenderer(props) {
         </Container >
         {selectedMouse&&windowOpen && (
         <NewWindow >
-            <ViewSlices selectedSampleType={selectedSampleType.value} selectedOrgan={selectedOrgan.value} selectedGene={selectedGene.value} selectedMouse={selectedMouse.value} selectImage={selectImage}
+            <ViewSlices selectedSampleType={selectedSampleType.value} 
+                        selectedOrgan={selectedOrgan.value} 
+                        selectedGene={selectedGene.value} 
+                        selectedMouse={selectedMouse.value} 
+                        selectImage={selectImage}
+                        slices={slices} 
+                        selectedWavelength={selectedWavelength} 
             ></ViewSlices>
         </NewWindow>
       )}

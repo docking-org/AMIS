@@ -1,123 +1,56 @@
 import axios from "axios";
 import React from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Spinner, Col, Row, Container, Navbar, Card, Table, Dropdown } from "react-bootstrap";
+import { Spinner, Col, Row, Container, Navbar, Button, Table, ButtonGroup } from "react-bootstrap";
 
 
 
 function ViewSlices(props){
 
-    const [slicesTomato,setSlicesTomato] =  React.useState(null);
-    const [slicesDAPI,setSlicesDAPI] =  React.useState(null);
-    const [loadedDAPI, setLoadedDAPI] = React.useState(false);
-    const [loadedTomato, setLoadedTomato] = React.useState(false);
-    const [selectedSampleType, setSelectedSampleType] = props.selectedSampleType;
-    const [selectedGene, setSelectedGene] = props.selectedGene;
-    const [selectedOrgan, setSelectedOrgan] = props.selectedOrgan;
-    const [selectedMouse, setSelectedMouse] = props.selectedMouse;
-
-    const [selectedSlice, setSelectedSlice] = React.useState(0);
-    const [wavelengths, setWavelengths] = React.useState(["DAPI", "tdTomato"]);
-    const [selectedWaveLength, setSelectedWaveLength] = React.useState("tdTomato");
-    const [slices, setSlices] = React.useState(null);
-    const [imagesDAPI, setImagesDAPI] = React.useState([]);
-    const [imagesTomato, setImagesTomato] = React.useState([]);
+    const [selectedSampleType, setSelectedSampleType] = React.useState(props.selectedSampleType);
+    const [selectedGene, setSelectedGene] = React.useState(props.selectedGene);
+    const [selectedOrgan, setSelectedOrgan] = React.useState(props.selectedOrgan);
+    const [selectedMouse, setSelectedMouse] = React.useState(props.selectedMouse);
+    const [selectedWavelength, setSelectedWavelength] = React.useState(props.selectedWavelength);
+    const [slices, setSlices] = React.useState(props.slices);
+    
 
   
 
-    function loadSlices(wavelength) {
-            
-            var sampleType = props.selectedSampleType;
-            var gene = props.selectedGene;
-            var organ = props.selectedOrgan;
-            var mouse = props.selectedMouse;
- 
-            var url = "/slices?per_page=-1&order_by=slice_id";
-            url += "&instrument=" + sampleType;
-            url += "&gene=" + gene;
-            url += "&organ=" + organ;
-            url += "&mouse_number=" + mouse;
-            url += "&wavelength=" + wavelength;
-            
-            axios({
-                method: "GET",
-                url: url,
-                dataType: "json",
-                dataSrc: "items",
-            }).then((response) => {
-                var res = response.data.items;
-                
-           
-                if (wavelength === "tdTomato"){
-                    console.log(res);
-                    setSlicesTomato(res)
-                    setLoadedTomato(true)
-                }
-                else{
-                    console.log(res);
-                    setSlicesDAPI(res)
-                    setLoadedDAPI(true)
-                }
-           
-            })
-        
-    }
 
     React.useEffect(() => {
-        if (loadedDAPI === false && loadedTomato === false){
-            loadSlices("DAPI");
-            loadSlices("tdTomato");
-        }
+        // if (loadedDAPI === false && loadedTomato === false){
+        //     loadSlices("DAPI");
+        //     loadSlices("tdTomato");
+        // }
     }, [])
 
     React.useEffect(() => {
-       getImages()
-        
-    }, [selectedWaveLength])
+    
+    }, [selectedWavelength])
 
     React.useEffect(() => {
-        
-    }, [slicesDAPI, slicesTomato])
+        console.log(slices)
+    }, [slices])
 
-    React.useEffect(() => {
-  
-    }, [loadedTomato, loadedDAPI])
-
+    
 
 
     function getImages(){
-        
-        if(slicesDAPI && slicesTomato){
-            
-            if (selectedWaveLength === "DAPI"){
-                return slicesDAPI.map((slice, index) => {
-                    return(
-                    <Col md={4} className="mb-4">
-                    <img src={slice.img_small} width="100%" height="100%" onClick={() => {
-                        
-                        props.selectImage(index);
-                    }}
-                    />
-                    </Col>)
-                });
-            
-            }
-            else{
-                return slicesTomato.map((slice, index) => {
-                    return(<Col md={4} className="mb-4">
-                     <img src={slice.img_small} width="100%" height="100%" onClick={() => {
-                      
-                        props.selectImage(index);
-                    }} />
+        console.log(selectedWavelength) 
+        const images = []
+        slices[selectedWavelength].map((slice, index) => {
+            console.log(slice)
+            images.push(
+                <Col md={4} className="mb-4">
+                <img src={slice.img_small} width="100%" height="100%" onClick={() => {
                     
-                    </Col>)
-                });
-            }
-        }
-        else{
-            return []
-        }
-        
+                    props.selectImage(index);
+                }}
+                />
+                </Col>)
+        })
+        return images;
   
     }
 
@@ -133,31 +66,28 @@ function ViewSlices(props){
                             <th>Mouse</th>
                             <th>Age</th>
                             <th>Sex</th>
-                            <th>Wavelength</th>
+                         
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                            <td>{selectedSampleType}</td>
-                            <td>{selectedGene}</td>
-                            <td>{selectedOrgan}</td>
-                            <td>{selectedMouse}</td>
-                            <td>{slicesTomato ? "":""}</td>
-                            <td>{slicesTomato ? "": ""}</td>
-                            <td><Dropdown>
-                                <Dropdown.Toggle variant="success" id="dropdown-basic">
-                                    {selectedWaveLength}
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                    {wavelengths.map((wavelength) => {
-                                        return <Dropdown.Item onClick={() => setSelectedWaveLength(wavelength)}>{wavelength}</Dropdown.Item>
-                                    })}
-                                </Dropdown.Menu>
-                            </Dropdown></td>
-
+                                <td>{selectedSampleType}</td>
+                                <td>{selectedGene}</td>
+                                <td>{selectedOrgan}</td>
+                                <td>{selectedMouse}</td>
+                                <td>{slices[selectedWavelength][0].age}</td>
+                                <td>{slices[selectedWavelength][0].sex}</td>
                             </tr>
                         </tbody>
-                        </Table>
+                                
+                    </Table>
+
+                    <ButtonGroup  className="mb-2">
+                        {Object.keys(slices).map((wavelength, index) => {
+                            return <Button variant="secondary" onClick={() => { setSelectedWavelength(wavelength) }} active={selectedWavelength === wavelength ? true : false}>{wavelength}</Button> 
+                        })}
+                    </ButtonGroup>
+                    <br/>
                                         
                     {getImages()}
                 </Row>

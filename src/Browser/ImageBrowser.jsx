@@ -18,6 +18,7 @@ function ImageBrowser() {
         mice: [],
         slicesTomato: [],
         slicesDAPI: [],
+        slices: {},
         selectedSampleType: null,
         selectedGene: null,
         selectedOrgan: null,
@@ -37,7 +38,8 @@ function ImageBrowser() {
         lut:
         {
             'tdTomato': 'grayscale',
-            'DAPI': 'grayscale'
+            'DAPI': 'grayscale',
+            'GFP': 'grayscale',
         }
 
     }

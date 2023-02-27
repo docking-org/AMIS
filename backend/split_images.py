@@ -9,7 +9,7 @@ import multiprocessing
 
 def split(file, tile_size=256, overlap=0, format='PNG', quality=100):
     options = {
-        'zoom': (0, 7),
+        'zoom': (0, 1),
         'resampling': 'average',
         'resume': True,
         'profile': 'raster',

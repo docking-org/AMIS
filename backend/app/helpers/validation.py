@@ -96,7 +96,7 @@ def load_images():
     folder = current_app.config['IMAGE_LOAD_FOLDER']
     path = os.path.realpath(os.path.dirname(folder))
     print("Path: {}".format(path))
-    files = [f for f in glob.glob(path + "/**/*.tif", recursive=True)]
+    files = [f for f in glob.glob(path + "/420006/*.tif", recursive=True)]
     for file in files:
         file_name = Path(file).stem
         file_name_with_ext = Path(file).name
