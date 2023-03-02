@@ -658,9 +658,11 @@ function ImageRenderer(props) {
                                 Mouse Id: {selectedMouse ? selectedMouse.value : null}
 
                                 <br></br>
-                                {/* Age: {slices[selectedWavelength] ? slices[selectedWavelength][selectedSlice].age : null}
+                               
+                                Age: {slices[selectedWavelength] ? slices[selectedWavelength][0].age : null}
                                 <br></br>
-                                Sex: {slices[selectedWavelength]? slices[selectedWavelength][selectedSlice].sex : null} */}
+
+                                Sex: {slices[selectedWavelength] ? slices[selectedWavelength][0].sex: null}
 
                             </div>
                             : 
