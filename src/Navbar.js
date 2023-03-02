@@ -15,6 +15,7 @@ function BasicExample() {
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
                             <Nav.Link href="/image_browser">Image Browser</Nav.Link>
+                            <Nav.Link href="/3d_browser">3d Browser</Nav.Link>
                             <Nav.Link href="https://druggablegenome.net/DRGC_GPCR">IDG Program</Nav.Link>
                         </Nav>
                     </Navbar.Collapse>

@@ -42,7 +42,7 @@ function ImageRenderer(props) {
     const [genes, updateGenes] = useState(props.state.genes)
     const [organs, updateOrgans] = useState(props.state.organs)
     const [mice, updateMice] = useState(props.state.mice)
-
+    const [activeLayers, updateActiveLayers] = useState(props.state.activeLayers)
 
     const [slices, updateSlices] = useState(props.state.slices)
 
@@ -60,6 +60,7 @@ function ImageRenderer(props) {
     const [options, updateOptions] = useState(props.state.options)
     const [selections, updateSelections] = useState(props.state.selections)
     const [lut, updateLut] = useState(props.state.lut)
+    const [layers, updateLayers] = useState(props.state.layers)
 
 
 
@@ -168,7 +169,8 @@ function ImageRenderer(props) {
                 console.log(slices)
                 updateSlices(slices)
                 updateselectedWavelength(Object.keys(slices)[0])
-
+                updateActiveLayers(Object.keys(slices)[0])
+                
                 if (!slider) {
                     try {
                         setSlider(new Sly('#forcecentered' + (props.main ? 1 : 2), slyOptions).init())
@@ -306,6 +308,8 @@ function ImageRenderer(props) {
             selections:selections,
             sampleTypes:sampleTypes,
             optionsLoaded:optionsLoaded,
+            activeLayers:activeLayers,
+
         }
     }
 
@@ -441,13 +445,20 @@ function ImageRenderer(props) {
         setFolded(!folded)
     }
 
+    useEffect(() => {
+        if (slider) {
+            slider.reload()
+            slider.activate(selectedSlice)
+        }
+    }, [folded])
+
     
     const NewWindow = ({ children, close }) => {
         const newWindow = useMemo(() =>
             window.open(
                 "about:blank",
                 "newWin",
-                `width=800,height=400`
+                `width=800,height=600`
             )
         );
         newWindow.onbeforeunload = () => {
@@ -514,11 +525,51 @@ function ImageRenderer(props) {
         }
         });
     }
-    function selectImage(i){
+    function selectImage(i, wavelength){
+        updateActiveLayers([wavelength])
+        updateSlices(slices)
         selectSlice(i)
         slider.activate(i)
-        console.log(windowOpen)
+        console.log(activeLayers)
+        //activate tilelayer for selected wavelength
+      
+
     }
+
+    useEffect(() => {
+        var layers = []
+        updateLayers([])
+        Object.keys(slices).forEach(wavelength => {
+            console.log(wavelength)
+            let active = activeLayers.includes(wavelength)
+            layers.push(
+            <LayersControl.Overlay name={wavelength} checked={active}>
+                <TileLayer
+                                               
+                opacity={options.blend / 100}
+                tms={true}
+                minZoom={2}
+                maxZoom={7}
+                noWrap={true}
+
+                crs={CRS.Simple}
+                bounds={[[-200, -200], [500, 180]]}
+
+                url={ selectedMouse?
+                    "http://localhost:5000/lut" + '/{z}/{x}/{y}.png' + "?lut=" + lut[wavelength] + "&url=" + encodeURIComponent(slices[wavelength][selectedSlice] ? slices[wavelength][selectedSlice].img_no_ext : null) + "&brightness=" + options.brightness +
+                        "&contrast=" + options.contrast +
+                        "&cliplow=" + options.min +
+                        "&cliphigh=" + options.max : ""}
+                />
+            </LayersControl.Overlay>)
+        })
+
+
+        updateLayers(layers)
+        console.log(layers)
+    }, [selectedWavelength, selectedSlice, slices, selectedMouse, options, lut, activeLayers])
+
+    
 
     return (
         <div>
@@ -527,8 +578,9 @@ function ImageRenderer(props) {
         <Container fluid className="imageBrowser">
       
             <Col>
-                <Row className='justify-content-center'>
-                    <Col lg={2}>
+                <Row className='justify-content-end'>
+                    <div className={props.main ? (folded ? 'sidebar-left': 'sidebar-left open'): (folded ? 'sidebar-right': 'sidebar-right open')} 
+                        onMouseEnter={() => setFolded(false)} onMouseLeave={() => setFolded(true)}>
                         <div className='select-card'>
                             {optionsLoaded ?                            
                             (
@@ -583,8 +635,8 @@ function ImageRenderer(props) {
 
 
                             {props.main ? <button type="button" className="btn btn-toggle-split btn-dark" onClick={() => { props.splitScreen(buildState()) }}>Toggle Split Screen</button> : null}
+                            &nbsp;
                             
-                          
 
                             <div className="col-sm-hidden col-md-10 row slice_details"></div>
 
@@ -617,17 +669,17 @@ function ImageRenderer(props) {
                             
                             }
 
-
-                    </Col>
-
+                    </div>
 
 
 
-                    <Col lg={10} style={{
+
+                    <Col lg={12} style={{
                         height: '550px'
-                    }} >
+                    }}>
 
                         <MapContainer
+                            attributionControl={false}
                             fullscreenControl={true}
                             center={[-50, -50]} maxBoundsViscosity={1.0} nowrap={true} scrollWheelZoom zoom={2} >
                             
@@ -669,28 +721,8 @@ function ImageRenderer(props) {
 
                             <LayersControl position="topright" >
                                 {
-                                    Object.keys(slices).length >=1 ?
-                                    Object.keys(slices).map((wavelength, index) => {
-                                        return <LayersControl.Overlay name={wavelength} checked={index === 0 ? true : false}>
-                                            <TileLayer
-                                               
-                                                opacity={options.blend / 100}
-                                                tms={true}
-                                                minZoom={2}
-                                                maxZoom={7}
-                                                noWrap={true}
-
-                                                crs={CRS.Simple}
-                                                bounds={[[-200, -200], [500, 180]]}
-
-                                                url={ selectedMouse?
-                                                    "http://localhost:5000/lut" + '/{z}/{x}/{y}.png' + "?lut=" + lut[wavelength] + "&url=" + encodeURIComponent(slices[wavelength][selectedSlice] ? slices[wavelength][selectedSlice].img_no_ext : null) + "&brightness=" + options.brightness +
-                                                        "&contrast=" + options.contrast +
-                                                        "&cliplow=" + options.min +
-                                                        "&cliphigh=" + options.max : ""}
-                                            />
-                                        </LayersControl.Overlay>
-                                    }): ""
+                                   layers
+                                }: ""
                                 }
                             </LayersControl>
 
@@ -700,7 +732,7 @@ function ImageRenderer(props) {
 
                         <div className="wrap">
                             <Row>
-                                <Col lg={1}>
+                                <Col lg={{span:'1'}}>
                                     <div className="controls center" >
                                         <ButtonGroup aria-label="Basic example">
                                             {
@@ -712,7 +744,7 @@ function ImageRenderer(props) {
                                         </ButtonGroup>
                                     </div>
                                 </Col>
-                                <Col lg={11}>
+                                <Col lg={{span:'6', offset:'2'}}>
 
                                     <div className="controls center" >
                                         <Button onClick={() => slider.prev()}>
@@ -745,7 +777,7 @@ function ImageRenderer(props) {
                                             return <li key={index} id={"_" + index} index={index}
                                                 //onclick, slide to slice and update selected slice
                                                 onClick={() => {
-                                                    slider.activate(index)
+                                                     selectImage(index, selectedWavelength);
 
                                                 }}  >
                                                 <img src={slice.img_no_ext + ".webp"} className="slice" />
@@ -768,6 +800,7 @@ function ImageRenderer(props) {
                         selectedGene={selectedGene.value} 
                         selectedMouse={selectedMouse.value} 
                         selectImage={selectImage}
+                        setFolded = {setFolded}
                         slices={slices} 
                         selectedWavelength={selectedWavelength} 
             ></ViewSlices>

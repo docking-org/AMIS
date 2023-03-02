@@ -71,6 +71,7 @@
 .imageBrowser{
   background: black;
   height: 60rem;
+  width: 100%;
 } 
 .frame ul li {
   background: none;
@@ -97,4 +98,36 @@
   border-radius: 10px;
 
   background-color: white;
+}
+
+.sidebar-left {
+  position: absolute;
+  left: -15vw;
+  z-index: 1000000;
+  height: 60vh;
+  width: 17%;
+  transition: left 0.3s ease-in-out;
+  background-color: none;
+}
+
+.sidebar-left.open {
+  left: 0;
+  z-index: 1000001;
+}
+
+.sidebar-right {
+  position: absolute;
+  right: 0;
+  z-index: 1000000;
+  height: 60vh;
+  
+  width: 3%;
+  transition: right 0.3s ease-in-out;
+  background-color: none;
+}
+
+.sidebar-right.open {
+  right: 0;
+  width: 17%;
+  z-index: 1000001;
 }

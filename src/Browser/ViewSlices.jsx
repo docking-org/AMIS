@@ -37,15 +37,16 @@ function ViewSlices(props){
 
 
     function getImages(){
-        console.log(selectedWavelength) 
+        
         const images = []
         slices[selectedWavelength].map((slice, index) => {
-            console.log(slice)
+        
             images.push(
                 <Col md={4} className="mb-4">
                 <img src={slice.img_small} width="100%" height="100%" onClick={() => {
                     
-                    props.selectImage(index);
+                    props.selectImage(index, selectedWavelength);
+                    props.setFolded(true);
                 }}
                 />
                 </Col>)
@@ -93,10 +94,6 @@ function ViewSlices(props){
                 </Row>
             </Container>
                 )
-
-        
-
-
 }
 
 export default ViewSlices;

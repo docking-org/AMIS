@@ -12,6 +12,7 @@ import {
 } from "react-router-dom";
 import ImageBrowser from './Browser/ImageBrowser';
 import ViewSlices from './Browser/ViewSlices';
+import Browser3d from './Browser/Browser3d';
 axios.defaults.baseURL = "http://localhost:5000"
 
 const router = createBrowserRouter([
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
         path: "/image_browser",
         element: <ImageBrowser />,
       },
+      {
+        path: "/3d_browser",
+        element: <Browser3d />,
+      }
     
     ],
   },

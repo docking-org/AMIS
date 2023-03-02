@@ -40,7 +40,9 @@ function ImageBrowser() {
             'tdTomato': 'grayscale',
             'DAPI': 'grayscale',
             'GFP': 'grayscale',
-        }
+        },
+        activeLayers:[],
+        layers:[]
 
     }
     );
