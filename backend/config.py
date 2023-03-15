@@ -26,9 +26,15 @@ class Config(object):
     JPEG_FOLDER = os.getenv("JPEG_FOLDER")
     JPG_FOLDER = os.getenv("JPG_FOLDER")
     DIRECTORY_MAP = {
-        '/nfs/ex9/idg-images*' : 'https://files.docking.org/idg-images',
-        '/nfs/exj/idg-images*' : 'https://files.docking.org/idg-images2',
+        '/nfs/ex9/idg-images*' : '/images/1',
+        '/nfs/exj/idg-images*' : '/images/2',
     }
+    
+    URL_MAP = {
+        '1' : '/nfs/ex9/idg-images',
+        '2' : '/nfs/exj/idg-images',
+    }
+    
     # Flask-User settings
     USER_APP_NAME = "A Mouse Image Server"  # Shown in and email templates and page footers
 

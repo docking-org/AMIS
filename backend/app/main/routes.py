@@ -1,9 +1,9 @@
-from flask import render_template, request, send_file, make_response, jsonify, current_app
+from flask import render_template, request, send_file, make_response, jsonify, current_app, send_from_directory
 import json
 import cv2
 import json
 import urllib
-import re
+import os
 import numpy as np
 from app.data.lut.lookuptables import lookuptables
 from app.main import application
@@ -185,8 +185,11 @@ def lut(z,x,y):
     if int(z) < 0 or int(x) < 0 or int(ycord) < 0:
         return make_response(jsonify({'error': 'Invalid coordinates'}), 400)
     lut = request.args.get("lut")
-    url = request.args.get('url') + "/{}/{}/{}".format(z,x,y)
-    print(url)
+    url = toPath(request.args.get('url'))
+ 
+
+    url = url + "/{}/{}/{}".format(z,x,y)
+    
     autobrightness = request.args.get("autobrightness")
    
     # for local testing    
@@ -251,4 +254,19 @@ def lut(z,x,y):
     response.headers.set(
         'Content-Disposition', 'attachment')
     return response
+    
+@application.route('/images/<path>/<number>/<image>', methods=['GET'])
+def send_image(path,number,image):
+    if path not in current_app.config['URL_MAP']:
+        return make_response(jsonify({'error': 'Invalid path'}), 400)
+    else:
+        url = current_app.config['URL_MAP'][path] + "/" + number
+        return send_from_directory(url, image)
+    
+def toPath(url):
+    path = url.split("/")[2]
+    new = current_app.config['URL_MAP'][path] 
+    path = url.replace("/images/" + path, new)
+    return path
+        
     
