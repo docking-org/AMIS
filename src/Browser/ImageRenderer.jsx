@@ -556,7 +556,7 @@ function ImageRenderer(props) {
                 bounds={[[-200, -200], [500, 180]]}
 
                 url={ selectedMouse?
-                    "http://https://amis2.docking.org/lut" + '/{z}/{x}/{y}.png' + "?lut=" + lut[wavelength] + "&url=" + encodeURIComponent(slices[wavelength][selectedSlice] ? slices[wavelength][selectedSlice].img_no_ext : null) + "&brightness=" + options.brightness +
+                    "https://amis2.docking.org/lut" + '/{z}/{x}/{y}.png' + "?lut=" + lut[wavelength] + "&url=" + encodeURIComponent(slices[wavelength][selectedSlice] ? slices[wavelength][selectedSlice].img_no_ext : null) + "&brightness=" + options.brightness +
                         "&contrast=" + options.contrast +
                         "&cliplow=" + options.min +
                         "&cliphigh=" + options.max : ""}
