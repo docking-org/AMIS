@@ -1,6 +1,6 @@
 from app import db
 from flask import current_app, url_for
-
+import re
 
 class PaginatedAPIMixin(object):
     @staticmethod
@@ -120,45 +120,48 @@ class SliceModel(PaginatedAPIMixin, db.Model):
             'sample_type': "Cleared" if self.instrument.upper() == "LSM" else "Histological",
         }
         return data
-
+    
+    
+    def get_url(self, url):
+        for key in current_app.config['DIRECTORY_MAP']:
+            print(key)
+            if re.search(key, url):
+                url = re.sub(key, current_app.config['DIRECTORY_MAP'][key], url)
+        return url
+    
     @property
     def img_no_ext(self):
-        return "{}{}/{}".format(current_app.config['IMG_UPLOAD_FOLDER_URL'],
-                                self.img_path, self.combined_data)
+        url = self.get_url(self.img_path)
+        
+        return "{}/{}".format(url, self.combined_data)
 
     @property
     def img_small(self):
-        return "{}{}/{}.webp".format(
-            current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path,
-            self.combined_data)
+        url = self.get_url(self.img_path)
+        return "{}/{}.webp".format(url, self.combined_data)
 
     @property
     def img_small_RI(self):
         if self.wavelength == "DAPI":
             return ""
-        return "{}{}/{}_RI.webp".format(
-            current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path,
-            self.combined_data)
+        
+        return "{}_RI.webp".format(self.combined_data)
 
     @property
     def img_big(self):
-        return "{}{}/{}.jpg".format(
-            current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path,
-            self.combined_data)
+        url = self.get_url(self.img_path)
+        return "{}/{}.jpg".format(url, self.combined_data)
 
     @property
     def img_big_RI(self):
         if self.wavelength == "DAPI":
             return ""
-        return "{}{}/{}_RI.jpg".format(
-            current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path,
-            self.combined_data)
+        return "{}_RI.jpg".format(self.combined_data)
 
     @property
     def tif(self):
-        return "{}{}/{}.tif".format(
-            current_app.config['IMG_UPLOAD_FOLDER_URL'], self.img_path,
-            self.combined_data)
+        url = self.get_url(self.img_path)
+        return "{}/{}.tif".format(url, self.combined_data)
 
     @classmethod
     def find_img_by_checksum(cls, checksum):

@@ -25,6 +25,10 @@ class Config(object):
     IMG_UPLOAD_FOLDER_URL = os.getenv("IMG_UPLOAD_FOLDER_URL")
     JPEG_FOLDER = os.getenv("JPEG_FOLDER")
     JPG_FOLDER = os.getenv("JPG_FOLDER")
+    DIRECTORY_MAP = {
+        '/nfs/ex9/idg-images*' : 'https://files.docking.org/idg-images',
+        '/nfs/exj/idg-images*' : 'https://files.docking.org/idg-images2',
+    }
     # Flask-User settings
     USER_APP_NAME = "A Mouse Image Server"  # Shown in and email templates and page footers
 

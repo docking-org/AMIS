@@ -1,8 +1,9 @@
-from flask import render_template, request, send_file, make_response, jsonify
+from flask import render_template, request, send_file, make_response, jsonify, current_app
 import json
 import cv2
 import json
 import urllib
+import re
 import numpy as np
 from app.data.lut.lookuptables import lookuptables
 from app.main import application
@@ -33,6 +34,8 @@ def gene():
     return render_template('gene.html')
 
 
+
+
 @application.route('/organ', methods=['GET'])
 def organ():
     return render_template('organ.html')
@@ -46,6 +49,7 @@ def experiment():
 @application.route('/mouse', methods=['GET'])
 def mouse():
     return render_template('mouse.html')
+
 
 
 @application.route('/interest', methods=['GET'])
@@ -186,61 +190,59 @@ def lut(z,x,y):
     autobrightness = request.args.get("autobrightness")
    
     # for local testing    
-    # req = urllib.request.urlopen(url)
-    # if req.getcode() != 200:
-    #     return make_response(jsonify({'error': 'Could not download image'}), 400)
-    # arr = np.asarray(bytearray(req.read()), dtype=np.uint8)  
-    # img = cv2.imdecode(arr, -1).astype(np.uint8)
+    req = urllib.request.urlopen(url)
+    if req.getcode() != 200:
+        return make_response(jsonify({'error': 'Could not download image'}), 400)
+    arr = np.asarray(bytearray(req.read()), dtype=np.uint8)  
+    img = cv2.imdecode(arr, -1).astype(np.uint8)
+    
     
     # for production
-    url = url.replace("https://files.docking.org/", "/nfs/ex9/")
-    img = cv2.imread(url).astype(np.uint8)
+    # url = url.replace("https://files.docking.org/", "/nfs/ex9/")
+    # img = cv2.imread(url).astype(np.uint8)
     
-    img = img[:,:,:3]
+    # img = img[:,:,:3]
     
     
-    if autobrightness != "true":
-        brightness = int(request.args.get("brightness"))
-        contrast = int(request.args.get("contrast"))
-        cliplow = int(request.args.get("cliplow"))
-        cliphigh = int(request.args.get("cliphigh"))
+    # if autobrightness != "true":
+    #     brightness = int(request.args.get("brightness"))
+    #     contrast = int(request.args.get("contrast"))
+    #     cliplow = int(request.args.get("cliplow"))
+    #     cliphigh = int(request.args.get("cliphigh"))
     
-        contrast_factor = (259 * (contrast + 255)) / (255 * (259 - contrast))
+    #     contrast_factor = (259 * (contrast + 255)) / (255 * (259 - contrast))
 
-        brightness_factor = brightness - 128 * (contrast_factor - 1)
+    #     brightness_factor = brightness - 128 * (contrast_factor - 1)
         
-        img = img * contrast_factor + brightness_factor
+    #     img = img * contrast_factor + brightness_factor
         
         
-        img = np.clip(img, cliplow, cliphigh)
+    #     img = np.clip(img, cliplow, cliphigh)
     
-    else:
-        contrast  = 20
-        brightness = -15
+    # else:
+    #     contrast  = 20
+    #     brightness = -15
         
-        contrast_factor = (259 * (contrast + 255)) / (255 * (259 - contrast))
+    #     contrast_factor = (259 * (contrast + 255)) / (255 * (259 - contrast))
 
 
-        brightness_factor = brightness - 128 * (contrast_factor - 1)
+    #     brightness_factor = brightness - 128 * (contrast_factor - 1)
         
-        img = img * contrast_factor + brightness_factor
+    #     img = img * contrast_factor + brightness_factor
         
-        img = np.clip(img, 0, 255)
+    #     img = np.clip(img, 0, 255)
             
     
         
-    img = img.astype(np.uint8)
+    # img = img.astype(np.uint8)
     
-    if lut == "inverted":
-        img = cv2.bitwise_not(img)
+    # if lut == "inverted":
+    #     img = cv2.bitwise_not(img)
     
-    try:
-        img = cv2.LUT(img, lookuptables[lut])
-    except:
-        pass
-    
-  
-    
+    # try:
+    #     img = cv2.LUT(img, lookuptables[lut])
+    # except:
+    #     pass
     
        
     retval, buffer = cv2.imencode('.png', img)
