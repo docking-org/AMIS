@@ -369,7 +369,7 @@ function ImageRenderer(props) {
 
         axios({
             method: "GET",
-            url: "http://localhost:5000/getAutoValues?url=" + encodeURIComponent(selectedUrl),
+            url: "https://amis2.docking.org/getAutoValues?url=" + encodeURIComponent(selectedUrl),
             dataType: "json",
             dataSrc: "items",
         }).then((response) => {
@@ -395,7 +395,7 @@ function ImageRenderer(props) {
         
         axios({
             method: "GET",
-            url: "http://localhost:5000/filters",
+            url: "https://amis2.docking.org/filters",
             dataType: "json",
             dataSrc: "items",
         }).then((response) => {
@@ -556,7 +556,7 @@ function ImageRenderer(props) {
                 bounds={[[-200, -200], [500, 180]]}
 
                 url={ selectedMouse?
-                    "http://localhost:5000/lut" + '/{z}/{x}/{y}.png' + "?lut=" + lut[wavelength] + "&url=" + encodeURIComponent(slices[wavelength][selectedSlice] ? slices[wavelength][selectedSlice].img_no_ext : null) + "&brightness=" + options.brightness +
+                    "http://https://amis2.docking.org/lut" + '/{z}/{x}/{y}.png' + "?lut=" + lut[wavelength] + "&url=" + encodeURIComponent(slices[wavelength][selectedSlice] ? slices[wavelength][selectedSlice].img_no_ext : null) + "&brightness=" + options.brightness +
                         "&contrast=" + options.contrast +
                         "&cliplow=" + options.min +
                         "&cliphigh=" + options.max : ""}
