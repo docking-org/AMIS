@@ -20,7 +20,8 @@ deploy-dev job:
           -e IMG_UPLOAD_FOLDER_URL=${IMG_UPLOAD_FOLDER_URL} 
           -e JPEG_FOLDER=${JPEG_FOLDER} 
           -e JPG_FOLDER=${JPG_FOLDER} 
-          -v /nfs/ex9/:/nfs/ex9/ 
+          -v /nfs/ex9/:/nfs/ex9/
+          -v /nfs/exj/:/nfs/exj/ 
           ${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}-0.1.${CI_JOB_ID}
        
 deploy-live job:
@@ -45,4 +46,5 @@ deploy-live job:
           -e JPEG_FOLDER=${JPEG_FOLDER} 
           -e JPG_FOLDER=${JPG_FOLDER} 
           -v /nfs/ex9/:/nfs/ex9/ 
+          -v /nfs/exj/:/nfs/exj/ 
           ${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}-0.1.${CI_JOB_ID}
