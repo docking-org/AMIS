@@ -82,13 +82,18 @@ def interest():
 #         print("print get")
 #         return "GET"
 
-@application.route('/loadimages', methods=['GET', 'POST'])
-def image_load():
+@application.route('/loadimages/<path>/<folder>', methods=['GET', 'POST'])
+def image_load(path = None, folder = None):
     # folder = current_app.config['IMAGE_LOAD_FOLDER']
     # file_dir = os.path.realpath(os.path.dirname(folder))
     # lst = os.listdir(file_dir)
     # ret = save_file_list(lst)
-    return load_images()
+    if path and folder:
+        url = current_app.config['URL_MAP'][path] + "/" + folder
+        print(url)
+        return load_images(url)
+    else:
+        return make_response(jsonify({'error': 'Could not download image'}), 400)
 
 
 

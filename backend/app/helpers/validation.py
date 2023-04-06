@@ -12,7 +12,7 @@ import shutil
 import glob
 from pathlib import Path
 from PIL import Image
-
+from config import Config
 
 def save_excel_records(type, records):
     # line = 1
@@ -86,22 +86,23 @@ def save_excel_records(type, records):
         #     {}\n Exception {}\n".format(line, str(e))
 
 
-def load_images():
+def load_images(url):
     skipped = 0
     new_files = 0
     jpegs = 0
     moved_jpegs = 0
     p_denied = 0
     missing_jpegs = []
-    folder = current_app.config['IMAGE_LOAD_FOLDER']
-    path = os.path.realpath(os.path.dirname(folder))
-    print("Path: {}".format(path))
-    files = [f for f in glob.glob(path + "/420006/*.tif", recursive=True)]
+    # folder = 
+    # path = os.path.realpath(os.path.dirname(folder))
+    # print("Path: {}".format(path))
+    files = [f for f in glob.glob(url +'/*.tif')]
+    path = url
     for file in files:
         file_name = Path(file).stem
         file_name_with_ext = Path(file).name
-        file_sub_folder = str(Path(file).parent)[len(path):]
-
+        file_sub_folder = url
+   
 
         # print("File: {}".format(file))
         # print("File name: {}".format(file_name))
@@ -132,24 +133,24 @@ def load_images():
             dest_file_with_jpeg = "{}{}.jpg".format(destination, file_name)
             # print("DEST:"+destination+file_name)
             # print("dest_file_with_jpeg:" + dest_file_with_jpeg)
-            if not os.path.isfile(dest_file_with_jpeg):
-                jpegs += 1
-                jpeg_folder = current_app.config['JPEG_FOLDER']
-                jpeg_path = os.path.realpath(os.path.dirname(jpeg_folder))
-                print("jpeg_path:" + jpeg_path)
-                source = "{}/{}.jpg".format(jpeg_path, file_name)
-                print("SOURCE:" + source)
-                try:
-                    if os.path.isfile(source):
-                        moved_jpegs += 1
-                        print("DEST:" + destination)
-                        print("SOURCE:" + source)
-                        shutil.move(source, destination)
-                        print("JPEG file has been moved to " + destination)
-                    else:
-                        missing_jpegs.append(dest_file_with_jpeg)
-                except Exception as e:
-                    print(e)
+            # if not os.path.isfile(dest_file_with_jpeg):
+            #     jpegs += 1
+            #     jpeg_folder = current_app.config['JPEG_FOLDER']
+            #     jpeg_path = os.path.realpath(os.path.dirname(jpeg_folder))
+            #     print("jpeg_path:" + jpeg_path)
+            #     source = "{}/{}.jpg".format(jpeg_path, file_name)
+            #     print("SOURCE:" + source)
+            #     try:
+            #         if os.path.isfile(source):
+            #             moved_jpegs += 1
+            #             print("DEST:" + destination)
+            #             print("SOURCE:" + source)
+            #             shutil.move(source, destination)
+            #             print("JPEG file has been moved to " + destination)
+            #         else:
+            #             missing_jpegs.append(dest_file_with_jpeg)
+            #     except Exception as e:
+            #         print(e)
             skipped += 1
             print("_______________Skipped the file: {}".format(
                 file_name_with_ext))

@@ -59,7 +59,7 @@ lml==0.0.1
 Mako==1.0.7
 MarkupSafe==1.1.0
 marshmallow==3.2.2
-numpy==1.19.5
+numpy
 opencv-python==4.6.0.66
 openpyxl==2.5.4
 paramiko==2.6.0
