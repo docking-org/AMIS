@@ -782,7 +782,7 @@ function ImageRenderer(props) {
                                                      selectImage(index, selectedWavelength);
 
                                                 }}  >
-                                                <img src={slice.img_no_ext + ".jpg"}
+                                                <img src={slice.img_no_ext + ".png"}
                                                     onError={(e) => { e.target.onerror = null; e.target.src = `${slice.img_not_ext}.webp` }}
                                                 className="slice" />
                                             </li>
