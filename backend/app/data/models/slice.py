@@ -138,7 +138,7 @@ class SliceModel(PaginatedAPIMixin, db.Model):
     @property
     def img_small(self):
         url = self.get_url(self.img_path)
-        return "{}/{}.webp".format(url, self.combined_data)
+        return "{}/{}.jpg".format(url, self.combined_data)
 
     @property
     def img_small_RI(self):
