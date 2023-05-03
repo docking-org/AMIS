@@ -13,7 +13,7 @@ RUN yarn build
 FROM continuumio/anaconda3:latest as backend
 WORKDIR /home/amis
 ADD backend/application.py backend/config.py backend/boot.sh backend/requirements.txt ./
-RUN conda create -n amis -y
+RUN conda create -n amis -y python=3.7
 RUN echo "conda activate amis" > ~/.bashrc
 
 ENV PATH /opt/conda/envs/amis/bin:$PATH
