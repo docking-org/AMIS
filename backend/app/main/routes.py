@@ -211,34 +211,38 @@ def lut(z,x,y):
     
     img = img[:,:,:3]
     
+    opacityThreshold = int(request.args.get("opacityThreshold"))
+    
+    img[img < opacityThreshold] = 0
     
     if autobrightness != "true":
         brightness = int(request.args.get("brightness"))
         contrast = int(request.args.get("contrast"))
         cliplow = int(request.args.get("cliplow"))
         cliphigh = int(request.args.get("cliphigh"))
-    
-        contrast_factor = (259 * (contrast + 255)) / (255 * (259 - contrast))
 
+        contrast_factor = (259 * (contrast + 255)) / (255 * (259 - contrast))
         brightness_factor = brightness - 128 * (contrast_factor - 1)
+         #apply brightness and contrast only to pixels that are not black (0,0,0)
+        img = np.where(img != 0, img * contrast_factor + brightness_factor, 0)
         
-        img = img * contrast_factor + brightness_factor
+        # img = img * contrast_factor + brightness_factor
         
         
         img = np.clip(img, cliplow, cliphigh)
     
-    else:
-        contrast  = 20
-        brightness = -15
+    # else:
+    #     contrast  = 20
+    #     brightness = -15
         
-        contrast_factor = (259 * (contrast + 255)) / (255 * (259 - contrast))
+    #     contrast_factor = (259 * (contrast + 255)) / (255 * (259 - contrast))
 
 
-        brightness_factor = brightness - 128 * (contrast_factor - 1)
+    #     brightness_factor = brightness - 128 * (contrast_factor - 1)
         
-        img = img * contrast_factor + brightness_factor
+    #     img = img * contrast_factor + brightness_factor
         
-        img = np.clip(img, 0, 255)
+    #     img = np.clip(img, 0, 255)
             
     
         
@@ -252,7 +256,14 @@ def lut(z,x,y):
     except:
         pass
     
-       
+    #convert image to alpha channel
+    
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2BGRA)
+    
+    #make all black pixels transparent
+    img[np.all(img == [0,0,0,255], axis=2)] = [0,0,0,0]
+    
+    
     retval, buffer = cv2.imencode('.png', img)
     response = make_response(buffer.tobytes())
     response.headers.set('Content-Type', 'image/png')

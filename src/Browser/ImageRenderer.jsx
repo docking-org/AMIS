@@ -61,7 +61,7 @@ function ImageRenderer(props) {
     const [selections, updateSelections] = useState(props.state.selections)
     const [lut, updateLut] = useState(props.state.lut)
     const [layers, updateLayers] = useState(props.state.layers)
-
+    const [brightnessBoost, updateBrightnessBoost] = useState(props.state.brightnessBoost)
 
 
 
@@ -168,8 +168,8 @@ function ImageRenderer(props) {
                 })
                 console.log(slices)
                 updateSlices(slices)
-                updateselectedWavelength(Object.keys(slices)[0])
-                updateActiveLayers(Object.keys(slices)[0])
+                updateselectedWavelength(Object.keys(slices).sort().reverse()[0])
+                updateActiveLayers(Object.keys(slices).sort().reverse()[0])
 
                 if (!slider) {
                     try {
@@ -196,8 +196,18 @@ function ImageRenderer(props) {
     }
 
     useEffect(() => {
+        
+        // updateSelectedMouse(null);
+        // updateMice([]);
+        // updateSelectedOrgan(null);
+        // updateOrgans([]);
+        // updateLayers([]);
+    }, [selectedGene])
+
+    useEffect(() => {
         updateSelectedMouse(null);
         updateMice([]);
+        updateLayers([]);
         console.log("selectedOrgan changed")
         if (selectedGene && selectedOrgan && selectedSampleType) {
             let url = "/mice?";
@@ -316,8 +326,7 @@ function ImageRenderer(props) {
 
     useEffect(() => {
         if (!props.main && !loaded) {
-            loadSlices("DAPI")
-            loadSlices("tdTomato")
+            loadSlices()
             updateSelectedSlice(props.state.selectedSlice)
 
             setLoaded(true)
@@ -356,7 +365,8 @@ function ImageRenderer(props) {
             'contrast': 0,
             'min': 0,
             'max': 255,
-            'blend': 100
+            'blend': 100,
+            'opacityThreshold': 0,
         })
     }
 
@@ -369,7 +379,7 @@ function ImageRenderer(props) {
 
         axios({
             method: "GET",
-            url: "https://amis2.docking.org/getAutoValues?url=" + encodeURIComponent(selectedUrl),
+            url: "/getAutoValues?url=" + encodeURIComponent(selectedUrl),
             dataType: "json",
             dataSrc: "items",
         }).then((response) => {
@@ -379,7 +389,8 @@ function ImageRenderer(props) {
                 contrast: Math.round(parseFloat(res.contrast) / 3 * 100),
                 min: res.min,
                 max: res.max,
-                blend: options.blend
+                blend: options.blend,
+                opacityThreshold: options.opacityThreshold,
             })
             console.log(options)
 
@@ -395,7 +406,7 @@ function ImageRenderer(props) {
 
         axios({
             method: "GET",
-            url: "https://amis2.docking.org/filters",
+            url: "/filters",
             dataType: "json",
             dataSrc: "items",
         }).then((response) => {
@@ -536,10 +547,12 @@ function ImageRenderer(props) {
 
     }
 
+    
+    const mapRef = React.useRef(null);
     useEffect(() => {
         var layers = []
-        updateLayers([])
-        Object.keys(slices).forEach(wavelength => {
+      
+        Object.keys(slices).sort().reverse().forEach(wavelength => {
             console.log(wavelength)
             let active = activeLayers.includes(wavelength)
             layers.push(
@@ -556,8 +569,9 @@ function ImageRenderer(props) {
                         bounds={[[-200, -200], [500, 180]]}
 
                         url={selectedMouse ?
-                            "https://amis2.docking.org/lut" + '/{z}/{x}/{y}.png' + "?lut=" + lut[wavelength] + "&url=" + encodeURIComponent(slices[wavelength][selectedSlice] ? slices[wavelength][selectedSlice].img_no_ext : null) + "&brightness=" + options.brightness +
+                            "/lut" + '/{z}/{x}/{y}.png' + "?lut=" + lut[wavelength] + "&url=" + encodeURIComponent(slices[wavelength][selectedSlice] ? slices[wavelength][selectedSlice].img_no_ext : null) + "&brightness=" + options.brightness +
                             "&contrast=" + options.contrast +
+                            "&opacityThreshold=" + options.opacityThreshold +
                             "&cliplow=" + options.min +
                             "&cliphigh=" + options.max : ""}
                     />
@@ -566,7 +580,7 @@ function ImageRenderer(props) {
 
 
         updateLayers(layers)
-        console.log(layers)
+       
     }, [selectedWavelength, selectedSlice, slices, selectedMouse, options, lut, activeLayers])
 
 
@@ -580,7 +594,7 @@ function ImageRenderer(props) {
                 <Col>
                     <Row className='justify-content-end'>
                         <div className={props.main ? (folded ? 'sidebar-left' : 'sidebar-left open') : (folded ? 'sidebar-right' : 'sidebar-right open')}
-                            onMouseEnter={() => setFolded(false)} onMouseLeave={() => setFolded(true)}>
+                            onMouseEnter={() => setFolded(false)} onMouseLeave={() => selectedMouse ? setFolded(true) : setFolded(false)}>
                             <div className='select-card'>
                                 {optionsLoaded ?
                                     (
@@ -603,7 +617,7 @@ function ImageRenderer(props) {
                                                 value={selectedGene}
                                                 isDisabled={!selectedSampleType} isClearable={props.renderSize === 12 ? true : false} options={
 
-                                                    selectedSampleType ? Object.keys(selections[selectedSampleType['value']].genes).map(gene => ({ "value": gene, "label": gene })) : []
+                                                    selectedSampleType ? Object.keys(selections[selectedSampleType['value']].genes).sort().map(gene => ({ "value": gene, "label": gene })) : []
 
                                                 } onChange={(option) => updateSelectedGene(option ? option : null)} />
 
@@ -613,7 +627,7 @@ function ImageRenderer(props) {
                                                 defaultValue={selectedOrgan}
                                                 value={selectedOrgan}
                                                 isDisabled={!selectedGene} isClearable={props.renderSize === 12 ? true : false} options={
-                                                    selectedGene ? Object.keys(selections[selectedSampleType['value']].genes[selectedGene['value']].organs).map(organ => ({ "value": organ, "label": organ })) : []
+                                                    selectedGene ? Object.keys(selections[selectedSampleType['value']].genes[selectedGene['value']].organs).sort().map(organ => ({ "value": organ, "label": organ })) : []
                                                 } onChange={(option) => updateSelectedOrgan(option ? option : null)} />
 
                                             <label className="col-sm-4 col-form-label">Mouse</label>
@@ -624,7 +638,10 @@ function ImageRenderer(props) {
                                                 value={selectedMouse}
                                                 isDisabled={!selectedOrgan} isClearable={props.renderSize === 12 ? true : false} options={
 
-                                                    selectedOrgan ? mice.map(mouse => ({
+                                                    selectedOrgan ? mice.sort((a, b) => {
+                                                        return (a.spec < b.spec) ? -1 : (a.spec > b.spec) ? 1 : 0;
+                                                    }
+                                                    ).map(mouse => ({
                                                         "value": mouse.number, "label": (mouse.sex !== true ? "♀" : "♂") + "  " + mouse.number + "  " +
                                                             (mouse.spec === "+" ? "pos" : "neg")
                                                     })) : []
@@ -681,6 +698,7 @@ function ImageRenderer(props) {
                         }}>
 
                             <MapContainer
+                      
                                 attributionControl={false}
                                 fullscreenControl={true}
                                 center={[-50, -50]} maxBoundsViscosity={1.0} nowrap={true} scrollWheelZoom zoom={2} >
@@ -691,13 +709,14 @@ function ImageRenderer(props) {
 
                                 </OpenPopup>
                                 <SliderMenu position="bottomleft" active={colorAccordion} closeAccordions={closeAccordions} toggleAccordion={toggleColorAccordion}
-                                    logo={"Color Options"}
+                                    logo={"Image Display Options"}
                                     className="color-accordion"
                                 >
 
                                     <Slider label="min" value='min' updateOption={updateOption} defaultValue={options['min']} onChange={() => console.log()} tooltip='Adjust Min Value' min={0} max={255} delta={10} />
                                     <Slider label="max" value='max' updateOption={updateOption} defaultValue={options['max']} onChange={() => console.log()} tooltip='Adjust Max Value' min={0} max={255} delta={10} />
                                     <Slider icon='tint' value='blend' updateOption={updateOption} defaultValue={options['blend']} onChange={() => console.log()} tooltip='Adjust Opacity' min={0} max={100} delta={15} />
+                                    <Slider icon='tint' value='opacityThreshold' updateOption={updateOption} defaultValue={options['opacityThreshold']} onChange={() => console.log()} tooltip='Adjust Opacity Threshold' min={0} max={255} delta={20} />
                                     <Slider icon='sun' value='brightness' updateOption={updateOption} defaultValue={options['brightness']} onChange={() => console.log()} tooltip='Adjust Brightness' min={-255} max={255} delta={10} />
                                     <Slider icon='adjust' value='contrast' updateOption={updateOption} defaultValue={options['contrast']} onChange={() => console.log()} tooltip='Adjust Contrast' min={-255} max={255} delta={10} />
                                     <br></br>
@@ -721,11 +740,13 @@ function ImageRenderer(props) {
 
                                 </SliderMenu>
 
-                                <LayersControl position="topright" >
+                                <LayersControl position="topright"
+                                          ref = {mapRef}
+                                >
                                     {
                                         layers
                                     }: ""
-                                }
+
                                 </LayersControl>
 
                             </MapContainer>
@@ -739,11 +760,21 @@ function ImageRenderer(props) {
                                             <ButtonGroup aria-label="Basic example">
                                                 {
                                                     Object.keys(slices).length >= 1 ?
-                                                        Object.keys(slices).map((wavelength, index) => {
+                                                        Object.keys(slices).sort().reverse().map((wavelength, index) => {
                                                             return <Button variant="secondary" onClick={() => { updateselectedWavelength(wavelength) }} active={selectedWavelength === wavelength ? true : false}>{wavelength}</Button>
                                                         }) : ""
                                                 }
+                                                <Button
+                                                    onClick={() => {
+                                                        updateBrightnessBoost(!brightnessBoost)
+                                                    }}
+                                                    variant={brightnessBoost ? "warning" : "secondary"}
+                                                >
+                                                    <i className="fa fa-sun"
+                                                    >  </i>
+                                                </Button>
                                             </ButtonGroup>
+
                                         </div>
                                     </Col>
                                     <Col lg={{ span: '6', offset: '2' }}>
@@ -757,7 +788,21 @@ function ImageRenderer(props) {
                                             <span className="" style={{ fontWeight: 'bold', color: '#0aaaf1', fontSize: 'larger' }}>
 
                                                 Slice <input className="current_id" type="number" min="0" style={{ width: '50px' }}
-                                                    value={selectedSlice === 0 ? 1 : selectedSlice + 1} onChange={() => console.log()} />
+                                                    value={selectedSlice === "" ? selectedSlice : selectedSlice + 1}
+                                                    onChange={(e) => {
+                                                        //if slice is valid and value is not null
+                                                        console.log(e.target.value)
+                                                        if (e.target.value === ""){
+                                                            updateSelectedSlice("");
+                                                        }
+                                                        else if (e.target.value && e.target.value <= slices[selectedWavelength].length && e.target.value > 0) {
+                                                            selectImage(e.target.value - 1, selectedWavelength);                
+                                                        }
+                                                      
+
+                                                        
+                                                    }}
+                                                />
                                                 &nbsp; of <span className="total_result">{slices[selectedWavelength] ? slices[selectedWavelength].length : 0}</span>
                                             </span>
                                             &nbsp;
@@ -784,6 +829,7 @@ function ImageRenderer(props) {
                                                     }}  >
                                                     <img src={slice.img_no_ext + ".png"}
                                                         onError={(e) => { e.target.onerror = null; e.target.src = `${slice.img_no_ext}.webp` }}
+                                                        style={{ filter: `brightness(${brightnessBoost ? 100 : 1})` }}
                                                         className="slice" />
                                                 </li>
                                             })
@@ -799,7 +845,8 @@ function ImageRenderer(props) {
             </Container >
             {selectedMouse && windowOpen && (
                 <NewWindow >
-                    <ViewSlices selectedSampleType={selectedSampleType.value}
+                    <ViewSlices 
+                        selectedSampleType={selectedSampleType.value}
                         selectedOrgan={selectedOrgan.value}
                         selectedGene={selectedGene.value}
                         selectedMouse={selectedMouse.value}

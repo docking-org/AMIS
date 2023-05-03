@@ -13,7 +13,7 @@ import {
 import ImageBrowser from './Browser/ImageBrowser';
 import ViewSlices from './Browser/ViewSlices';
 import Browser3d from './Browser/Browser3d';
-axios.defaults.baseURL = "https://amis2.docking.org/"
+axios.defaults.baseURL = "/"
 
 const router = createBrowserRouter([
   {

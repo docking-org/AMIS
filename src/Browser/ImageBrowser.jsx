@@ -33,7 +33,8 @@ function ImageBrowser() {
             'contrast': 0,
             'min': 0,
             'max': 255,
-            'blend': 100
+            'blend': 100,
+            'opacityThreshold': 0,
         },
         lut:
         {
@@ -42,8 +43,8 @@ function ImageBrowser() {
             'GFP': 'grayscale',
         },
         activeLayers:[],
-        layers:[]
-
+        layers:[],
+        brightnessBoost: 0,
     }
     );
 
