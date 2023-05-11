@@ -38,7 +38,7 @@
 }
 
 .leaflet-container{
-  height: 550px;
+  
 }
 
 /* chrome and chromium based */
@@ -54,13 +54,13 @@
 /* Example wrapper */
 .wrap {
 	position: relative;
-	margin: 3em 0;
+	
 }
 
 /* Frame */
 .frame {
-	height: 250px;
-	line-height: 250px;
+
+	
 	overflow: hidden;
 }
 .frame ul {
@@ -74,17 +74,17 @@
 	float: left;
 	width: 227px;
 	height: 100%;
-	margin: 0 1px 0 0;
+	
 	padding: 0;
 	background: #333;
 	color: #ddd;
 	text-align: center;
 	cursor: pointer;
+	background: black;
 }
 .frame ul li.active {
 	color: #fff;
 	background: #a03232;
-	border-radius: 20px;
 	
 }
 
@@ -136,7 +136,7 @@
 }
 
 /* Controls */
-.controls { margin: 25px 0; text-align: center; }
+.controls { margin:7px 0; text-align: center; }
 
 /* One Item Per Frame example*/
 .oneperframe { height: 300px; line-height: 300px; }

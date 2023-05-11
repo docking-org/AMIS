@@ -2,6 +2,11 @@
   text-align: center;
 }
 
+Body{
+  min-height: 100vh;
+  background-color:black;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -37,12 +42,11 @@
   }
 }
 
-.leaflet-container{
-  height: 550px;
-}
+
 
 .slice{
-  width: 180px;
+  max-height: 150px;
+  width: auto;
   filter: brightness(600%);
 }
 
@@ -71,12 +75,9 @@
 
 .imageBrowser{
   background: black;
-  height: 60rem;
   width: 100%;
 } 
-.frame ul li {
-  background: none;
-}
+
 
 .leaflet-container {
   background: black;
@@ -132,4 +133,23 @@
   margin-right: -1vw;
   right: 0;
   z-index: 1000001;
+}
+
+.leaflet-center {
+  z-index: 20000 !important;
+
+  left: 50% !important;
+  transform: translate(-50%, 0%) !important;
+}
+
+.leaflet-middle {
+  top: 50% !important;
+  position: absolute !important;
+
+transform: translate(0%, -50%) !important;
+
+}
+
+.leaflet-center.leaflet-middle {
+transform: translate(-50%, -50%) !important;
 }

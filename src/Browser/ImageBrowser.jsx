@@ -42,13 +42,12 @@ function ImageBrowser() {
             'DAPI': 'grayscale',
             'GFP': 'grayscale',
         },
-        activeLayers:[],
-        layers:[],
+        activeLayers: [],
+        layers: [],
         brightnessBoost: 0,
+        controlsHidden: false,
     }
     );
-
-
 
     function splitScreen(newState) {
         setState(newState)

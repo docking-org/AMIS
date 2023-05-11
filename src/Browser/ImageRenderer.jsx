@@ -10,9 +10,9 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import { useState, useEffect, createRef, useMemo } from 'react';
 import axios from "axios";
 import Select from 'react-select';
-import { MapContainer, TileLayer, LayersControl } from 'react-leaflet';
+import { MapContainer, TileLayer, LayersControl, ScaleControl } from 'react-leaflet';
 import { CRS, setOptions } from 'leaflet';
-import { Button } from 'react-bootstrap';
+import { Button, Card } from 'react-bootstrap';
 import $ from 'jquery';
 import Sly from 'sly-scroll';
 import LUTSelector from './LeafletControls/LUTSelector';
@@ -23,6 +23,8 @@ import 'leaflet-fullscreen/dist/leaflet.fullscreen.css';
 import OpenPopup from './LeafletControls/OpenPopup';
 import { render, createPortal } from "react-dom";
 import ViewSlices from "./ViewSlices";
+import Scale from './LeafletControls/Scale';
+import SliceToggle from './LeafletControls/SliceToggle';
 
 const DropdownIndicator = (
     props
@@ -43,7 +45,7 @@ function ImageRenderer(props) {
     const [organs, updateOrgans] = useState(props.state.organs)
     const [mice, updateMice] = useState(props.state.mice)
     const [activeLayers, updateActiveLayers] = useState(props.state.activeLayers)
-
+    const [controlsHidden, setControlsHidden] = useState(props.state.controlsHidden)
     const [slices, updateSlices] = useState(props.state.slices)
 
     const [selectedSampleType, updateSelectedSampleType] = useState(props.state.selectedSampleType)
@@ -104,7 +106,6 @@ function ImageRenderer(props) {
 
     function selectSlice(id) {
 
-
         updateSelectedSlice(id)
     }
 
@@ -117,12 +118,9 @@ function ImageRenderer(props) {
         e.returnValue = false
     }
 
-
-
-
-
     useEffect(() => {
         if (slider) {
+
             slider.on('active', function (e, i) {
                 selectSlice(i)
             });
@@ -132,18 +130,36 @@ function ImageRenderer(props) {
     }, [props.renderSize, slider])
 
 
-
-
     useEffect(() => {
         loadSlices()
 
 
     }, [selectedMouse])
 
+    useEffect(() => {
+        console.log(selectedSlice)
+
+    }, [selectedSlice])
+
+    window.addEventListener('resize', () => {
+        if (slider) {
+            slider.reload()
+            try {
+
+                slider.activate(selectedSlice)
+
+            } catch (e) {
+                console.log()
+            }
+
+        }
+    })
+
+
     function loadSlices() {
         if (selectedMouse) {
             var url = "/slices?per_page=-1&order_by=slice_id";
-            url += "&instrument=" + selectedSampleType['value'];
+            url += "&instrument=" + 'Histological';
             url += "&gene=" + selectedGene['value'];
             url += "&organ=" + selectedOrgan['value'];
 
@@ -184,6 +200,7 @@ function ImageRenderer(props) {
                 else {
                     slider.reload()
                     try {
+
                         slider.activate(props.state.selectedSlice)
 
                     } catch (e) {
@@ -196,7 +213,7 @@ function ImageRenderer(props) {
     }
 
     useEffect(() => {
-        
+
         // updateSelectedMouse(null);
         // updateMice([]);
         // updateSelectedOrgan(null);
@@ -301,6 +318,7 @@ function ImageRenderer(props) {
 
 
     function buildState() {
+        setControlsHidden(false)
         return {
             genes: genes,
             organs: organs,
@@ -319,7 +337,7 @@ function ImageRenderer(props) {
             sampleTypes: sampleTypes,
             optionsLoaded: optionsLoaded,
             activeLayers: activeLayers,
-
+            controlsHidden: false,
         }
     }
 
@@ -448,7 +466,11 @@ function ImageRenderer(props) {
 
             console.log(sampleTypes)
             updateSelections(sampleTypes)
+            updateSelectedSampleType({
+                "value": "Histological", "label": "Histological"
+            })
             setOptionsLoaded(true)
+
         })
     }
 
@@ -457,9 +479,11 @@ function ImageRenderer(props) {
     }
 
     useEffect(() => {
-        if (slider) {
-            slider.reload()
-            slider.activate(selectedSlice)
+        if (!controlsHidden) {
+            if (slider) {
+                slider.reload()
+                slider.activate(selectedSlice)
+            }
         }
     }, [folded])
 
@@ -516,6 +540,8 @@ function ImageRenderer(props) {
     }, [windowOpen])
 
 
+
+
     function copyStyles(sourceDoc, targetDoc) {
         Array.from(sourceDoc.styleSheets).forEach(styleSheet => {
             if (styleSheet.cssRules) { // for <style> elements
@@ -537,6 +563,7 @@ function ImageRenderer(props) {
         });
     }
     function selectImage(i, wavelength) {
+
         updateActiveLayers([wavelength])
         updateSlices(slices)
         selectSlice(i)
@@ -547,11 +574,11 @@ function ImageRenderer(props) {
 
     }
 
-    
+
     const mapRef = React.useRef(null);
     useEffect(() => {
         var layers = []
-      
+
         Object.keys(slices).sort().reverse().forEach(wavelength => {
             console.log(wavelength)
             let active = activeLayers.includes(wavelength)
@@ -580,7 +607,7 @@ function ImageRenderer(props) {
 
 
         updateLayers(layers)
-       
+
     }, [selectedWavelength, selectedSlice, slices, selectedMouse, options, lut, activeLayers])
 
 
@@ -599,15 +626,6 @@ function ImageRenderer(props) {
                                 {optionsLoaded ?
                                     (
                                         <div>
-                                            <label className="col-sm-12 col-form-label">Sample Type</label>
-                                            <Select
-                                                components={{ DropdownIndicator }}
-                                                defaultValue={selectedSampleType}
-                                                value={selectedSampleType}
-                                                isClearable={props.renderSize === 12 ? true : false} options={
-                                                    //use the selections keys to get the sample types
-                                                    Object.keys(selections).map(selection => ({ "value": selection, "label": selection }))
-                                                } onChange={(option) => updateSelectedSampleType(option ? option : null)} />
 
                                             <label className="col-sm-4 col-form-label">Gene</label>
 
@@ -693,12 +711,10 @@ function ImageRenderer(props) {
 
 
 
-                        <Col lg={12} style={{
-                            height: '550px'
-                        }}>
+                        <Col lg={12} style={{ height: (controlsHidden ? '90vh' : '70vh') }}>
 
                             <MapContainer
-                      
+                                style={{ height: '100%' }}
                                 attributionControl={false}
                                 fullscreenControl={true}
                                 center={[-50, -50]} maxBoundsViscosity={1.0} nowrap={true} scrollWheelZoom zoom={2} >
@@ -708,6 +724,7 @@ function ImageRenderer(props) {
                                 >
 
                                 </OpenPopup>
+
                                 <SliderMenu position="bottomleft" active={colorAccordion} closeAccordions={closeAccordions} toggleAccordion={toggleColorAccordion}
                                     logo={"Image Display Options"}
                                     className="color-accordion"
@@ -741,111 +758,148 @@ function ImageRenderer(props) {
                                 </SliderMenu>
 
                                 <LayersControl position="topright"
-                                          ref = {mapRef}
+                                    ref={mapRef}
                                 >
                                     {
                                         layers
                                     }: ""
 
+                                    <div
+                                        className="leaflet-bottom leaflet-center"
+                                        onClick={() => {
+
+                                            setControlsHidden(!controlsHidden)
+                                            console.log(controlsHidden)
+                                        }}
+                                    >
+                                        <div
+                                            className='leaflet-control'>
+                                            <Button
+                                                variant="secondary"
+                                            >
+                                                <i className={"fas fa-arrow-" + (controlsHidden ? "up" : "down")}
+                                                    aria-hidden="true"></i>
+                                            </Button>
+                                        </div>
+
+                                    </div>
                                 </LayersControl>
+
+
+
+
+
 
                             </MapContainer>
 
 
 
-                            <div className="wrap">
-                                <Row>
-                                    <Col lg={{ span: '1' }}>
-                                        <div className="controls center" >
-                                            <ButtonGroup aria-label="Basic example">
-                                                {
-                                                    Object.keys(slices).length >= 1 ?
-                                                        Object.keys(slices).sort().reverse().map((wavelength, index) => {
-                                                            return <Button variant="secondary" onClick={() => { updateselectedWavelength(wavelength) }} active={selectedWavelength === wavelength ? true : false}>{wavelength}</Button>
-                                                        }) : ""
-                                                }
-                                                <Button
-                                                    onClick={() => {
-                                                        updateBrightnessBoost(!brightnessBoost)
-                                                    }}
-                                                    variant={brightnessBoost ? "warning" : "secondary"}
-                                                >
-                                                    <i className="fa fa-sun"
-                                                    >  </i>
+                            <div className="wrap"
+                                hidden={controlsHidden}
+                            >
+                                <Card
+                                    className="ps-1 pe-1 bg-dark pb-2"
+                                >
+
+                                    <Row
+
+                                    >
+                                        <Col lg={{ span: '1' }}>
+                                            <div className="controls center" >
+                                                <ButtonGroup aria-label="Basic example">
+                                                    {
+                                                        Object.keys(slices).length >= 1 ?
+                                                            Object.keys(slices).sort().reverse().map((wavelength, index) => {
+                                                                return <Button variant="secondary" onClick={() => { updateselectedWavelength(wavelength) }} active={selectedWavelength === wavelength ? true : false}>{wavelength}</Button>
+                                                            }) : ""
+                                                    }
+                                                    <Button
+                                                        onClick={() => {
+                                                            updateBrightnessBoost(!brightnessBoost)
+                                                        }}
+                                                        variant={brightnessBoost ? "warning" : "secondary"}
+                                                    >
+                                                        <i className="fa fa-sun"
+                                                        >  </i>
+                                                    </Button>
+                                                </ButtonGroup>
+
+                                            </div>
+                                        </Col>
+                                        <Col lg={{ span: '6', offset: '2' }}>
+
+                                            <div className="controls center" >
+                                                <Button onClick={() => slider.prev()}>
+                                                    <i className="fa fa-arrow-left"></i>
                                                 </Button>
-                                            </ButtonGroup>
+                                                &nbsp;
+                                                &nbsp;
+                                                <span className="" style={{ fontWeight: 'bold', color: '#0aaaf1', fontSize: 'larger' }}>
 
-                                        </div>
-                                    </Col>
-                                    <Col lg={{ span: '6', offset: '2' }}>
+                                                    Slice <input className="current_id" type="number" min="0" style={{ width: '50px' }}
+                                                        value={selectedSlice === "" ? selectedSlice : selectedSlice + 1}
+                                                        onChange={(e) => {
+                                                            //if slice is valid and value is not null
+                                                            console.log(e.target.value)
+                                                            if (e.target.value === "") {
+                                                                updateSelectedSlice("");
+                                                            }
+                                                            else if (e.target.value && e.target.value <= slices[selectedWavelength].length && e.target.value > 0) {
 
-                                        <div className="controls center" >
-                                            <Button onClick={() => slider.prev()}>
-                                                <i className="fa fa-arrow-left"></i>
-                                            </Button>
-                                            &nbsp;
-                                            &nbsp;
-                                            <span className="" style={{ fontWeight: 'bold', color: '#0aaaf1', fontSize: 'larger' }}>
-
-                                                Slice <input className="current_id" type="number" min="0" style={{ width: '50px' }}
-                                                    value={selectedSlice === "" ? selectedSlice : selectedSlice + 1}
-                                                    onChange={(e) => {
-                                                        //if slice is valid and value is not null
-                                                        console.log(e.target.value)
-                                                        if (e.target.value === ""){
-                                                            updateSelectedSlice("");
-                                                        }
-                                                        else if (e.target.value && e.target.value <= slices[selectedWavelength].length && e.target.value > 0) {
-                                                            selectImage(e.target.value - 1, selectedWavelength);                
-                                                        }
-                                                      
-
-                                                        
-                                                    }}
-                                                />
-                                                &nbsp; of <span className="total_result">{slices[selectedWavelength] ? slices[selectedWavelength].length : 0}</span>
-                                            </span>
-                                            &nbsp;
-                                            &nbsp;
-                                            <Button onClick={() => slider.next()}>
-                                                <i className="fa fa-arrow-right"></i>
-                                            </Button>
-
-                                        </div>
-                                    </Col>
-                                </Row>
+                                                                selectImage(e.target.value - 1, selectedWavelength);
+                                                            }
 
 
-                                <div className="frame" id={"forcecentered" + (props.main ? 1 : 2)}>
-                                    <ul className="clearfix">
 
-                                        {
-                                            getSliceThumbnails().map((slice, index) => {
-                                                return <li key={index} id={"_" + index} index={index}
-                                                    //onclick, slide to slice and update selected slice
-                                                    onClick={() => {
-                                                        selectImage(index, selectedWavelength);
+                                                        }}
+                                                    />
+                                                    &nbsp; of <span className="total_result">{slices[selectedWavelength] ? slices[selectedWavelength].length : 0}</span>
+                                                </span>
+                                                &nbsp;
+                                                &nbsp;
+                                                <Button onClick={() => slider.next()}>
+                                                    <i className="fa fa-arrow-right"></i>
+                                                </Button>
 
-                                                    }}  >
-                                                    <img src={slice.img_no_ext + ".png"}
-                                                        onError={(e) => { e.target.onerror = null; e.target.src = `${slice.img_no_ext}.webp` }}
-                                                        style={{ filter: `brightness(${brightnessBoost ? 100 : 1})` }}
-                                                        className="slice" />
-                                                </li>
-                                            })
-                                        }
-                                    </ul>
-                                </div>
+                                            </div>
+                                        </Col>
+                                    </Row>
 
+
+                                    <div className="frame" id={"forcecentered" + (props.main ? 1 : 2)}>
+                                        <ul className="clearfix">
+
+                                            {
+                                                getSliceThumbnails().map((slice, index) => {
+                                                    return <li key={index} id={"_" + index} index={index}
+                                                        //onclick, slide to slice and update selected slice
+                                                        onClick={() => {
+                                                            if (!controlsHidden) {
+
+                                                                selectImage(index, selectedWavelength);
+                                                            }
+
+                                                        }}  >
+                                                        <img src={slice.img_no_ext + ".png"}
+                                                            onError={(e) => { e.target.onerror = null; e.target.src = `${slice.img_no_ext}.webp` }}
+                                                            style={{ filter: `brightness(${brightnessBoost ? 100 : 1})` }}
+                                                            className="slice" />
+                                                    </li>
+                                                })
+                                            }
+                                        </ul>
+                                    </div>
+                                </Card>
                             </div>
 
                         </Col>
                     </Row>
+
                 </Col >
             </Container >
             {selectedMouse && windowOpen && (
                 <NewWindow >
-                    <ViewSlices 
+                    <ViewSlices
                         selectedSampleType={selectedSampleType.value}
                         selectedOrgan={selectedOrgan.value}
                         selectedGene={selectedGene.value}
@@ -856,8 +910,9 @@ function ImageRenderer(props) {
                         selectedWavelength={selectedWavelength}
                     ></ViewSlices>
                 </NewWindow>
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 }
 
