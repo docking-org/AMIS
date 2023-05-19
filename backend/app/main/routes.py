@@ -220,7 +220,9 @@ def lut(z,x,y):
         contrast = int(request.args.get("contrast"))
         cliplow = int(request.args.get("cliplow"))
         cliphigh = int(request.args.get("cliphigh"))
+        
 
+        
         contrast_factor = (259 * (contrast + 255)) / (255 * (259 - contrast))
         brightness_factor = brightness - 128 * (contrast_factor - 1)
          #apply brightness and contrast only to pixels that are not black (0,0,0)
@@ -228,8 +230,11 @@ def lut(z,x,y):
         
         # img = img * contrast_factor + brightness_factor
         
+
         
-        img = np.clip(img, cliplow, cliphigh)
+        #modify the image so that as cliplow is higher, pixels get closer to 255, and as cliphigh is lower, pixels get closer to 0
+        img = np.where(img < cliplow, 0, img)
+        img = np.where(img > cliphigh, 255, img)
     
     # else:
     #     contrast  = 20

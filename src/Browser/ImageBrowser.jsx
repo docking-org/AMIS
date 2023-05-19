@@ -29,12 +29,12 @@ function ImageBrowser() {
         selectedWavelength: "tdTomato",
         colorAccordion: false,
         options: {
-            'brightness': 0,
+            'brightness': 50,
             'contrast': 0,
             'min': 0,
             'max': 255,
-            'blend': 100,
-            'opacityThreshold': 0,
+            'blend': 50,
+            'opacityThreshold': 15,
         },
         lut:
         {
@@ -59,6 +59,9 @@ function ImageBrowser() {
             updateSize(12)
         }
     }
+
+
+
 
 
     useEffect(() => {

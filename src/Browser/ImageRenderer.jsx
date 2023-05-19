@@ -25,6 +25,8 @@ import { render, createPortal } from "react-dom";
 import ViewSlices from "./ViewSlices";
 import Scale from './LeafletControls/Scale';
 import SliceToggle from './LeafletControls/SliceToggle';
+import Rotate from './LeafletControls/Rotate';
+import { useLayoutEffect } from 'react';
 
 const DropdownIndicator = (
     props
@@ -64,7 +66,7 @@ function ImageRenderer(props) {
     const [lut, updateLut] = useState(props.state.lut)
     const [layers, updateLayers] = useState(props.state.layers)
     const [brightnessBoost, updateBrightnessBoost] = useState(props.state.brightnessBoost)
-
+    const [slicesLoaded, setSlicesLoaded] = useState(false)
 
 
     var $frame = $('#forcecentered ' + (props.main ? 1 : 2));
@@ -93,6 +95,11 @@ function ImageRenderer(props) {
 
 
     useEffect(() => {
+        document.addEventListener('cloneDisplayOptions', (e) => {
+            console.log(e.detail.options)
+            updateOptions(e.detail.options)
+        })
+
         return () => {
             if (slider) {
                 slider.destroy()
@@ -156,6 +163,9 @@ function ImageRenderer(props) {
     })
 
 
+
+
+
     function loadSlices() {
         if (selectedMouse) {
             var url = "/slices?per_page=-1&order_by=slice_id";
@@ -186,7 +196,7 @@ function ImageRenderer(props) {
                 updateSlices(slices)
                 updateselectedWavelength(Object.keys(slices).sort().reverse()[0])
                 updateActiveLayers(Object.keys(slices).sort().reverse()[0])
-
+                setSlicesLoaded(true)
                 if (!slider) {
                     try {
                         setSlider(new Sly('#forcecentered' + (props.main ? 1 : 2), slyOptions).init())
@@ -212,13 +222,14 @@ function ImageRenderer(props) {
         }
     }
 
-    useEffect(() => {
-
-        // updateSelectedMouse(null);
-        // updateMice([]);
-        // updateSelectedOrgan(null);
-        // updateOrgans([]);
-        // updateLayers([]);
+    useLayoutEffect(() => {
+        if (slicesLoaded) {
+            updateSelectedMouse(null);
+            updateMice([]);
+            updateSelectedOrgan(null);
+            updateOrgans([]);
+            updateLayers([]);
+        }
     }, [selectedGene])
 
     useEffect(() => {
@@ -586,7 +597,7 @@ function ImageRenderer(props) {
                 <LayersControl.Overlay name={wavelength} checked={active}>
                     <TileLayer
 
-                        opacity={options.blend / 100}
+                        opacity={activeLayers.length > 1 ? (options.blend / 100) : 1}
                         tms={true}
                         minZoom={2}
                         maxZoom={7}
@@ -611,7 +622,12 @@ function ImageRenderer(props) {
     }, [selectedWavelength, selectedSlice, slices, selectedMouse, options, lut, activeLayers])
 
 
+    const cloneOptionsEvent = new CustomEvent("cloneDisplayOptions", {
+        detail: {
+            options: options
 
+        }
+    })
     return (
         <div>
 
@@ -620,6 +636,7 @@ function ImageRenderer(props) {
 
                 <Col>
                     <Row className='justify-content-end'>
+
                         <div className={props.main ? (folded ? 'sidebar-left' : 'sidebar-left open') : (folded ? 'sidebar-right' : 'sidebar-right open')}
                             onMouseEnter={() => setFolded(false)} onMouseLeave={() => selectedMouse ? setFolded(true) : setFolded(false)}>
                             <div className='select-card'>
@@ -714,6 +731,13 @@ function ImageRenderer(props) {
                         <Col lg={12} style={{ height: (controlsHidden ? '90vh' : '70vh') }}>
 
                             <MapContainer
+                                rotate={true}
+                                shiftKeyRotate={true}
+                                rotateControl={{
+                                    closeOnZeroBearing: false,
+                                    position: 'topleft',
+                                }}
+                                bearing={'0'}
                                 style={{ height: '100%' }}
                                 attributionControl={false}
                                 fullscreenControl={true}
@@ -723,7 +747,11 @@ function ImageRenderer(props) {
                                     setWindowOpen={setWindowOpen}
                                 >
 
+
+
                                 </OpenPopup>
+
+
 
                                 <SliderMenu position="bottomleft" active={colorAccordion} closeAccordions={closeAccordions} toggleAccordion={toggleColorAccordion}
                                     logo={"Image Display Options"}
@@ -740,6 +768,11 @@ function ImageRenderer(props) {
                                     <Button size='sm' onClick={() => resetValues()}> Reset Values</Button>
                                     &nbsp;
                                     <Button size='sm' onClick={() => getAutoValues()}> Auto</Button>
+                                    &nbsp;
+
+                                    <Button size='sm' onClick={() => {
+                                        document.dispatchEvent(cloneOptionsEvent)
+                                    }}>Normalize</Button>
                                 </SliderMenu>
                                 <SliderMenu position="bottomright" closeAccordions={closeAccordions} active={lutAccordion} toggleAccordion={togglelutAccordion}
                                     className="lut-accordion"
@@ -783,6 +816,9 @@ function ImageRenderer(props) {
                                         </div>
 
                                     </div>
+
+
+
                                 </LayersControl>
 
 
