@@ -857,7 +857,7 @@ function ImageRenderer(props) {
 
                                     >
                                         <Card.Header
-
+                                            style={{ "font-size": ".9em" }}
                                         >
 
                                             Active Layers
@@ -998,8 +998,7 @@ function ImageRenderer(props) {
 
                                                     </div>
                                                 </Col>
-                                                <Col lg={1}>
-                                                </Col>
+
                                                 <Col lg={2}
                                                     className="mt-2"
                                                 >
