@@ -102,20 +102,8 @@ def load_images(url):
         file_name = Path(file).stem
         file_name_with_ext = Path(file).name
         file_sub_folder = url
-   
-
-        # print("File: {}".format(file))
-        # print("File name: {}".format(file_name))
-        # print("File name with extention: {}".format(file_name_with_ext))
-        # print("File sub folder: {}".format(file_sub_folder))
-
-        if "hidden" in file_sub_folder:
-            # print("_______________Skipped the file in HIDDEN dir: {}/{}".
-            #       format(file_sub_folder, file_name_with_ext))
-            continue
-
         full_path_without_ext = "{}{}/{}".format(path, file_sub_folder, file_name)
-        print("full_path_without_ext", full_path_without_ext)
+        
         # It converts png to resized .webp file if there is now *.webp file
         for type in ["_RI.", "."]:
             if not os.path.isfile('{}{}webp'.format(full_path_without_ext, type)) and \
@@ -131,32 +119,17 @@ def load_images(url):
         if SliceModel.isRegistered(file_name):
             destination = "{}{}/".format(path, file_sub_folder)
             dest_file_with_jpeg = "{}{}.jpg".format(destination, file_name)
-            # print("DEST:"+destination+file_name)
-            # print("dest_file_with_jpeg:" + dest_file_with_jpeg)
-            # if not os.path.isfile(dest_file_with_jpeg):
-            #     jpegs += 1
-            #     jpeg_folder = current_app.config['JPEG_FOLDER']
-            #     jpeg_path = os.path.realpath(os.path.dirname(jpeg_folder))
-            #     print("jpeg_path:" + jpeg_path)
-            #     source = "{}/{}.jpg".format(jpeg_path, file_name)
-            #     print("SOURCE:" + source)
-            #     try:
-            #         if os.path.isfile(source):
-            #             moved_jpegs += 1
-            #             print("DEST:" + destination)
-            #             print("SOURCE:" + source)
-            #             shutil.move(source, destination)
-            #             print("JPEG file has been moved to " + destination)
-            #         else:
-            #             missing_jpegs.append(dest_file_with_jpeg)
-            #     except Exception as e:
-            #         print(e)
+            
             skipped += 1
             print("_______________Skipped the file: {}".format(
                 file_name_with_ext))
             continue
 
         values = file_name.replace('_RI', '').split('_')
+        if(values[0] == 'overlay'):
+            #shift values one to the left
+            values = values[1:]
+            values[15] = 'Overlay'
         try:
             genotype_gene = GenotypeModel.find_by_id(values[2])
             if genotype_gene is None:

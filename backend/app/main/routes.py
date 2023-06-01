@@ -129,59 +129,25 @@ def img_browser():
     #                        pos_mouse_number=pos_mouse_number, neg_mouse_number=neg_mouse_number, wavelength=wavelength, selected_slice=selected_slice,
     #                        imgType=imgType)
 
-
+import png
+import numpy as np
+from PIL import Image
 @application.route('/getAutoValues', methods=['GET'])
 def getAutoValues(clip_hist_percent=2):
-    url = request.args.get('url') + ".webp"
-   
-    
-    # req = urllib.request.urlopen(url)
-    # if req.getcode() != 200:
-    #     return make_response(jsonify({'error': 'Could not download image'}), 400)
-    # arr = np.asarray(bytearray(req.read()), dtype=np.uint8)  
-    # img = cv2.imdecode(arr, -1).astype(np.uint8)
-    url = url.replace("https://files.docking.org/", "/nfs/ex9/")
-    img = cv2.imread(url).astype(np.uint8)
-    
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    
-    # Calculate grayscale histogram
-    hist = cv2.calcHist([gray],[0],None,[256],[0,256])
-    hist_size = len(hist)
-    
-    # Calculate cumulative distribution from the histogram
-    accumulator = []
-    accumulator.append(float(hist[0]))
-    for index in range(1, hist_size):
-        accumulator.append(accumulator[index -1] + float(hist[index]))
-    
-    # Locate points to clip
-    maximum = accumulator[-1]
-    clip_hist_percent *= (maximum/100.0)
-    clip_hist_percent /= 2.0
-    
-    # Locate left cut
-    minimum_gray = 0
-    while accumulator[minimum_gray] < clip_hist_percent:
-        minimum_gray += 1
-    
-    # Locate right cut
-    maximum_gray = hist_size -1
-    while accumulator[maximum_gray] >= (maximum - clip_hist_percent):
-        maximum_gray -= 1
-    
-    # Calculate alpha and beta values
-    alpha = 255 / (maximum_gray - minimum_gray)
-    beta = -minimum_gray * alpha
-    
-    
+    url = toPath(request.args.get('url')) + '/0/0/0.png'
+    print(url)
+    reader = png.Reader(url )
+    pngdata = reader.read()
+    px_array = np.array( map( np.uint16, pngdata[2] ))
+    print( px_array.dtype )
 
-    auto_result = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
-    newmin = auto_result.min()
-    newmax= auto_result.max()
-  
+    #open image as 16 bit
+    img = cv2.imread(url, cv2.IMREAD_UNCHANGED).astype(np.uint16)
+    img = img*16
+    print(img)
     
-    return jsonify({'min': int(newmin), "max": int(newmax), "contrast":str(alpha), "brightness": str(beta)})
+    
+    return jsonify({'min': int(0), "max": int(img.max()), "contrast":str(3), "brightness": str(3)})
 
 
 @application.route('/lut/<z>/<x>/<y>', methods=['GET'])
@@ -223,7 +189,7 @@ def lut(z,x,y):
         
 
         
-        contrast_factor = (259 * (contrast + 255)) / (255 * (259 - contrast))
+        contrast_factor = (255 * (contrast + 255)) / (255 * (255 - contrast))
         brightness_factor = brightness - 128 * (contrast_factor - 1)
          #apply brightness and contrast only to pixels that are not black (0,0,0)
         img = np.where(img != 0, img * contrast_factor + brightness_factor, 0)
@@ -264,7 +230,7 @@ def lut(z,x,y):
     #convert image to alpha channel
     
     img = cv2.cvtColor(img, cv2.COLOR_BGR2BGRA)
-    
+
     #make all black pixels transparent
     img[np.all(img == [0,0,0,255], axis=2)] = [0,0,0,0]
     
@@ -275,6 +241,16 @@ def lut(z,x,y):
     response.headers.set(
         'Content-Disposition', 'attachment')
     return response
+
+@application.route('/images/<path>/<number>/<image>/<x>/<y>/<z>.png', methods=['GET'])
+def send_slice(path,number,image, x, y, z):
+    if path not in current_app.config['URL_MAP']:
+        return make_response(jsonify({'error': 'Invalid path'}), 400)
+    else:
+
+        url = current_app.config['URL_MAP'][path] + "/" + number + "/" + image + "/" + x + "/" + y + "/"
+        print(url)
+        return send_from_directory(url, '0.png')
     
 @application.route('/images/<path>/<number>/<image>', methods=['GET'])
 def send_image(path,number,image):
@@ -283,6 +259,9 @@ def send_image(path,number,image):
     else:
         url = current_app.config['URL_MAP'][path] + "/" + number
         return send_from_directory(url, image)
+
+
+            
     
 def toPath(url):
     path = url.split("/")[2]
