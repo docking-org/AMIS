@@ -2,7 +2,7 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import {Outlet} from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
 
 function BasicExample() {
@@ -15,8 +15,8 @@ function BasicExample() {
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
                             <Nav.Link href="/image_browser">Image Browser</Nav.Link>
-                            <Nav.Link href="/3d_browser">3d Browser</Nav.Link>
-                            <Nav.Link href="https://druggablegenome.net/DRGC_GPCR">IDG Program</Nav.Link>
+
+                            <Nav.Link target="_blank" href="https://druggablegenome.net/DRGC_GPCR">IDG Program</Nav.Link>
                         </Nav>
                     </Navbar.Collapse>
                 </Container>

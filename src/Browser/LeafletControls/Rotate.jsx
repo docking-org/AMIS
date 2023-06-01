@@ -1784,7 +1784,6 @@ L.Control.Rotate = L.Control.extend({
 
         var arrow = this._arrow = L.DomUtil.create('span', 'leaflet-control-rotate-arrow');
 
-        arrow.style.backgroundImage = `url("data:image/svg+xml;charset=utf-8,%3Csvg width='29' height='29' viewBox='0 0 29 29' xmlns='http://www.w3.org/2000/svg' fill='%23333'%3E%3Cpath d='M10.5 14l4-8 4 8h-8z'/%3E%3Cpath d='M10.5 16l4 8 4-8h-8z' fill='%23ccc'/%3E%3C/svg%3E")`;
         arrow.style.cursor = 'grab';
         arrow.style.display = 'block';
         arrow.style.width = '100%';

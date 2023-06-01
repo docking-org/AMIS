@@ -10,9 +10,9 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import { useState, useEffect, createRef, useMemo } from 'react';
 import axios from "axios";
 import Select from 'react-select';
-import { MapContainer, TileLayer, LayersControl, ScaleControl } from 'react-leaflet';
+import { MapContainer, TileLayer, LayersControl, ScaleControl, Tooltip, } from 'react-leaflet';
 import { CRS, setOptions } from 'leaflet';
-import { Button, Card } from 'react-bootstrap';
+import { Button, Card, DropdownButton, Dropdown, Form, Overlay, OverlayTrigger, Tooltip as BSTooltip } from 'react-bootstrap';
 import $ from 'jquery';
 import Sly from 'sly-scroll';
 import LUTSelector from './LeafletControls/LUTSelector';
@@ -195,7 +195,7 @@ function ImageRenderer(props) {
                 console.log(slices)
                 updateSlices(slices)
                 updateselectedWavelength(Object.keys(slices).sort().reverse()[0])
-                updateActiveLayers(Object.keys(slices).sort().reverse()[0])
+                updateActiveLayers([Object.keys(slices).sort().reverse()[0]])
                 setSlicesLoaded(true)
                 if (!slider) {
                     try {
@@ -395,7 +395,7 @@ function ImageRenderer(props) {
             'min': 0,
             'max': 255,
             'blend': 100,
-            'opacityThreshold': 0,
+            'opacityThreshold': 12,
         })
     }
 
@@ -593,8 +593,9 @@ function ImageRenderer(props) {
         Object.keys(slices).sort().reverse().forEach(wavelength => {
             console.log(wavelength)
             let active = activeLayers.includes(wavelength)
-            layers.push(
-                <LayersControl.Overlay name={wavelength} checked={active}>
+            if (active) {
+                layers.push(
+
                     <TileLayer
 
                         opacity={activeLayers.length > 1 ? (options.blend / 100) : 1}
@@ -613,7 +614,9 @@ function ImageRenderer(props) {
                             "&cliplow=" + options.min +
                             "&cliphigh=" + options.max : ""}
                     />
-                </LayersControl.Overlay>)
+
+                )
+            }
         })
 
 
@@ -686,7 +689,19 @@ function ImageRenderer(props) {
                                             <br />
 
 
-                                            {props.main ? <button type="button" className="btn btn-toggle-split btn-dark" onClick={() => { props.splitScreen(buildState()) }}>Toggle Split Screen</button> : null}
+                                            {props.main ?
+                                                (
+
+
+                                                    <button type="button" className="btn btn-toggle-split btn-dark"
+                                                        title='Add a new display to the right panel'
+                                                        onClick={() => { props.splitScreen(buildState()) }}>Toggle Split Screen</button>
+
+
+
+                                                )
+                                                : null}
+
                                             &nbsp;
 
 
@@ -728,7 +743,7 @@ function ImageRenderer(props) {
 
 
 
-                        <Col lg={12} style={{ height: (controlsHidden ? '90vh' : '70vh') }}>
+                        <Col lg={12} style={{ height: (controlsHidden ? '90vh' : '65vh') }}>
 
                             <MapContainer
                                 rotate={true}
@@ -743,13 +758,13 @@ function ImageRenderer(props) {
                                 fullscreenControl={true}
                                 center={[-50, -50]} maxBoundsViscosity={1.0} nowrap={true} scrollWheelZoom zoom={2} >
 
-                                <OpenPopup position="topright"
+                                {/* <OpenPopup position="topright"
                                     setWindowOpen={setWindowOpen}
                                 >
 
 
 
-                                </OpenPopup>
+                                </OpenPopup> */}
 
 
 
@@ -758,8 +773,8 @@ function ImageRenderer(props) {
                                     className="color-accordion"
                                 >
 
-                                    <Slider label="min" value='min' updateOption={updateOption} defaultValue={options['min']} onChange={() => console.log()} tooltip='Adjust Min Value' min={0} max={255} delta={10} />
-                                    <Slider label="max" value='max' updateOption={updateOption} defaultValue={options['max']} onChange={() => console.log()} tooltip='Adjust Max Value' min={0} max={255} delta={10} />
+                                    <Slider label="min" value='min' updateOption={updateOption} defaultValue={options['min']} onChange={() => console.log()} tooltip='Adjust Min Value' min={0} max={255} delta={15} />
+                                    <Slider label="max" value='max' updateOption={updateOption} defaultValue={options['max']} onChange={() => console.log()} tooltip='Adjust Max Value' min={0} max={255} delta={15} />
                                     <Slider icon='tint' value='blend' updateOption={updateOption} defaultValue={options['blend']} onChange={() => console.log()} tooltip='Adjust Opacity' min={0} max={100} delta={15} />
                                     <Slider icon='tint' value='opacityThreshold' updateOption={updateOption} defaultValue={options['opacityThreshold']} onChange={() => console.log()} tooltip='Adjust Opacity Threshold' min={0} max={255} delta={20} />
                                     <Slider icon='sun' value='brightness' updateOption={updateOption} defaultValue={options['brightness']} onChange={() => console.log()} tooltip='Adjust Brightness' min={-255} max={255} delta={10} />
@@ -774,10 +789,12 @@ function ImageRenderer(props) {
                                         document.dispatchEvent(cloneOptionsEvent)
                                     }}>Normalize</Button>
                                 </SliderMenu>
+
                                 <SliderMenu position="bottomright" closeAccordions={closeAccordions} active={lutAccordion} toggleAccordion={togglelutAccordion}
                                     className="lut-accordion"
-                                    description={''}
+                                    description={'Apply a Look Up Table to the layers'}
                                     logo={"LUT"}
+
                                 >
                                     {
                                         Object.keys(slices).length >= 1 ?
@@ -789,21 +806,24 @@ function ImageRenderer(props) {
 
 
                                 </SliderMenu>
+                                {layers}
 
-                                <LayersControl position="topright"
-                                    ref={mapRef}
+
+
+                                <div
+                                    className="leaflet-bottom leaflet-center"
+                                    onClick={() => {
+
+                                        setControlsHidden(!controlsHidden)
+                                        console.log(controlsHidden)
+                                    }}
                                 >
-                                    {
-                                        layers
-                                    }: ""
-
-                                    <div
-                                        className="leaflet-bottom leaflet-center"
-                                        onClick={() => {
-
-                                            setControlsHidden(!controlsHidden)
-                                            console.log(controlsHidden)
-                                        }}
+                                    <OverlayTrigger
+                                        overlay={
+                                            <BSTooltip>
+                                                {controlsHidden ? "Show Slice Viewer" : "Hide Slice Viewer"}
+                                            </BSTooltip>
+                                        }
                                     >
                                         <div
                                             className='leaflet-control'>
@@ -814,12 +834,12 @@ function ImageRenderer(props) {
                                                     aria-hidden="true"></i>
                                             </Button>
                                         </div>
+                                    </OverlayTrigger>
 
-                                    </div>
+                                </div>
 
 
 
-                                </LayersControl>
 
 
 
@@ -829,20 +849,60 @@ function ImageRenderer(props) {
                             </MapContainer>
 
 
-
-                            <div className="wrap"
-                                hidden={controlsHidden}
-                            >
-                                <Card
-                                    className="ps-1 pe-1 bg-dark pb-2"
+                            <Row>
+                                <Col lg={2}
+                                    hidden={controlsHidden}
                                 >
-
-                                    <Row
+                                    <Card
 
                                     >
-                                        <Col lg={{ span: '1' }}>
-                                            <div className="controls center" >
-                                                <ButtonGroup aria-label="Basic example">
+                                        <Card.Header
+
+                                        >
+
+                                            Active Layers
+                                            <div
+                                                style={{ float: 'right' }}
+                                            >
+                                                <OverlayTrigger
+                                                    overlay={
+                                                        <BSTooltip>
+                                                            Show/Hide Layers in the Map
+                                                        </BSTooltip>
+                                                    }
+                                                >
+
+                                                    <i className="fas fa-info"></i>
+                                                </OverlayTrigger>
+                                            </div>
+                                        </Card.Header>
+                                        <Card.Body
+                                        >
+
+                                            <div className="" >
+
+                                                {Object.keys(slices).length >= 1 ?
+                                                    Object.keys(slices).sort().reverse().map((wavelength, index) => {
+                                                        return <Form.Check
+                                                            type="checkbox"
+                                                            label={wavelength}
+                                                            checked={activeLayers.includes(wavelength)}
+                                                            onChange={() => {
+                                                                if (activeLayers.includes(wavelength)) {
+                                                                    updateActiveLayers(activeLayers.filter(item => item !== wavelength))
+                                                                }
+                                                                else {
+                                                                    updateActiveLayers(activeLayers.concat(wavelength))
+                                                                }
+                                                                console.log(activeLayers)
+
+                                                            }}
+                                                        />
+                                                    }) : ""
+                                                }
+
+
+                                                {/* <ButtonGroup aria-label="Basic example">
                                                     {
                                                         Object.keys(slices).length >= 1 ?
                                                             Object.keys(slices).sort().reverse().map((wavelength, index) => {
@@ -858,75 +918,198 @@ function ImageRenderer(props) {
                                                         <i className="fa fa-sun"
                                                         >  </i>
                                                     </Button>
-                                                </ButtonGroup>
+                                                </ButtonGroup> */}
 
                                             </div>
-                                        </Col>
-                                        <Col lg={{ span: '6', offset: '2' }}>
 
-                                            <div className="controls center" >
-                                                <Button onClick={() => slider.prev()}>
-                                                    <i className="fa fa-arrow-left"></i>
-                                                </Button>
-                                                &nbsp;
-                                                &nbsp;
-                                                <span className="" style={{ fontWeight: 'bold', color: '#0aaaf1', fontSize: 'larger' }}>
+                                        </Card.Body>
+                                    </Card>
+                                </Col>
+                                <Col lg={10}>
+                                    <div className="wrap"
+                                        hidden={controlsHidden}
+                                    >
 
-                                                    Slice <input className="current_id" type="number" min="0" style={{ width: '50px' }}
-                                                        value={selectedSlice === "" ? selectedSlice : selectedSlice + 1}
-                                                        onChange={(e) => {
-                                                            //if slice is valid and value is not null
-                                                            console.log(e.target.value)
-                                                            if (e.target.value === "") {
-                                                                updateSelectedSlice("");
+                                        <Card
+                                            className="ps-1 pe-1 bg-dark pb-2"
+                                        >
+
+                                            <Row
+
+                                            >
+                                                <Col lg={3}>
+                                                </Col>
+                                                <Col lg={6}>
+
+                                                    <div className="controls center"
+                                                        style={{ display: 'flex', justifyContent: 'center' }}
+                                                    >
+                                                        <OverlayTrigger
+                                                            overlay={
+                                                                <BSTooltip>
+                                                                    Previous Slice
+                                                                </BSTooltip>
                                                             }
-                                                            else if (e.target.value && e.target.value <= slices[selectedWavelength].length && e.target.value > 0) {
+                                                        >
+                                                            <Button onClick={() => slider.prev()}>
+                                                                <i className="fa fa-arrow-left"></i>
+                                                            </Button>
+                                                        </OverlayTrigger>
+                                                        &nbsp;
+                                                        &nbsp;
+                                                        <div className='mt-1'>
+                                                            <span className="" style={{ fontWeight: 'bold', color: '#0aaaf1', fontSize: 'larger' }}>
 
-                                                                selectImage(e.target.value - 1, selectedWavelength);
+                                                                Slice <input className="current_id" type="number" min="0" style={{ width: '50px' }}
+                                                                    value={selectedSlice === "" ? selectedSlice : selectedSlice + 1}
+                                                                    onChange={(e) => {
+                                                                        //if slice is valid and value is not null
+                                                                        console.log(e.target.value)
+                                                                        if (e.target.value === "") {
+                                                                            updateSelectedSlice("");
+                                                                        }
+                                                                        else if (e.target.value && e.target.value <= slices[selectedWavelength].length && e.target.value > 0) {
+
+                                                                            selectImage(e.target.value - 1, selectedWavelength);
+                                                                        }
+
+
+
+                                                                    }}
+                                                                />
+                                                                &nbsp; of <span className="total_result">{slices[selectedWavelength] ? slices[selectedWavelength].length : 0}</span>
+                                                            </span>
+                                                        </div>
+                                                        &nbsp;
+                                                        &nbsp;
+                                                        <OverlayTrigger
+                                                            overlay={
+                                                                <BSTooltip>
+                                                                    Next Slice
+                                                                </BSTooltip>
                                                             }
+                                                        >
+
+                                                            <Button onClick={() => slider.next()}>
+                                                                <i className="fa fa-arrow-right"></i>
+                                                            </Button>
+                                                        </OverlayTrigger>
+
+
+                                                    </div>
+                                                </Col>
+                                                <Col lg={1}>
+                                                </Col>
+                                                <Col lg={2}
+                                                    className="mt-2"
+                                                >
+                                                    <div
+                                                        style={{ display: 'flex', justifyContent: 'center' }}
+                                                    >
+                                                        <OverlayTrigger
+                                                            overlay={
+                                                                <BSTooltip>
+                                                                    Select Slice Viewer Layer
+                                                                </BSTooltip>
+                                                            }
+                                                        >
+                                                            <Dropdown>
+                                                                <Dropdown.Toggle>
+                                                                    {selectedWavelength}
+                                                                </Dropdown.Toggle>
+                                                                <Dropdown.Menu>
 
 
 
-                                                        }}
-                                                    />
-                                                    &nbsp; of <span className="total_result">{slices[selectedWavelength] ? slices[selectedWavelength].length : 0}</span>
-                                                </span>
-                                                &nbsp;
-                                                &nbsp;
-                                                <Button onClick={() => slider.next()}>
-                                                    <i className="fa fa-arrow-right"></i>
-                                                </Button>
+                                                                    {Object.keys(slices).length >= 1 ?
+                                                                        Object.keys(slices).sort().reverse().map((wavelength, index) => {
+                                                                            return <Dropdown.Item onClick={() => { updateselectedWavelength(wavelength) }} active={selectedWavelength === wavelength ? true : false}>{wavelength}</Dropdown.Item>
+                                                                        }) : ""
+                                                                    }
+                                                                </Dropdown.Menu>
+                                                            </Dropdown>
+                                                        </OverlayTrigger>
+                                                        &nbsp;
 
+
+
+                                                        <OverlayTrigger
+
+                                                            overlay={
+                                                                <BSTooltip>
+                                                                    {brightnessBoost ? "Disable" : "Enable"} Brightness Boost
+                                                                </BSTooltip>
+                                                            }
+                                                        >
+
+                                                            <Button
+
+                                                                onClick={() => {
+                                                                    updateBrightnessBoost(!brightnessBoost)
+                                                                }}
+                                                                variant={brightnessBoost ? "warning" : "secondary"}
+
+                                                            >
+                                                                <i className="fa fa-sun"
+                                                                >  </i>
+                                                            </Button>
+                                                        </OverlayTrigger>
+                                                        &nbsp;
+                                                        <OverlayTrigger
+                                                            overlay={
+                                                                <BSTooltip>
+                                                                    Open Slice Viewer in New Window
+                                                                </BSTooltip>
+                                                            }
+                                                        >
+                                                            <Button
+                                                                onClick={() => {
+                                                                    setControlsHidden(true)
+                                                                    setWindowOpen(true)
+                                                                }}
+                                                                variant="secondary"
+                                                            >
+                                                                <i className="fa fa-external-link-alt"
+                                                                >  </i>
+                                                            </Button>
+                                                        </OverlayTrigger>
+
+
+                                                    </div>
+                                                </Col>
+
+
+                                            </Row>
+
+
+                                            <div className="frame" id={"forcecentered" + (props.main ? 1 : 2)}>
+                                                <ul className="clearfix">
+
+                                                    {
+                                                        getSliceThumbnails().map((slice, index) => {
+                                                            return <li key={index} id={"_" + index} index={index}
+                                                                //onclick, slide to slice and update selected slice
+                                                                onClick={() => {
+                                                                    if (!controlsHidden) {
+
+                                                                        selectImage(index, selectedWavelength);
+                                                                    }
+
+                                                                }}  >
+                                                                <img src={slice.img_no_ext + ".png"}
+                                                                    onError={(e) => { e.target.onerror = null; e.target.src = `${slice.img_no_ext}.webp` }}
+                                                                    style={{ filter: `brightness(${brightnessBoost ? 100 : 1})` }}
+                                                                    className="slice" />
+                                                            </li>
+                                                        })
+                                                    }
+                                                </ul>
                                             </div>
-                                        </Col>
-                                    </Row>
+                                        </Card>
 
-
-                                    <div className="frame" id={"forcecentered" + (props.main ? 1 : 2)}>
-                                        <ul className="clearfix">
-
-                                            {
-                                                getSliceThumbnails().map((slice, index) => {
-                                                    return <li key={index} id={"_" + index} index={index}
-                                                        //onclick, slide to slice and update selected slice
-                                                        onClick={() => {
-                                                            if (!controlsHidden) {
-
-                                                                selectImage(index, selectedWavelength);
-                                                            }
-
-                                                        }}  >
-                                                        <img src={slice.img_no_ext + ".png"}
-                                                            onError={(e) => { e.target.onerror = null; e.target.src = `${slice.img_no_ext}.webp` }}
-                                                            style={{ filter: `brightness(${brightnessBoost ? 100 : 1})` }}
-                                                            className="slice" />
-                                                    </li>
-                                                })
-                                            }
-                                        </ul>
                                     </div>
-                                </Card>
-                            </div>
+                                </Col>
+                            </Row>
 
                         </Col>
                     </Row>

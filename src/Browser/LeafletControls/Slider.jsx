@@ -52,9 +52,13 @@ function Slider(props) {
 
             &nbsp;
             <span className="slider-value"
-                style={{ width: "25px" }}
-            >{sliderValue}</span>
-        </div>
+                style={{
+                    width: "30px", display: "inline-block", textAlign: "center", fontSize: "12 px", whiteSpace: "nowrap"
+                }}
+            > {
+                    Math.round((sliderValue / props.max) * 100)
+                } %</span>
+        </div >
 
     )
 }

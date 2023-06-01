@@ -62,7 +62,11 @@ function SliderMenu(props) {
 
 
                                 <div style={{ padding: '6px' }}>
-                                    <h5>{props.description}</h5>
+                                    <div style={{ padding: '6px' }}>
+                                        {props.description}
+                                    </div>
+
+
 
                                     {props.children}
                                 </div>
