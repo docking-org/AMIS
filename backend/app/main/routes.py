@@ -129,22 +129,19 @@ def img_browser():
     #                        pos_mouse_number=pos_mouse_number, neg_mouse_number=neg_mouse_number, wavelength=wavelength, selected_slice=selected_slice,
     #                        imgType=imgType)
 
-import png
-import numpy as np
-from PIL import Image
 @application.route('/getAutoValues', methods=['GET'])
 def getAutoValues(clip_hist_percent=2):
-    url = toPath(request.args.get('url')) + '/0/0/0.png'
-    print(url)
-    reader = png.Reader(url )
-    pngdata = reader.read()
-    px_array = np.array( map( np.uint16, pngdata[2] ))
-    print( px_array.dtype )
+    # url = toPath(request.args.get('url')) + '/0/0/0.png'
+    # print(url)
+    # reader = png.Reader(url )
+    # pngdata = reader.read()
+    # px_array = np.array( map( np.uint16, pngdata[2] ))
+    # print( px_array.dtype )
 
-    #open image as 16 bit
-    img = cv2.imread(url, cv2.IMREAD_UNCHANGED).astype(np.uint16)
-    img = img*16
-    print(img)
+    # #open image as 16 bit
+    # img = cv2.imread(url, cv2.IMREAD_UNCHANGED).astype(np.uint16)
+    # img = img*16
+    # print(img)
     
     
     return jsonify({'min': int(0), "max": int(img.max()), "contrast":str(3), "brightness": str(3)})
