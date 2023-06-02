@@ -28,15 +28,20 @@ import SliceToggle from './LeafletControls/SliceToggle';
 import Rotate from './LeafletControls/Rotate';
 import { useLayoutEffect } from 'react';
 
+
 const DropdownIndicator = (
     props
 ) => {
     return (
         <div></div>
     );
+
+
 };
 
-function ImageRenderer(props) {
+
+
+function NavGuideRenderer(props) {
 
     const lutRef = createRef(null);
     const colorRef = createRef(null);
@@ -54,7 +59,7 @@ function ImageRenderer(props) {
     const [selectedGene, updateSelectedGene] = useState(props.state.selectedGene)
     const [selectedOrgan, updateSelectedOrgan] = useState(props.state.selectedOrgan)
     const [selectedMouse, updateSelectedMouse] = useState(props.state.selectedMouse)
-    const [selectedSlice, updateSelectedSlice] = useState(props.state.selectedMouse)
+    const [selectedSlice, updateSelectedSlice] = useState(props.state.selectedSlice)
     const [selectedWavelength, updateselectedWavelength] = useState(props.state.selectedWavelength)
     const [colorAccordion, setColorAccordion] = useState(false);
     const [lutAccordion, setlutAccordion] = useState(false);
@@ -67,7 +72,7 @@ function ImageRenderer(props) {
     const [layers, updateLayers] = useState(props.state.layers)
     const [brightnessBoost, updateBrightnessBoost] = useState(props.state.brightnessBoost)
     const [slicesLoaded, setSlicesLoaded] = useState(false)
-
+    const [guide, updateGuide] = useState(null)
 
     var $frame = $('#forcecentered ' + (props.main ? 1 : 2));
 
@@ -77,12 +82,11 @@ function ImageRenderer(props) {
         smart: true,
         activateMiddle: 1,
 
-        mouseDragging: 1,
-        touchDragging: 1,
-        releaseSwing: 1,
+
+
         startAt: props.state.selectedSlice,
 
-        scrollBy: 1,
+        scrollBy: 0,
         speed: 300,
         elasticBounds: 1,
 
@@ -334,15 +338,6 @@ function ImageRenderer(props) {
 
     function buildState() {
         setControlsHidden(false)
-
-        // const blob = new Blob([JSON.stringify(d)], { type: 'application/json' });
-        // const href = URL.createObjectURL(blob);
-        // const link = document.createElement('a');
-        // link.href = href;
-        // link.download = "file.json";
-        // document.body.appendChild(link);
-        // link.click();
-        // document.body.removeChild(link);
         return {
             genes: genes,
             organs: organs,
@@ -446,56 +441,15 @@ function ImageRenderer(props) {
         //sample return line {"experiment":"Ai9","gene":"GPR68","organ":"heart","sample_type":"Histological","unique":"GPR68Ai9heartHistological"},
         // the filters are unique to the combination of gene, organ, and sample type
 
-        axios({
-            method: "GET",
-            url: "/filters",
-            dataType: "json",
-            dataSrc: "items",
-        }).then((response) => {
-            var res = response.data.items
-
-            var genes = []
-            var organs = []
-
-            var response = []
-            //sample line in res {"experiment":"Ai9","gene":"GPR85","organ":"kidney","sample_type":"Cleared","unique":"GPR85Ai9kidneyCleared"},
-            var sampleTypes = {}
-            res.forEach(filter => {
-                //convert res to format
-                //[{sampleType: "Histological", genes: {"GPR68": {organs: {"heart" : {'mice': []}}}}}]
-
-                if (!sampleTypes[filter.sample_type]) {
-                    sampleTypes[filter.sample_type] = { genes: [] }
-                }
-                if (genes.length == 0 || !genes.includes(filter.gene)) {
-                    genes.push(filter.gene)
-                }
-
-                if (!sampleTypes[filter.sample_type].genes[filter.gene]) {
-
-                    sampleTypes[filter.sample_type].genes[filter.gene] = { organs: [] }
-                }
-                if (organs.length == 0 || !organs.includes(filter.organ)) {
-                    organs.push(filter.organ)
-                }
-                if (!sampleTypes[filter.sample_type].genes[filter.gene].organs[filter.organ]) {
-                    sampleTypes[filter.sample_type].genes[filter.gene].organs[filter.organ] = { mice: [] }
-                }
 
 
-            })
-
-            //remove 0 entries from sampleTypes, which are created by the [{}]
+        //remove 0 entries from sampleTypes, which are created by the [{}]
 
 
-            console.log(sampleTypes)
-            updateSelections(sampleTypes)
-            updateSelectedSampleType({
-                "value": "Histological", "label": "Histological"
-            })
-            setOptionsLoaded(true)
 
-        })
+        setOptionsLoaded(true)
+
+
     }
 
     function fold() {
@@ -588,11 +542,11 @@ function ImageRenderer(props) {
     }
     function selectImage(i, wavelength) {
 
-        updateActiveLayers([wavelength])
-        updateSlices(slices)
-        selectSlice(i)
-        slider.activate(i)
-        console.log(activeLayers)
+        // updateActiveLayers([wavelength])
+        // updateSlices(slices)
+        // selectSlice(i)
+        // slider.activate(i)
+        // console.log(activeLayers)
         //activate tilelayer for selected wavelength
 
 
@@ -607,6 +561,9 @@ function ImageRenderer(props) {
             console.log(wavelength)
             let active = activeLayers.includes(wavelength)
             if (active) {
+                console.log(slices)
+                console.log(slices[wavelength])
+                console.log(selectedSlice)
                 layers.push(
 
                     <TileLayer
@@ -648,14 +605,16 @@ function ImageRenderer(props) {
         <div>
 
 
-            <Container fluid className="imageBrowser g-0">
+            <Container fluid className="imageBrowser -0">
 
-                <Col>
-                    <Row className='justify-content-end'>
+                <Col className="  g-0">
+                    <Row className='justify-content-end '>
 
                         <div className={props.main ? (folded ? 'sidebar-left' : 'sidebar-left open') : (folded ? 'sidebar-right' : 'sidebar-right open')}
-                            onMouseEnter={() => setFolded(false)} onMouseLeave={() => selectedMouse ? setFolded(true) : setFolded(false)}>
-                            <div className='select-card'>
+                        >
+                            <div className='select-card nav-renderer'
+
+                            >
                                 {optionsLoaded ?
                                     (
                                         <div>
@@ -697,7 +656,7 @@ function ImageRenderer(props) {
                                                             (mouse.spec === "+" ? "pos" : "neg")
                                                     })) : []
 
-                                                } onChange={(option) => updateSelectedMouse(option ? option : null)} />
+                                                } />
 
                                             <br />
 
@@ -708,7 +667,7 @@ function ImageRenderer(props) {
 
                                                     <button type="button" className="btn btn-toggle-split btn-dark"
                                                         title='Add a new display to the right panel'
-                                                        onClick={() => { props.splitScreen(buildState()) }}>Toggle Split Screen</button>
+                                                    >Toggle Split Screen</button>
 
 
 
@@ -731,7 +690,7 @@ function ImageRenderer(props) {
                             </div>
                             {selectedMouse ?
 
-                                <div className='select-card'>
+                                <div className='select-card nav-renderer'>
                                     <b>Experiment</b>
                                     <br></br>
                                     <br></br>
@@ -771,25 +730,73 @@ function ImageRenderer(props) {
 
                         } */}
 
-                        <Col lg={12} style={{ height: (controlsHidden ? '90vh' : '65vh') }}
+                        <Col lg={{ span: 10, offset: 2 }} style={{ height: (controlsHidden ? '90vh' : '65vh') }}
 
                         >
+                            <div
 
-                            <MapContainer
 
-                                rotate={true}
-                                shiftKeyRotate={true}
-                                rotateControl={{
-                                    closeOnZeroBearing: false,
-                                    position: 'topleft',
-                                }}
-                                bearing={'0'}
-                                style={{ height: '100%' }}
-                                attributionControl={false}
-                                fullscreenControl={true}
-                                center={[-50, -50]} maxBoundsViscosity={1.0} nowrap={true} scrollWheelZoom zoom={2} >
+                            >
+                                <div
+                                    style={{
+                                        position: 'absolute',
+                                        zIndex: 10000000,
+                                        left: '60%',
+                                        top: '30%',
 
-                                {/* <OpenPopup position="topright"
+                                    }}
+                                >
+                                    <OverlayTrigger
+                                        placement="bottom"
+                                        overlay={
+                                            <BSTooltip>
+                                                The map shows each layer of the current selected slice. Zoom in using the scroll wheel and rotate the image by holding shift and dragging the mouse (also using the rotate icon on the top left )
+                                            </BSTooltip>
+                                        }
+                                    >
+                                        <i
+                                            style={{
+                                                color: 'white',
+                                                opacity: 0.5
+
+                                            }}
+                                            onMouseEnter={() => updateGuide("Map")}
+                                            onMouseLeave={() => updateGuide(null)}
+                                            className="far fa-circle fa-4x "
+                                        >
+
+                                        </i>
+                                    </OverlayTrigger>
+                                </div>
+                                <div
+                                    className={guide === "Map" ? "nav-renderer-active" : "nav-renderer"}
+                                    style={{
+
+                                        height: (controlsHidden ? '90vh' : '65vh')
+                                    }}
+                                >
+                                    <MapContainer
+
+
+                                        rotate={true}
+                                        shiftKeyRotate={true}
+                                        rotateControl={{
+                                            closeOnZeroBearing: false,
+                                            position: 'topleft',
+                                        }}
+                                        bearing={'0'}
+                                        style={{ height: '100%' }}
+                                        attributionControl={false}
+                                        fullscreenControl={true}
+                                        dragging={false}
+                                        zoomControl={false}
+                                        scrollWheelZoom={false}
+                                        doubleClickZoom={false}
+                                        touchZoom={false}
+
+                                        center={[-50, -50]} maxBoundsViscosity={1.0} nowrap={true} zoom={2} >
+
+                                        {/* <OpenPopup position="topright"
                                     setWindowOpen={setWindowOpen}
                                 >
 
@@ -799,40 +806,40 @@ function ImageRenderer(props) {
 
 
 
-                                <SliderMenu position="bottomleft" active={colorAccordion} closeAccordions={closeAccordions} toggleAccordion={toggleColorAccordion}
-                                    logo={"Image Display Options"}
-                                    className="color-accordion"
+                                        <SliderMenu position="bottomleft" active={colorAccordion} closeAccordions={closeAccordions} toggleAccordion={toggleColorAccordion}
+                                            logo={"Image Display Options"}
+                                            className="color-accordion"
 
-                                >
+                                        >
 
-                                    <Slider label="min" value='min' updateOption={updateOption} defaultValue={options['min']} onChange={() => console.log()} tooltip='Adjust Min Value' min={0} max={255} delta={15} />
-                                    <Slider label="max" value='max' updateOption={updateOption} defaultValue={options['max']} onChange={() => console.log()} tooltip='Adjust Max Value' min={0} max={255} delta={15} />
-                                    <Slider icon='tint' value='blend' updateOption={updateOption} defaultValue={options['blend']} onChange={() => console.log()} tooltip='Adjust Opacity' min={0} max={100} delta={15} />
-                                    <Slider icon='tint' value='opacityThreshold' updateOption={updateOption} defaultValue={options['opacityThreshold']} onChange={() => console.log()} tooltip='Adjust Opacity Threshold (lowest % of pixel values will be transparent)' min={0} max={255} delta={20} />
-                                    <Slider icon='sun' value='brightness' updateOption={updateOption} defaultValue={options['brightness']} onChange={() => console.log()} tooltip='Adjust Brightness' min={-255} max={255} delta={10} />
-                                    <Slider icon='adjust' value='contrast' updateOption={updateOption} defaultValue={options['contrast']} onChange={() => console.log()} tooltip='Adjust Contrast' min={-255} max={255} delta={10} />
-                                    <br></br>
-                                    <Button size='sm' onClick={() => resetValues()}> Reset Values</Button>
-                                    &nbsp;
-                                    <Button size='sm' onClick={() => getAutoValues()}
+                                            <Slider label="min" value='min' updateOption={updateOption} defaultValue={options['min']} onChange={() => console.log()} tooltip='Adjust Min Value' min={0} max={255} delta={15} />
+                                            <Slider label="max" value='max' updateOption={updateOption} defaultValue={options['max']} onChange={() => console.log()} tooltip='Adjust Max Value' min={0} max={255} delta={15} />
+                                            <Slider icon='tint' value='blend' updateOption={updateOption} defaultValue={options['blend']} onChange={() => console.log()} tooltip='Adjust Opacity' min={0} max={100} delta={15} />
+                                            <Slider icon='tint' value='opacityThreshold' updateOption={updateOption} defaultValue={options['opacityThreshold']} onChange={() => console.log()} tooltip='Adjust Opacity Threshold (lowest % of pixel values will be transparent)' min={0} max={255} delta={20} />
+                                            <Slider icon='sun' value='brightness' updateOption={updateOption} defaultValue={options['brightness']} onChange={() => console.log()} tooltip='Adjust Brightness' min={-255} max={255} delta={10} />
+                                            <Slider icon='adjust' value='contrast' updateOption={updateOption} defaultValue={options['contrast']} onChange={() => console.log()} tooltip='Adjust Contrast' min={-255} max={255} delta={10} />
+                                            <br></br>
+                                            <Button size='sm' onClick={() => resetValues()}> Reset Values</Button>
+                                            &nbsp;
+                                            <Button size='sm' onClick={() => getAutoValues()}
 
-                                    > Auto</Button>
-                                    &nbsp;
-                                    <br />
+                                            > Auto</Button>
+                                            &nbsp;
+                                            <br />
 
-                                    {
-                                        props.renderSize !== 12 ?
+                                            {
+                                                props.renderSize !== 12 ?
 
-                                            <Button size='sm'
-                                                className="mt-1"
-                                                onClick={() => {
-                                                    document.dispatchEvent(cloneOptionsEvent)
-                                                }}>Apply to {props.main ? "Right" : "Left"} Panel</Button>
-                                            : ""
-                                    }
+                                                    <Button size='sm'
+                                                        className="mt-1"
+                                                        onClick={() => {
+                                                            document.dispatchEvent(cloneOptionsEvent)
+                                                        }}>Apply to {props.main ? "Right" : "Left"} Panel</Button>
+                                                    : ""
+                                            }
 
-                                </SliderMenu>
-                                {/* 
+                                        </SliderMenu>
+                                        {/* 
                                 <SliderMenu position="bottomright" closeAccordions={closeAccordions} active={lutAccordion} toggleAccordion={togglelutAccordion}
                                     className="lut-accordion"
                                     description={'Apply a Look Up Table to the layers'}
@@ -844,45 +851,47 @@ function ImageRenderer(props) {
 
 
                                 </SliderMenu> */}
-                                {layers}
+                                        {layers}
 
 
 
-                                <div
-                                    className="leaflet-bottom leaflet-center"
-                                    onClick={() => {
-
-                                        setControlsHidden(!controlsHidden)
-                                        console.log(controlsHidden)
-                                    }}
-                                >
-                                    <OverlayTrigger
-                                        overlay={
-                                            <BSTooltip>
-                                                {controlsHidden ? "Show Slice Viewer" : "Hide Slice Viewer"}
-                                            </BSTooltip>
-                                        }
-                                    >
                                         <div
-                                            className='leaflet-control'>
-                                            <Button
-                                                variant="secondary"
-                                            >
-                                                <i className={"fas fa-arrow-" + (controlsHidden ? "up" : "down")}
-                                                    aria-hidden="true"></i>
-                                            </Button>
-                                        </div>
-                                    </OverlayTrigger>
+                                            className="leaflet-bottom leaflet-center"
+                                            onClick={() => {
 
+                                                setControlsHidden(!controlsHidden)
+                                                console.log(controlsHidden)
+                                            }}
+                                        >
+                                            <OverlayTrigger
+                                                overlay={
+                                                    <BSTooltip>
+                                                        {controlsHidden ? "Show Slice Viewer" : "Hide Slice Viewer"}
+                                                    </BSTooltip>
+                                                }
+                                            >
+                                                <div
+                                                    className='leaflet-control'>
+                                                    <Button
+                                                        variant="secondary"
+                                                    >
+                                                        <i className={"fas fa-arrow-" + (controlsHidden ? "up" : "down")}
+                                                            aria-hidden="true"></i>
+                                                    </Button>
+                                                </div>
+                                            </OverlayTrigger>
+
+                                        </div>
+                                    </MapContainer>
                                 </div>
-                            </MapContainer>
+                            </div>
                             <Row
                                 hidden={!selectedMouse}
                                 className='g-1'
                             >
                                 <Col lg={2}
                                     hidden={controlsHidden}
-                                    className="ms-0 mx-0"
+                                    className="ms-0 mx-0 nav-renderer"
                                 >
                                     <Card
 
@@ -971,7 +980,9 @@ function ImageRenderer(props) {
                                         </Card.Body>
                                     </Card>
                                 </Col>
-                                <Col lg={10}>
+                                <Col lg={10}
+                                    className="nav-renderer"
+                                >
                                     <div className="wrap"
                                         hidden={controlsHidden}
                                     >
@@ -999,7 +1010,7 @@ function ImageRenderer(props) {
                                                                 </BSTooltip>
                                                             }
                                                         >
-                                                            <Button onClick={() => slider.prev()}>
+                                                            <Button >
                                                                 <i className="fa fa-arrow-left"></i>
                                                             </Button>
                                                         </OverlayTrigger>
@@ -1038,7 +1049,7 @@ function ImageRenderer(props) {
                                                             }
                                                         >
 
-                                                            <Button onClick={() => slider.next()}>
+                                                            <Button >
                                                                 <i className="fa fa-arrow-right"></i>
                                                             </Button>
                                                         </OverlayTrigger>
@@ -1072,7 +1083,7 @@ function ImageRenderer(props) {
 
                                                                     {Object.keys(slices).length >= 1 ?
                                                                         Object.keys(slices).sort().reverse().map((wavelength, index) => {
-                                                                            return <Dropdown.Item onClick={() => { updateselectedWavelength(wavelength) }} active={selectedWavelength === wavelength ? true : false}>{wavelength}</Dropdown.Item>
+                                                                            return <Dropdown.Item active={selectedWavelength === wavelength ? true : false}>{wavelength}</Dropdown.Item>
                                                                         }) : ""
                                                                     }
                                                                 </Dropdown.Menu>
@@ -1093,9 +1104,7 @@ function ImageRenderer(props) {
 
                                                             <Button
 
-                                                                onClick={() => {
-                                                                    updateBrightnessBoost(!brightnessBoost)
-                                                                }}
+
                                                                 variant={brightnessBoost ? "warning" : "secondary"}
 
                                                             >
@@ -1112,10 +1121,7 @@ function ImageRenderer(props) {
                                                             }
                                                         >
                                                             <Button
-                                                                onClick={() => {
-                                                                    setControlsHidden(true)
-                                                                    setWindowOpen(true)
-                                                                }}
+
                                                                 variant="secondary"
                                                             >
                                                                 <i className="fa fa-external-link-alt"
@@ -1137,14 +1143,8 @@ function ImageRenderer(props) {
                                                     {
                                                         getSliceThumbnails().map((slice, index) => {
                                                             return <li key={index} id={"_" + index} index={index}
-                                                                //onclick, slide to slice and update selected slice
-                                                                onClick={() => {
-                                                                    if (!controlsHidden) {
-
-                                                                        selectImage(index, selectedWavelength);
-                                                                    }
-
-                                                                }}  >
+                                                            //onclick, slide to slice and update selected slice
+                                                            >
                                                                 <img src={slice.img_no_ext + ".png"}
                                                                     onError={(e) => { e.target.onerror = null; e.target.src = `${slice.img_no_ext}.webp` }}
                                                                     style={{ filter: `brightness(${brightnessBoost ? 100 : 1})` }}
@@ -1166,23 +1166,24 @@ function ImageRenderer(props) {
                 </Col >
             </Container >
 
-            {selectedMouse && windowOpen && (
-                <NewWindow >
-                    <ViewSlices
-                        selectedSampleType={selectedSampleType.value}
-                        selectedOrgan={selectedOrgan.value}
-                        selectedGene={selectedGene.value}
-                        selectedMouse={selectedMouse.value}
-                        selectImage={selectImage}
-                        setFolded={setFolded}
-                        slices={slices}
-                        selectedWavelength={selectedWavelength}
-                    ></ViewSlices>
-                </NewWindow>
-            )
+            {
+                selectedMouse && windowOpen && (
+                    <NewWindow >
+                        <ViewSlices
+                            selectedSampleType={selectedSampleType.value}
+                            selectedOrgan={selectedOrgan.value}
+                            selectedGene={selectedGene.value}
+                            selectedMouse={selectedMouse.value}
+                            selectImage={selectImage}
+                            setFolded={setFolded}
+                            slices={slices}
+                            selectedWavelength={selectedWavelength}
+                        ></ViewSlices>
+                    </NewWindow>
+                )
             }
         </div >
     );
 }
 
-export default ImageRenderer;
+export default NavGuideRenderer;

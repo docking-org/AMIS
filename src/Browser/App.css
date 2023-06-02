@@ -43,7 +43,7 @@ Body{
 }
 
 .leaflet-control-rotate-arrow{
-  padding-left: 32px;
+  padding-left: 30px;
   position: relative;
 }
 
@@ -53,7 +53,7 @@ Body{
   font-family: 'Font Awesome 5 Free';
   font-weight: 900; 
   top: 0;
-  color: #ccc;
+  color: black;
   left: 30%;
 }
 
@@ -165,4 +165,24 @@ transform: translate(0%, -50%) !important;
 
 .leaflet-center.leaflet-middle {
 transform: translate(-50%, -50%) !important;
+}
+
+.nav-renderer{
+  -webkit-filter: brightness(0.3);
+  pointer-events: none;
+}
+
+.nav-renderer-active{
+  -webkit-filter: brightness(1);
+  pointer-events: none;
+}
+
+.nav-guide-icon{
+    color: 'white';
+  
+}
+
+.nav-guide-icon:hover{
+    color: 'white';
+    opacity: 1;
 }

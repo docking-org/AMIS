@@ -13,6 +13,8 @@ import {
 import ImageBrowser from './Browser/ImageBrowser';
 import ViewSlices from './Browser/ViewSlices';
 import Browser3d from './Browser/Browser3d';
+import FeedbackForm from './Feedback/FeedbackForm';
+import NavigationGuide from './Browser/NavigationGuide';
 axios.defaults.baseURL = "/"
 
 const router = createBrowserRouter([
@@ -30,12 +32,20 @@ const router = createBrowserRouter([
       {
         path: "/3d_browser",
         element: <Browser3d />,
+      },
+      {
+        path: "/feedback",
+        element: <FeedbackForm />,
+      },
+      {
+        path: "/navigation_guide",
+        element: <NavigationGuide />,
       }
-    
+
     ],
   },
   {
-    path:"/viewSlices",
+    path: "/viewSlices",
     element: <ViewSlices />
   }
 ]);

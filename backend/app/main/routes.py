@@ -13,7 +13,8 @@ from app.data.models.gene import GeneModel
 from app.data.models.gene_name import GeneNameModel
 from app.data.models.organ import OrganModel
 from app.data.models.experiment import ExperimentModel
-
+from app.data.models.feedback import FeedbackModel
+from app import db
 
 # @application.route('/', methods=['GET'])
 # def index(gene_name=None, organ_name=None):
@@ -266,4 +267,20 @@ def toPath(url):
     path = url.replace("/images/" + path, new)
     return path
         
+
+@application.route('/submitFeedback', methods=['POST'])
+def submitFeedback():
+
+    data = request.get_json()
     
+    feedback = data["feedback"]
+    contact_info = data["contactInfo"]
+    
+    if feedback == "":
+        return make_response(jsonify({'error': 'Feedback cannot be empty'}), 400)
+    else:
+        fb = FeedbackModel(feedback=feedback, contact_info=contact_info)
+        db.session.add(fb)
+        db.session.commit()
+        return make_response(jsonify({'success': 'Feedback submitted'}), 200)
+        

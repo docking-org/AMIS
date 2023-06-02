@@ -19,20 +19,19 @@ function LUTSelector(props) {
 
 
     return (
-        <div style={{ display: "flex", width: "200px", padding: '5px' }}>
-            <label className="col-sm-4 col-form-label">{props.layer}</label>
-            <Form.Select aria-label="Default select example" defaultValue={props.option} onChange={(e) => {
-                props.changeLut(props.layer, e.target.value)
 
-            }}  >
-                {options.map((option) => {
-                    return <option value={option.value} key={option.value} onChange={() => console.log()}>
-                        {option.label}
-                    </option>
-                })}
-            </Form.Select>
+        <Form.Select aria-label="Default select example" defaultValue={props.option} style={{ "font-size": ".9em" }} onChange={(e) => {
+            props.changeLut(props.layer, e.target.value)
 
-        </div>
+        }}  >
+            {options.map((option) => {
+                return <option value={option.value} key={option.value} onChange={() => console.log()}>
+                    {option.label}
+                </option>
+            })}
+        </Form.Select>
+
+
     )
 }
 

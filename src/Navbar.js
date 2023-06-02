@@ -17,6 +17,8 @@ function BasicExample() {
                             <Nav.Link href="/image_browser">Image Browser</Nav.Link>
 
                             <Nav.Link target="_blank" href="https://druggablegenome.net/DRGC_GPCR">IDG Program</Nav.Link>
+                            <Nav.Link href="/navigation_guide">Guide</Nav.Link>
+                            <Nav.Link href='/feedback'>Feedback</Nav.Link>
                         </Nav>
                     </Navbar.Collapse>
                 </Container>

@@ -29,12 +29,12 @@ function ImageBrowser() {
         selectedWavelength: "tdTomato",
         colorAccordion: false,
         options: {
-            'brightness': 50,
+            'brightness': 10,
             'contrast': 0,
             'min': 0,
             'max': 255,
             'blend': 50,
-            'opacityThreshold': 15,
+            'opacityThreshold': 2,
         },
         lut:
         {

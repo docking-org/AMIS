@@ -1906,7 +1906,7 @@ L.Control.Rotate = L.Control.extend({
 
             // Locked mode
             else {
-                this._link.style.backgroundColor = 'grey';
+                this._link.style.backgroundColor = 'white';
                 if (0 === bearing && this.options.closeOnZeroBearing) {
                     this._container.style.display = 'none';
                 }
