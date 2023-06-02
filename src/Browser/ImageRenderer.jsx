@@ -10,7 +10,7 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import { useState, useEffect, createRef, useMemo } from 'react';
 import axios from "axios";
 import Select from 'react-select';
-import { MapContainer, TileLayer, LayersControl, ScaleControl, Tooltip, } from 'react-leaflet';
+import { MapContainer, TileLayer, LayersControl, ScaleControl, Tooltip, useMap } from 'react-leaflet';
 import { CRS, setOptions } from 'leaflet';
 import { Button, Card, DropdownButton, Dropdown, Form, Overlay, OverlayTrigger, Tooltip as BSTooltip } from 'react-bootstrap';
 import $ from 'jquery';
@@ -37,7 +37,7 @@ const DropdownIndicator = (
 };
 
 function ImageRenderer(props) {
-
+    const [rotation, setRotation] = useState(0)
     const lutRef = createRef(null);
     const colorRef = createRef(null);
     const [windowOpen, setWindowOpen] = useState(false);
@@ -49,7 +49,7 @@ function ImageRenderer(props) {
     const [activeLayers, updateActiveLayers] = useState(props.state.activeLayers)
     const [controlsHidden, setControlsHidden] = useState(props.state.controlsHidden)
     const [slices, updateSlices] = useState(props.state.slices)
-
+    const [map, setMap] = useState(null)
     const [selectedSampleType, updateSelectedSampleType] = useState(props.state.selectedSampleType)
     const [selectedGene, updateSelectedGene] = useState(props.state.selectedGene)
     const [selectedOrgan, updateSelectedOrgan] = useState(props.state.selectedOrgan)
@@ -144,8 +144,12 @@ function ImageRenderer(props) {
     }, [selectedMouse])
 
     useEffect(() => {
-        console.log(selectedSlice)
 
+        if (map) {
+            map.setZoom(0)
+            map.setBearing(0)
+
+        }
     }, [selectedSlice])
 
     window.addEventListener('resize', () => {
@@ -600,6 +604,7 @@ function ImageRenderer(props) {
 
 
     const mapRef = React.useRef(null);
+
     useEffect(() => {
         var layers = []
 
@@ -636,7 +641,11 @@ function ImageRenderer(props) {
         updateLayers(layers)
 
     }, [selectedWavelength, selectedSlice, slices, selectedMouse, options, lut, activeLayers])
-
+    function InitMap() {
+        const map = useMap();
+        setMap(map)
+        return null;
+    }
 
     const cloneOptionsEvent = new CustomEvent("cloneDisplayOptions", {
         detail: {
@@ -776,17 +785,20 @@ function ImageRenderer(props) {
                         >
 
                             <MapContainer
-
+                                whenReady={mapInstance => { mapRef.current = mapInstance }}
                                 rotate={true}
                                 shiftKeyRotate={true}
                                 rotateControl={{
+                                    resetValues: 0,
                                     closeOnZeroBearing: false,
-                                    position: 'topleft',
+                                    position: props.main ? 'topright' : 'topleft',
                                 }}
-                                bearing={'0'}
+
+                                bearing={rotation || '0'}
                                 style={{ height: '100%' }}
+                                zoomControl={false}
                                 attributionControl={false}
-                                fullscreenControl={true}
+                                fullscreenControl={{ position: props.main ? 'topright' : 'topleft', }}
                                 center={[-50, -50]} maxBoundsViscosity={1.0} nowrap={true} scrollWheelZoom zoom={2} >
 
                                 {/* <OpenPopup position="topright"
@@ -797,8 +809,7 @@ function ImageRenderer(props) {
 
                                 </OpenPopup> */}
 
-
-
+                                <InitMap />
                                 <SliderMenu position="bottomleft" active={colorAccordion} closeAccordions={closeAccordions} toggleAccordion={toggleColorAccordion}
                                     logo={"Image Display Options"}
                                     className="color-accordion"
@@ -980,11 +991,37 @@ function ImageRenderer(props) {
                                             className="ps-1 pe-1 bg-dark pb-2"
                                         >
 
+
+
+
+                                            <div className="frame" id={"forcecentered" + (props.main ? 1 : 2)}>
+                                                <ul className="clearfix">
+
+                                                    {
+                                                        getSliceThumbnails().map((slice, index) => {
+                                                            return <li key={index} id={"_" + index} index={index}
+                                                                //onclick, slide to slice and update selected slice
+                                                                onClick={() => {
+                                                                    if (!controlsHidden) {
+
+                                                                        selectImage(index, selectedWavelength);
+                                                                    }
+
+                                                                }}  >
+                                                                <img src={slice.img_no_ext + ".png"}
+                                                                    onError={(e) => { e.target.onerror = null; e.target.src = `${slice.img_no_ext}.webp` }}
+                                                                    style={{ filter: `brightness(${brightnessBoost ? 100 : 1})` }}
+                                                                    className="slice" />
+                                                            </li>
+                                                        })
+                                                    }
+                                                </ul>
+                                            </div>
                                             <Row
 
                                             >
                                                 <Col
-                                                    lg={2}
+                                                    lg={3}
                                                     hidden={props.renderSize !== 12}>
                                                 </Col>
                                                 <Col lg={6}>
@@ -1047,7 +1084,7 @@ function ImageRenderer(props) {
                                                     </div>
                                                 </Col>
 
-                                                <Col lg={props.renderSize === 12 ? 4 : 6}
+                                                <Col lg={props.renderSize === 12 ? 3 : 5}
 
                                                     className="mt-2"
                                                 >
@@ -1129,31 +1166,6 @@ function ImageRenderer(props) {
 
 
                                             </Row>
-
-
-                                            <div className="frame" id={"forcecentered" + (props.main ? 1 : 2)}>
-                                                <ul className="clearfix">
-
-                                                    {
-                                                        getSliceThumbnails().map((slice, index) => {
-                                                            return <li key={index} id={"_" + index} index={index}
-                                                                //onclick, slide to slice and update selected slice
-                                                                onClick={() => {
-                                                                    if (!controlsHidden) {
-
-                                                                        selectImage(index, selectedWavelength);
-                                                                    }
-
-                                                                }}  >
-                                                                <img src={slice.img_no_ext + ".png"}
-                                                                    onError={(e) => { e.target.onerror = null; e.target.src = `${slice.img_no_ext}.webp` }}
-                                                                    style={{ filter: `brightness(${brightnessBoost ? 100 : 1})` }}
-                                                                    className="slice" />
-                                                            </li>
-                                                        })
-                                                    }
-                                                </ul>
-                                            </div>
                                         </Card>
 
                                     </div>

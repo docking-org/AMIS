@@ -4,10 +4,10 @@ import Container from 'react-bootstrap/Container';
 import { useState } from 'react';
 import { Card } from 'react-bootstrap';
 const file_list = [
-  "2.png",
+  "Michaelangelo.png",
   "Banksy.PNG",
-  "bosch.PNG",
-  "bose.PNG",
+  "Bosch.PNG",
+  "Bose.PNG",
   "Bruegel.PNG",
   "Cezanne.PNG",
   "Dali.tif",
@@ -17,19 +17,19 @@ const file_list = [
   "GWilliams.PNG",
   "Hokusai.PNG",
   "Kahlo.PNG",
-  "miro.PNG",
+  "Miro.PNG",
   "Mondrian.PNG",
   "Murillo.PNG",
-  "picasso.PNG",
-  "pollock.PNG",
-  "rafael.PNG",
-  "rembrant.PNG",
+  "Picasso.PNG",
+  "Pollock.PNG",
+  "Rafael.PNG",
+  "Rembrant.PNG",
   "Renoir.PNG",
   "Rothko.PNG",
   "Taikan.PNG",
-  "vangogh.PNG",
+  "Vangogh.PNG",
   "Vermeer.PNG",
-  "warhol.PNG",
+  "Warhol.PNG",
   "Whistler.PNG",
   "Wyeth.PNG"
 ]
@@ -42,7 +42,7 @@ function App() {
       <div class="rounded-3 p-3 m-4 mb-0 row">
         <div class="col-md-6">
           <Card>
-            <Card.Header> Click to change the image (created by prompting Stable Diffusion)</Card.Header>
+            <Card.Header> Click to change the image</Card.Header>
             <Card.Img
               variant="top"
               src={'/mouse_images/' + file_list[current_image]}
@@ -58,7 +58,15 @@ function App() {
             >
             </Card.Img>
 
-
+            <Card.Body>
+              <Card.Text>
+                <b>
+                  Mouse Using A Microscope
+                </b>
+                <br />
+                In the style of {file_list[current_image].split('.')[0]}  (created by prompting Stable Diffusion)
+              </Card.Text>
+            </Card.Body>
           </Card>
 
 
@@ -103,30 +111,37 @@ function App() {
 
       </div>
       <br />
-
-      <Card
-        className="rounded-3 m-4 row"
+      <div
+        class="p-3 "
       >
-        <Card.Header>Acknowledgements</Card.Header>
-        <Card.Body>
-          <Card.Text>
+        <Card
+          className="rounded-3 row mb-1 mx-5"
+        >
+          <Card.Header>Acknowledgements</Card.Header>
+          <Card.Body>
+            <Card.Text>
+              <b>
+                Noah Sciaky, Yi-Ting Chia, Sreeparna Majumdar, Justin English</b>
+              <br />
+              Image Acquisition, Processing, and Artistic contributions
 
-            Amis was created by Mar Castanon and Chinzo Dakar using the following tools:
+              <br />
+              <br />
+              <b>
+                Mar Castanon, Chinzo Dakar
 
-            <ul>
-              <li>React.JS</li>
-              <li>Bootstrap</li>
-              <li>Leaflet</li>
-              <li>Flask</li>
-              <li>Postgres</li>
-            </ul>
+              </b>
+              <br />
+              Web Development
+              <br ></br>
+              <br ></br>
+              This site was built using React.JS, Bootstrap, Leaflet, Flask, and Postgres.
 
+            </Card.Text>
+          </Card.Body>
 
-          </Card.Text>
-        </Card.Body>
-
-      </Card>
-
+        </Card>
+      </div>
 
 
 

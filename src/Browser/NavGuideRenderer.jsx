@@ -750,7 +750,7 @@ function NavGuideRenderer(props) {
                                         placement="bottom"
                                         overlay={
                                             <BSTooltip>
-                                                The map shows each layer of the current selected slice. Zoom in using the scroll wheel and rotate the image by holding shift and dragging the mouse (also using the rotate icon on the top left )
+                                                The map shows each layer of the current selected slice. Zoom in using the scroll wheel and rotate the image by holding shift while using the scroll wheel (also using the rotate icon on the top left )
                                             </BSTooltip>
                                         }
                                     >
