@@ -1795,7 +1795,7 @@ L.Control.Rotate = L.Control.extend({
         var link = this._link = L.DomUtil.create('a', 'leaflet-control-rotate-toggle', container);
         link.appendChild(arrow);
         link.href = '#';
-        link.title = 'Rotate map';
+        link.title = 'Rotate map (Click+Drag or Shift+Scroll Wheel)';
 
         L.DomEvent
             .on(link, 'dblclick', L.DomEvent.stopPropagation)

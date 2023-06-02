@@ -643,6 +643,9 @@ function ImageRenderer(props) {
     }, [selectedWavelength, selectedSlice, slices, selectedMouse, options, lut, activeLayers])
     function InitMap() {
         const map = useMap();
+        map.zoomControl.setPosition(props.main ? 'topright' : 'topleft');
+        map.fullscreenControl.setPosition(props.main ? 'topright' : 'topleft');
+        map.rotateControl.setPosition(props.main ? 'topright' : 'topleft');
         setMap(map)
         return null;
     }
@@ -796,9 +799,9 @@ function ImageRenderer(props) {
 
                                 bearing={rotation || '0'}
                                 style={{ height: '100%' }}
-                                zoomControl={false}
+
                                 attributionControl={false}
-                                fullscreenControl={{ position: props.main ? 'topright' : 'topleft', }}
+                                fullscreenControl={true}
                                 center={[-50, -50]} maxBoundsViscosity={1.0} nowrap={true} scrollWheelZoom zoom={2} >
 
                                 {/* <OpenPopup position="topright"
