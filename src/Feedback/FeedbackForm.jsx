@@ -9,7 +9,7 @@ export default function FeedbackForm() {
 
     function submitFeedback(e) {
         e.preventDefault();
-        axios.post("http://localhost:5000/submitFeedback", {
+        axios.post("/submitFeedback", {
             contactInfo: contactInfo,
             feedback: feedback,
         }).then((response) => {
