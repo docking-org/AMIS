@@ -78,31 +78,31 @@ function App() {
 
               Welcome to A Mouse Imaging Server (<b>AMIS</b>), the home for mouse
               imaging data generated via the NIH Common fund Program for
-              Illuminating the Druggable Genome  (<a target="_blank" href="https://druggablegenome.net/DRGC_GPCR">IDG</a>). Our goal is to provide the
-              research community with free, immediate access to the whole body
-              distribution of understudied genes via engineered mouse lines.
+              Illuminating the Druggable Genome  (<a target="_blank" href="https://druggablegenome.net/DRGC_GPCR">IDG</a>). Our goal is to provide the research
+              community with free access to the whole body distribution of understudied genes via engineered mouse lines.
 
-              AMIS is provided by the Roth Lab at UNC Chapel Hill and the
-              Shoichet/Irwin labs at the University of California San Francisco
-              (UCSF).
+              AMIS is provided by the Roth Lab at UNC Chapel Hill and the Shoichet/Irwin labs at the University of California
+              San Francisco (UCSF).
               <br />
               <br />
 
-              The Website has been designed with the goal of observing and
-              comparing images depicting GPCR distributions which fall into two
-              categories: histological (fluorescent) or cleared
-              (Light-Sheet-Microscopy videos) image sets.
+              The Website has been designed with the goal of observing and comparing images depicting certain GPCR
+              distributions which fall into two categories: histological (fluorescent) or cleared (Light-Sheet-Microscopy videos)
+              image sets.
 
               <br />
               <br />
-              From here you may <a href="/image_browser">Browse images</a>, <a href="/navigation_guide">review web navigation</a>, examine
+              From here you may <a href="/image_browser">Browse images</a>, <a href="/help">review web navigation</a>, examine
               sample tables or sample preparation, or overview the basic
               workflows.
               <br />
               <br />
 
-              AMIS is a work in progress and we are planning to
-              continue to add content. Your <a href="/feedback">feedback</a> is welcome!
+              AMIS is a work in progress, and we are planning to continue to add content. In its current condition, the
+              histological images are available, videos of cleared-mice imaged using Light-Sheet-Microscopy should be
+              available shortly.
+              <br></br>
+              And of course, your <a href="/feedback">feedback</a> is welcome!
             </Card.Body>
 
           </Card>
@@ -120,21 +120,38 @@ function App() {
           <Card.Header>Acknowledgements</Card.Header>
           <Card.Body>
             <Card.Text>
-              <b>
-                Noah Sciaky, Yi-Ting Chia, Sreeparna Majumdar, Justin English</b>
+
+              <b>Noah Sciaky</b>, Yi-Ting Chia, Sreeparna Majumdar, Justin English
               <br />
               Image Acquisition, Processing, and Artistic contributions
 
               <br />
               <br />
               <b>
-                Mar Castanon, Chinzo Dakar
+                Mar Castanon</b>, Chinzo Dakar, Khanh Tang
 
-              </b>
+
               <br />
               Web Development
               <br ></br>
               <br ></br>
+              UNC histology Core (Curtis Connor and Ashley Ezzell)
+              <br />
+              Histological Specimen and Slide Preparation
+              <br ></br>
+              UNC Cystic Fibrosis Core (Claire M. Doerschuk and Michael Chua)
+              <br />
+              Olympus VS120 Slice Scanner
+              <br ></br>
+              <br ></br>
+              Cornelli (Zhuhao Wu and Kunjie Hua)
+              <br />
+              Light Sheet Microscopy
+              <br ></br>
+              <br ></br>
+              Overlords (John Irwin and Bryan Roth)
+              <br />
+              <br></br>
               This site was built using React.JS, Bootstrap, Leaflet, Flask, and Postgres.
 
             </Card.Text>

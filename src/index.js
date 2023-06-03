@@ -15,6 +15,7 @@ import ViewSlices from './Browser/ViewSlices';
 import Browser3d from './Browser/Browser3d';
 import FeedbackForm from './Feedback/FeedbackForm';
 import NavigationGuide from './Browser/NavigationGuide';
+import Help from './Help';
 axios.defaults.baseURL = "/"
 
 const router = createBrowserRouter([
@@ -40,6 +41,9 @@ const router = createBrowserRouter([
       {
         path: "/navigation_guide",
         element: <NavigationGuide />,
+      }, {
+        path: "/help",
+        element: <Help />
       }
 
     ],
