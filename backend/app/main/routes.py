@@ -171,34 +171,41 @@ def lut(z,x,y):
     
     # for production
     # url = url.replace("https://files.docking.org/", "/nfs/ex9/")
-    img = cv2.imread(url).astype(np.uint8)
     
-    img = img[:,:,:3]
+    img = cv2.imread(url, -1)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    img = img.astype(np.uint16)
+    img = img * 257
     
-    opacityThreshold = int(request.args.get("opacityThreshold"))
+    opacityThreshold = float(request.args.get("opacityThreshold"))* 65535 / 100
     
     img[img < opacityThreshold] = 0
     
     if autobrightness != "true":
-        brightness = int(request.args.get("brightness"))
-        contrast = int(request.args.get("contrast"))
-        cliplow = int(request.args.get("cliplow"))
-        cliphigh = int(request.args.get("cliphigh"))
+        brightness = float(request.args.get("brightness")) /100
+        contrast = float(request.args.get("contrast")) /200
+        cliplow = float(request.args.get("cliplow"))  * 65535 / 100
+        cliphigh = float(request.args.get("cliphigh"))    * 65535 / 100
+        print(cliplow)
+        print(cliphigh)
+        print(brightness)
+        print(contrast*65535)
+        print(65535 - contrast*65535)
+       
+        brightness_factor = brightness
+        # img = np.where(img > opacityThreshold, img+(32768*brightness_factor), img)
+        img = np.clip(img, contrast*65535, 65535-(65535*contrast))
+        #apply contrast and brightness while keeping pixels between 0 and 65535
         
+       
 
-        
-        contrast_factor = (255 * (contrast + 255)) / (255 * (255 - contrast))
-        brightness_factor = brightness - 128 * (contrast_factor - 1)
-         #apply brightness and contrast only to pixels that are not black (0,0,0)
-        img = np.where(img != 0, img * contrast_factor + brightness_factor, 0)
+        # img = np.where(img > opacityThreshold, img * contrast_factor + brightness_factor, img)
         
         # img = img * contrast_factor + brightness_factor
         
-
-        
         #modify the image so that as cliplow is higher, pixels get closer to 255, and as cliphigh is lower, pixels get closer to 0
         img = np.where(img < cliplow, 0, img)
-        img = np.where(img > cliphigh, 255, img)
+        img = np.where(img > cliphigh, 65535, img)
     
     # else:
     #     contrast  = 20
@@ -212,27 +219,30 @@ def lut(z,x,y):
     #     img = img * contrast_factor + brightness_factor
         
     #     img = np.clip(img, 0, 255)
-            
+
     
-        
+   
+    
     img = img.astype(np.uint8)
-    
     if lut == "inverted":
         img = cv2.bitwise_not(img)
-    
-    try:
-        img = cv2.LUT(img, lookuptables[lut])
-    except:
+    elif lut == "grayscale":
         pass
-    
-    #convert image to alpha channel
-    
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2BGRA)
+    else: 
+        try:
+           
+            img = cv2.LUT(img, lookuptables[lut])
+        except e:
+            print(e)
+            pass
 
+    
+    
     #make all black pixels transparent
-    img[np.all(img == [0,0,0,255], axis=2)] = [0,0,0,0]
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2RGBA)
+    img[np.all(img == [0, 0, 0, 255], axis=2)] = [0, 0, 0, 0]
     
-    
+
     retval, buffer = cv2.imencode('.png', img)
     response = make_response(buffer.tobytes())
     response.headers.set('Content-Type', 'image/png')

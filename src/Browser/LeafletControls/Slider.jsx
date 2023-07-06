@@ -41,7 +41,6 @@ function Slider(props) {
                 data-tooltip-content={props.tooltip}
 
                 onWheel={(e) => {
-
                     e.target.value = parseInt(e.target.value) + e.deltaY / props.delta;
                     props.updateOption(props.value, e.target.value);
                     setSliderValue(e.target.value);
@@ -53,11 +52,11 @@ function Slider(props) {
             &nbsp;
             <span className="slider-value"
                 style={{
-                    width: "30px", display: "inline-block", textAlign: "center", fontSize: "12 px", whiteSpace: "nowrap"
+                    width: "40px", display: "inline-block", textAlign: "center", fontSize: "12 px", whiteSpace: "nowrap"
                 }}
             > {
-                    Math.round((sliderValue / props.max) * 100)
-                } %</span>
+                    Math.round(65535 * (sliderValue - props.min) / (props.max - props.min))
+                }</span>
         </div >
 
     )
