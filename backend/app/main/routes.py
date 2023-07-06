@@ -182,43 +182,23 @@ def lut(z,x,y):
     img[img < opacityThreshold] = 0
     
     if autobrightness != "true":
-        brightness = float(request.args.get("brightness")) /100
-        contrast = float(request.args.get("contrast")) /200
+        
         cliplow = float(request.args.get("cliplow"))  * 65535 / 100
         cliphigh = float(request.args.get("cliphigh"))    * 65535 / 100
         print(cliplow)
         print(cliphigh)
-        print(brightness)
-        print(contrast*65535)
-        print(65535 - contrast*65535)
-       
-        brightness_factor = brightness
-        # img = np.where(img > opacityThreshold, img+(32768*brightness_factor), img)
-        img = np.clip(img, contrast*65535, 65535-(65535*contrast))
-        #apply contrast and brightness while keeping pixels between 0 and 65535
-        
-       
-
-        # img = np.where(img > opacityThreshold, img * contrast_factor + brightness_factor, img)
-        
-        # img = img * contrast_factor + brightness_factor
-        
-        #modify the image so that as cliplow is higher, pixels get closer to 255, and as cliphigh is lower, pixels get closer to 0
+      
+        #brightness is a number from -65535 to 65535
+        #contrast is a number from 0 to 32767. 0 being no contrast, 32767 being max contrast
+           
         img = np.where(img < cliplow, 0, img)
         img = np.where(img > cliphigh, 65535, img)
+        brightness =(float(request.args.get("brightness")))
+        contrast = 1 + (float(request.args.get("contrast")) / 65535 * 2)
+        img = cv2.addWeighted(img, contrast, img, 0 , brightness)
+
     
-    # else:
-    #     contrast  = 20
-    #     brightness = -15
-        
-    #     contrast_factor = (259 * (contrast + 255)) / (255 * (259 - contrast))
 
-
-    #     brightness_factor = brightness - 128 * (contrast_factor - 1)
-        
-    #     img = img * contrast_factor + brightness_factor
-        
-    #     img = np.clip(img, 0, 255)
 
     
    
