@@ -1,5 +1,3 @@
-import React, { Component } from "react";
-import { useMap } from "react-leaflet";
 import L, { LeafletMouseEvent, Map } from "leaflet";
 
 //from https://www.npmjs.com/package/leaflet-rotate
@@ -1931,5 +1929,3 @@ L.Map.addInitHook(function () {
         this.addControl(this.rotateControl);
     }
 });
-
-//# sourceMappingURL=leaflet-rotate-src.js.map

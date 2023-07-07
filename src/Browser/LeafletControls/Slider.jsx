@@ -55,7 +55,10 @@ function Slider(props) {
                     width: "40px", display: "inline-block", textAlign: "center", fontSize: "12 px", whiteSpace: "nowrap"
                 }}
             > {
-                    Math.round(65535 * (sliderValue - props.min) / (props.max - props.min))
+                    props.minValue ?
+                        Math.round(props.minValue + (props.maxValue - props.minValue) * (sliderValue - props.min) / (props.max - props.min))
+                        :
+                        Math.round(props.maxValue * (sliderValue - props.min) / (props.max - props.min))
                 }</span>
         </div >
 
