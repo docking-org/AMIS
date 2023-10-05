@@ -43,8 +43,8 @@ function ViewSlices(props) {
 
             images.push(
                 <Col md={4} className="mb-4">
-                    <img src={'https://amis2.docking.org' + slice.img_no_ext + ".png"}
-                        onError={(e) => { e.target.onerror = null; e.target.src = `'https://amis2.docking.org'${slice.img_no_ext}.webp` }} width="100%" height="100%" onClick={() => {
+                    <img src={'https://amis.docking.org' + slice.img_no_ext + ".png"}
+                        onError={(e) => { e.target.onerror = null; e.target.src = `'https://amis.docking.org'${slice.img_no_ext}.webp` }} width="100%" height="100%" onClick={() => {
 
                             props.selectImage(index, selectedWavelength);
                             props.setFolded(true);

@@ -1,7 +1,6 @@
 from app import db
 from flask import url_for
 
-
 class PaginatedAPIMixin(object):
     @staticmethod
     def to_collection_dict(query, page, per_page, endpoint, **kwargs):
@@ -28,7 +27,6 @@ class PaginatedAPIMixin(object):
         }
         return data
 
-
 class MouseModel(PaginatedAPIMixin, db.Model):
     __tablename__ = 'mouse'
 
@@ -42,6 +40,8 @@ class MouseModel(PaginatedAPIMixin, db.Model):
                              nullable=False)
     mani_type = db.relationship("ManipulationTypeModel", back_populates='mice')
     slices = db.relationship("SliceModel", back_populates='mouse')
+    subtype_id = db.Column(db.Integer, db.ForeignKey('subtype.id'), nullable=True)
+    subtype = db.relationship("SubtypeModel", back_populates='mice')
 
     def __init__(self, number, sex, age, gene, mani_type):
         self.number = number

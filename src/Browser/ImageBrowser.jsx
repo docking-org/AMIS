@@ -14,6 +14,7 @@ function ImageBrowser() {
     const [state, setState] = useState({
         sampleTypes: [],
         genes: [],
+        subtypes: [],
         organs: [],
         mice: [],
         slicesTomato: [],
@@ -23,6 +24,7 @@ function ImageBrowser() {
         selectedGene: null,
         selectedOrgan: null,
         selectedMouse: null,
+        selectedSubtype: null,
         selectedSlice: 1,
         selections: [],
         optionsLoaded: false,
@@ -59,10 +61,6 @@ function ImageBrowser() {
             updateSize(12)
         }
     }
-
-
-
-
 
     useEffect(() => {
         //leaflet doesn't like changing the col size. Force a window resize to trigger map update

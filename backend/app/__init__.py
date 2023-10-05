@@ -15,12 +15,30 @@ from app.data.views.model_views import ExperimentView, \
 from flask_restful import Api
 from flask_admin.contrib.sqla import ModelView
 from flask_cors import CORS
-db = SQLAlchemy()
-migrate = Migrate()
+
+
+
+
 bootstrap = Bootstrap5()
 api = Api()
 
 app = Flask(__name__, static_folder='../../build')
+app.config.from_object(Config)
+db = SQLAlchemy()
+migrate = Migrate()
+db.init_app(app)
+from app.data.models.experiment import ExperimentModel
+from app.data.models.slice import SliceModel
+from app.data.models.gene import GeneModel
+from app.data.models.mouse import MouseModel
+from app.data.models.organ import OrganModel
+from app.data.models.lookup import LookupModel
+from app.data.models.subtype import SubtypeModel
+from app.data.models.gene_name import GeneNameModel
+from app.data.models.mani_type import ManipulationTypeModel
+from app.data.models.genotype import GenotypeModel
+from app.data.models.feedback import FeedbackModel
+migrate.init_app(app, db)
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
@@ -31,9 +49,9 @@ def serve(path):
         return send_from_directory(app.static_folder, 'index.html')
 
 def create_app(config_class=Config):
-   
-    # Menu(app=app)
     app.config.from_object(config_class)
+    # Menu(app=app)
+ 
     app.config['TEMPLATES_AUTO_RELOAD'] = True
     from app.data.resources.gene import Genes
     from app.data.resources.experiment import ExperimentList
@@ -71,20 +89,14 @@ def create_app(config_class=Config):
     api.add_resource(Slices, *slice_routes)
     api.add_resource(Filters, "/filters")
 
-    db.init_app(app)
-    migrate.init_app(app, db)
+   
+
     api.init_app(app)
     bootstrap.init_app(app)
     cors = CORS(app)
-    from app.data.models.experiment import ExperimentModel
-    from app.data.models.mouse import MouseModel
-    from app.data.models.gene import GeneModel
-    from app.data.models.genotype import GenotypeModel
-    from app.data.models.slice import SliceModel
-    from app.data.models.organ import OrganModel
-    from app.data.models.mani_type import ManipulationTypeModel
-    from app.data.models.lookup import LookupModel
-
+ 
+    
+ 
 
     # admin = flask_admin.Admin(
     #     app,

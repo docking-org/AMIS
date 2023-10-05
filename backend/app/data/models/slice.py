@@ -31,6 +31,7 @@ class PaginatedAPIMixin(object):
     @staticmethod
     def to_menu_filter_dict(query):
         L = [item.to_menu_dict() for item in query.all()]
+                
         return {'items': list({v['unique']: v for v in L}.values())}
 
 
@@ -58,6 +59,8 @@ class SliceModel(PaginatedAPIMixin, db.Model):
     experiment = db.relationship("ExperimentModel", back_populates="slices")
     orientation = db.Column(db.String(200), nullable=True)
     combined_data = db.Column(db.String(800), unique=True)
+
+    
 
     def __init__(self, uberon, orientation, slide_number, slice_id,
                  z_step_size, objective, instrument,
@@ -105,19 +108,21 @@ class SliceModel(PaginatedAPIMixin, db.Model):
             'img_small_RI': self.img_small_RI,
             'img_big': self.img_big,
             'img_big_RI': self.img_big_RI,
-            'tif_url': self.tif
+            'tif_url': self.tif,
+            'construct': self.mouse.gene.construct,
         }
         return data
 
     def to_menu_dict(self):
         data = {
-            'unique': self.mouse.gene.gene_name.name + self.experiment.name +
+            'unique': self.mouse.gene.gene_name.name + (self.mouse.subtype.subtype_name if self.mouse.subtype else "") + self.experiment.name +
                       self.organ.name +
                       ("Cleared" if self.instrument.upper() == "LSM" else "Histological"),
             'gene': self.mouse.gene.gene_name.name,
             'experiment': self.experiment.name,
             'organ': self.organ.name,
             'sample_type': "Cleared" if self.instrument.upper() == "LSM" else "Histological",
+            'subtype': self.mouse.subtype.subtype_name if self.mouse.subtype else None,
         }
         return data
     

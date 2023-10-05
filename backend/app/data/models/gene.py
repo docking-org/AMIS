@@ -1,5 +1,5 @@
 from app import db
-
+from app.data.models.subtype import SubtypeModel
 
 class GeneModel(db.Model):
     __tablename__ = 'gene'
@@ -21,6 +21,9 @@ class GeneModel(db.Model):
     genotype_reporter = db.relationship("GenotypeModel",
                                         foreign_keys='GeneModel.genotype_reporter_id')
     mice = db.relationship("MouseModel", back_populates='gene')
+
+    construct = db.Column(db.String(80), nullable=True)
+    subtypes = db.relationship("SubtypeModel", back_populates='gene')
 
     def __init__(self, gene_name, genotype_gene, genotype_reporter):
         self.gene_name = gene_name

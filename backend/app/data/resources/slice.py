@@ -7,7 +7,7 @@ from app.data.models.experiment import ExperimentModel
 from app.data.models.genotype import GenotypeModel
 from app.data.models.gene import GeneModel
 from app.data.models.gene_name import GeneNameModel
-
+from app.data.models.subtype import SubtypeModel
 parser = reqparse.RequestParser()
 
 
@@ -21,6 +21,7 @@ class Slices(Resource):
         parser.add_argument('genotype_reporter', type=str)
         parser.add_argument('sex', type=str)
         parser.add_argument('age', type=str)
+        
         # 'mani_type': self.mouse.mani_type.type,
         parser.add_argument('organ', type=str)
         parser.add_argument('uberon', type=str)
@@ -35,7 +36,7 @@ class Slices(Resource):
         parser.add_argument('wavelength', type=str)
         parser.add_argument('probe_id', type=str)
         parser.add_argument('survey_classification', type=str)
-
+      
         args = parser.parse_args()
         new_args = {key: val for key, val in args.items() if val is not None}
         # print(new_args)
@@ -92,7 +93,9 @@ class Slices(Resource):
             slices.filter_by(**new_args).order_by(order), page, per_page,
             'slices')
 
+        
         if file_type == 'json':
+
             return Response(str(data),
                             mimetype='application/json',
                             headers={
@@ -115,6 +118,7 @@ class Filters(Resource):
         parser.add_argument('organ', type=str)
         parser.add_argument('experiment', type=str)
         # instrument
+        parser.add_argument('subtype', type=str)
         parser.add_argument("instrument", type=str)
 
         args = parser.parse_args()
@@ -127,6 +131,11 @@ class Filters(Resource):
                 MouseModel.gene.has(GeneModel.gene_name.has(
                     GeneNameModel.name == new_args.get('gene')))))
             new_args.pop('gene')
+        if new_args.get('subtype'):
+            slices = slices.filter(SliceModel.mouse.has(
+                MouseModel.subtype.has(SubtypeModel.subtype_name == new_args.get(
+                    'subtype'))))
+            new_args.pop('subtype')
         if new_args.get('organ'):
             slices = slices.filter(
                 SliceModel.organ.has(OrganModel.name == new_args.get('organ')))

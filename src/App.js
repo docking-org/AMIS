@@ -121,7 +121,7 @@ function App() {
           <Card.Body>
             <Card.Text>
 
-              <b>Noah Sciaky</b>, Yi-Ting Chia, Sreeparna Majumdar, Justin English
+              <b>Noah Sciaky</b>, Yi-Ting Chiu, Sreeparna Majumdar, Dewran Daniel Kocak, Justin English
               <br />
               Image Acquisition, Processing, and Artistic contributions
 

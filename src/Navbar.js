@@ -15,7 +15,7 @@ function BasicExample() {
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
                             <Nav.Link href="/image_browser">Image Browser</Nav.Link>
-
+                            <Nav.Link href="/3d_browser">3D Browser</Nav.Link>
                             <Nav.Link href="/help">Help</Nav.Link>
                             <Nav.Link href='/feedback'>Feedback</Nav.Link>
 

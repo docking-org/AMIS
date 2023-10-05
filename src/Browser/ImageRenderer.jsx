@@ -44,6 +44,7 @@ function ImageRenderer(props) {
     const [folded, setFolded] = useState(false);
     const [sampleTypes, updateSampleTypes] = useState(props.state.sampleTypes)
     const [genes, updateGenes] = useState(props.state.genes)
+    const [subtypes, updateSubtypes] = useState(props.state.subtypes)
     const [organs, updateOrgans] = useState(props.state.organs)
     const [mice, updateMice] = useState(props.state.mice)
     const [activeLayers, updateActiveLayers] = useState(props.state.activeLayers)
@@ -55,6 +56,7 @@ function ImageRenderer(props) {
     const [selectedOrgan, updateSelectedOrgan] = useState(props.state.selectedOrgan)
     const [selectedMouse, updateSelectedMouse] = useState(props.state.selectedMouse)
     const [selectedSlice, updateSelectedSlice] = useState(props.state.selectedMouse)
+    const [selectedSubtype, updateSelectedSubtype] = useState(props.state.selectedSubtype)
     const [selectedWavelength, updateselectedWavelength] = useState(props.state.selectedWavelength)
     const [colorAccordion, setColorAccordion] = useState(false);
     const [lutAccordion, setlutAccordion] = useState(false);
@@ -176,7 +178,6 @@ function ImageRenderer(props) {
             url += "&instrument=" + 'Histological';
             url += "&gene=" + selectedGene['value'];
             url += "&organ=" + selectedOrgan['value'];
-
             url += "&mouse_number=" + selectedMouse['value'];
 
             axios({
@@ -238,7 +239,7 @@ function ImageRenderer(props) {
             updateOrgans([]);
             updateLayers([]);
         }
-    }, [selectedGene])
+    }, [selectedGene, selectedSubtype])
 
     useEffect(() => {
         updateSelectedMouse(null);
@@ -247,7 +248,8 @@ function ImageRenderer(props) {
         console.log("selectedOrgan changed")
         if (selectedGene && selectedOrgan && selectedSampleType) {
             let url = "/mice?";
-
+            console.log(selectedSubtype)
+            if (selectedSubtype) { (url += '&subtype=' + selectedSubtype['value']) };
             url += "&instrument=" + selectedSampleType['value'];
             url += "&gene=" + selectedGene['value'];
             url += "&organ=" + selectedOrgan['value'];
@@ -298,11 +300,6 @@ function ImageRenderer(props) {
         } catch (e) {
             console.log()
         }
-
-
-
-
-
     }
 
 
@@ -353,6 +350,7 @@ function ImageRenderer(props) {
             mice: mice,
             selectedSampleType: selectedSampleType,
             selectedGene: selectedGene,
+            selectedSubtype: selectedSubtype,
             selectedOrgan: selectedOrgan,
             selectedMouse: selectedMouse,
             selectedSlice: selectedSlice,
@@ -459,6 +457,7 @@ function ImageRenderer(props) {
             var res = response.data.items
 
             var genes = []
+            var subtypes = []
             var organs = []
 
             var response = []
@@ -467,6 +466,8 @@ function ImageRenderer(props) {
             res.forEach(filter => {
                 //convert res to format
                 //[{sampleType: "Histological", genes: {"GPR68": {organs: {"heart" : {'mice': []}}}}}]
+                // or if subtype exists
+                //[{sampleType: "Histological", genes: {"GPR68": {Subtypes: {"Subtype1": {organs: {"heart" : {'mice': []}}}}}}}]
 
                 if (!sampleTypes[filter.sample_type]) {
                     sampleTypes[filter.sample_type] = { genes: [] }
@@ -474,19 +475,38 @@ function ImageRenderer(props) {
                 if (genes.length == 0 || !genes.includes(filter.gene)) {
                     genes.push(filter.gene)
                 }
+                console.log(filter)
 
-                if (!sampleTypes[filter.sample_type].genes[filter.gene]) {
-
-                    sampleTypes[filter.sample_type].genes[filter.gene] = { organs: [] }
+                if (filter.subtype) {
+                    if (!sampleTypes[filter.sample_type].genes[filter.gene]) {
+                        sampleTypes[filter.sample_type].genes[filter.gene] = { subtypes: [] }
+                    }
+                    if (!sampleTypes[filter.sample_type].genes[filter.gene].subtypes[filter.subtype]) {
+                        sampleTypes[filter.sample_type].genes[filter.gene].subtypes[filter.subtype] = { organs: [] }
+                    }
+                    if (organs.length == 0 || !organs.includes(filter.organ)) {
+                        organs.push(filter.organ)
+                    }
+                    if (!sampleTypes[filter.sample_type].genes[filter.gene].subtypes[filter.subtype].organs[filter.organ]) {
+                        sampleTypes[filter.sample_type].genes[filter.gene].subtypes[filter.subtype].organs[filter.organ] = { mice: [] }
+                    }
                 }
-                if (organs.length == 0 || !organs.includes(filter.organ)) {
-                    organs.push(filter.organ)
-                }
-                if (!sampleTypes[filter.sample_type].genes[filter.gene].organs[filter.organ]) {
-                    sampleTypes[filter.sample_type].genes[filter.gene].organs[filter.organ] = { mice: [] }
-                }
 
+                //add subtypes
 
+                else {
+                    if (!sampleTypes[filter.sample_type].genes[filter.gene]) {
+
+                        sampleTypes[filter.sample_type].genes[filter.gene] = { organs: [] }
+                    }
+                    if (organs.length == 0 || !organs.includes(filter.organ)) {
+                        organs.push(filter.organ)
+                    }
+                    if (!sampleTypes[filter.sample_type].genes[filter.gene].organs[filter.organ]) {
+                        sampleTypes[filter.sample_type].genes[filter.gene].organs[filter.organ] = { mice: [] }
+                    }
+
+                }
             })
 
             //remove 0 entries from sampleTypes, which are created by the [{}]
@@ -683,14 +703,53 @@ function ImageRenderer(props) {
                                                     selectedSampleType ? Object.keys(selections[selectedSampleType['value']].genes).sort().map(gene => ({ "value": gene, "label": gene })) : []
 
                                                 } onChange={(option) => updateSelectedGene(option ? option : null)} />
+                                            {selectedGene && selections[selectedSampleType['value']].genes[selectedGene['value']].subtypes ?
+                                                <div>
+                                                    <label className="col-sm-4 col-form-label">Subtype</label>
 
+                                                    <Select
+                                                        components={{ DropdownIndicator }}
+                                                        defaultValue={selectedSubtype}
+                                                        value={selectedSubtype}
+                                                        isDisabled={!selectedSampleType} isClearable={props.renderSize === 12 ? true : false} options={
+                                                            //if selectedGene and gene has subtypes, return subtypes, else return empty array
+
+                                                            selectedGene && selections[selectedSampleType['value']].genes[selectedGene['value']].subtypes ?
+                                                                Object.keys(selections[selectedSampleType['value']].genes[selectedGene['value']].subtypes).sort().map(subtype => ({ "value": subtype, "label": subtype })) : []
+
+
+                                                        } onChange={(option) => {
+                                                            updateSelectedSubtype(option ? option : null)
+
+                                                        }
+                                                        } />
+                                                </div>
+                                                : null}
                                             <label className="col-sm-4 col-form-label">Organ</label>
                                             <Select
                                                 components={{ DropdownIndicator }}
                                                 defaultValue={selectedOrgan}
                                                 value={selectedOrgan}
-                                                isDisabled={!selectedGene} isClearable={props.renderSize === 12 ? true : false} options={
-                                                    selectedGene ? Object.keys(selections[selectedSampleType['value']].genes[selectedGene['value']].organs).sort().map(organ => ({ "value": organ, "label": organ })) : []
+                                                isDisabled={!selectedGene || (
+                                                    selectedGene && selections[selectedSampleType['value']].genes[selectedGene['value']].subtypes && !selectedSubtype
+                                                )} isClearable={props.renderSize === 12 ? true : false} options={
+
+                                                    selectedGene ? (
+                                                        selectedGene && selections[selectedSampleType['value']].genes[selectedGene['value']].subtypes ?
+                                                            (
+                                                                selectedSubtype ?
+                                                                    Object.keys(selections[selectedSampleType['value']].genes[selectedGene['value']].subtypes[selectedSubtype['value']].organs).sort().map(organ => ({ "value": organ, "label": organ })) : []
+                                                            )
+                                                            :
+                                                            Object.keys(selections[selectedSampleType['value']].genes[selectedGene['value']].organs).sort().map(organ => ({ "value": organ, "label": organ }))
+                                                    ) : []
+
+
+                                                    // Object.keys(selections[selectedSampleType['value']].genes[selectedGene['value']].subtypes[selectedSubtype['value']].organs).sort().map(organ => ({"value": organ, "label": organ }))
+                                                    // : selectedGene ? Object.keys(selections[selectedSampleType['value']].genes[selectedGene['value']].organs).sort().map(organ => ({"value": organ, "label": organ })) : []
+
+
+
                                                 } onChange={(option) => updateSelectedOrgan(option ? option : null)} />
 
                                             <label className="col-sm-4 col-form-label">Mouse</label>
@@ -713,7 +772,7 @@ function ImageRenderer(props) {
 
                                             <br />
 
-
+                                            {/* 
                                             {props.main ?
                                                 (
 
@@ -725,7 +784,7 @@ function ImageRenderer(props) {
 
 
                                                 )
-                                                : null}
+                                                : null} */}
 
                                             &nbsp;
 
@@ -755,6 +814,11 @@ function ImageRenderer(props) {
                                     <br></br>
 
                                     Sex: {slices[selectedWavelength] ? slices[selectedWavelength][0].sex : null}
+                                    <br></br>
+
+                                    Construct: {slices[selectedWavelength] ? slices[selectedWavelength][0].construct : null}
+
+
 
                                 </div>
                                 :
@@ -861,6 +925,19 @@ function ImageRenderer(props) {
                                 {layers}
 
 
+                                {props.main ?
+                                    (
+                                        <div className="leaflet-bottom leaflet-right">
+                                            <div className="leaflet-control">
+                                                <button type="button" className="btn btn-toggle-split btn-dark "
+                                                    title='Add a new display to the right panel'
+                                                    onClick={() => { props.splitScreen(buildState()) }}>Toggle Split Screen</button>
+                                            </div>
+
+                                        </div>
+
+                                    )
+                                    : null}
 
                                 <div
                                     className="leaflet-bottom leaflet-center"

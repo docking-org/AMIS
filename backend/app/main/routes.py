@@ -96,9 +96,6 @@ def image_load(path = None, folder = None):
     else:
         return make_response(jsonify({'error': 'Could not download image'}), 400)
 
-
-
-
 @application.route('/details/<id>/<from_url>', methods=['GET', 'POST'])
 def details(id, from_url):
     slice = SliceModel.find_by_id(id)

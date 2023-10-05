@@ -6,7 +6,7 @@ from app.data.models.gene_name import GeneNameModel
 from app.data.models.slice import SliceModel
 from app.data.models.organ import OrganModel
 from app.data.models.experiment import ExperimentModel
-
+from app.data.models.subtype import SubtypeModel
 # class MouseList(Resource):
 #     def get(self):
 #         return {'items': [x.json() for x in MouseModel.query.all()]}
@@ -20,6 +20,7 @@ class MouseList(Resource):
         parser.add_argument('organ', type=str)
         parser.add_argument('instrument', type=str)
         parser.add_argument('experiment', type=str)
+        parser.add_argument('subtype', type=str)
         args = parser.parse_args()
         new_args = {key: val for key, val in args.items() if val is not None}
 
@@ -31,6 +32,11 @@ class MouseList(Resource):
             mice = mice.filter(MouseModel.gene.has(GeneModel.gene_name.has(
                 GeneNameModel.name == new_args.get('gene'))))
             new_args.pop('gene')
+        if new_args.get('subtype'):
+        
+            mice = mice.filter(MouseModel.subtype.has(
+                SubtypeModel.subtype_name == new_args.get('subtype')))
+            new_args.pop('subtype')
         if new_args.get('organ'):
             mice = mice.filter(MouseModel.slices.any(
                 SliceModel.organ.has(
