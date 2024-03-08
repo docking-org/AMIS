@@ -25,14 +25,17 @@ class Config(object):
     IMG_UPLOAD_FOLDER_URL = os.getenv("IMG_UPLOAD_FOLDER_URL")
     JPEG_FOLDER = os.getenv("JPEG_FOLDER")
     JPG_FOLDER = os.getenv("JPG_FOLDER")
+
     DIRECTORY_MAP = {
         '/nfs/ex9/idg-images*' : '/images/1',
         '/nfs/exj/idg-images*' : '/images/2',
+        '/nfs/mammoth/idg-images*' : '/images/3',
     }
     
     URL_MAP = {
         '1' : '/nfs/ex9/idg-images',
         '2' : '/nfs/exj/idg-images',
+        '3' : '/nfs/mammoth/idg-images',
     }
     
     # Flask-User settings
