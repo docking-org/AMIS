@@ -239,6 +239,10 @@ def send_slice(path,number,image, x, y, z):
     
 @application.route('/images/<path>/<number>/<image>', methods=['GET'])
 def send_image(path,number,image):
+    if image.split(".")[1] == "webp" and not os.path.exists(current_app.config['URL_MAP'][path] + "/" + number + "/" + image):
+        image = image.split(".")[0] + ".png"
+        
+        
     if path not in current_app.config['URL_MAP']:
         return make_response(jsonify({'error': 'Invalid path'}), 400)
     else:

@@ -81,7 +81,6 @@ python-dateutil==2.7.5
 python-dotenv==0.8.2
 python-editor==1.0.3
 pytz==2018.7
-PyYAML==5.4
 requests==2.27.1
 s3transfer==0.1.13
 semantic-version==2.5.0
