@@ -27,13 +27,13 @@ class Config(object):
     JPG_FOLDER = os.getenv("JPG_FOLDER")
 
     DIRECTORY_MAP = {
-        '/nfs/ex9/idg-images*' : '/images/1',
+        '/nfs/ex9/idg-images*' : '/images/3',
         '/nfs/exj/idg-images*' : '/images/2',
         '/nfs/mammoth/idg-images*' : '/images/3',
     }
     
     URL_MAP = {
-        '1' : '/nfs/ex9/idg-images',
+        '1' : '/nfs/mammoth/idg-images',
         '2' : '/nfs/exj/idg-images',
         '3' : '/nfs/mammoth/idg-images',
     }
