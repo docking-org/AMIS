@@ -247,9 +247,15 @@ def send_image(path,number,image):
         return make_response(jsonify({'error': 'Invalid path'}), 400)
     else:
         url = current_app.config['URL_MAP'][path] + "/" + number
+
+        if not os.path.exists(url + "/" + image):
+            for path in current_app.config['URL_MAP']:
+                if os.path.exists(current_app.config['URL_MAP'][path] + "/" + number + "/" + image):
+                    url = current_app.config['URL_MAP'][path] + "/" + number
+                    break
         return send_from_directory(url, image)
 
-
+    
             
     
 def toPath(url):

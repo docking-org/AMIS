@@ -34,7 +34,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "PORT=3005 react-scripts start",
+    "start": "PORT=3000 react-scripts start",
     "start-backend": "cd backend && gunicorn  -b :5000 -w 8 --log-level=DEBUG --access-logfile - --error-logfile - application:application  --timeout 36000 --reload",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -58,5 +58,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://0.0.0.0:5050/"
+  "proxy": "http://0.0.0.0:5052/"
 }
