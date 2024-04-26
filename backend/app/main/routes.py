@@ -232,9 +232,10 @@ def send_slice(path,number,image, x, y, z):
     if path not in current_app.config['URL_MAP']:
         return make_response(jsonify({'error': 'Invalid path'}), 400)
     else:
-
         url = current_app.config['URL_MAP'][path] + "/" + number + "/" + image + "/" + x + "/" + y + "/"
-        print(url)
+        
+        #convert from 0 based to 1 based
+        
         return send_from_directory(url, '0.png')
     
 @application.route('/images/<path>/<number>/<image>', methods=['GET'])
@@ -253,7 +254,26 @@ def send_image(path,number,image):
                 if os.path.exists(current_app.config['URL_MAP'][path] + "/" + number + "/" + image):
                     url = current_app.config['URL_MAP'][path] + "/" + number
                     break
-        return send_from_directory(url, image)
+
+        img = cv2.imread(url + "/" + image, -1)
+        #if single channel, convert to 3 channel
+        
+        if len(img.shape) == 2:
+            img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            img = img.astype(np.uint8)
+            retval, buffer = cv2.imencode('.png', img)
+            
+            cv2.imwrite(url + "/" + image.split(".")[0] + ".webp", img)
+            
+
+            response = make_response(buffer.tobytes())
+            response.headers.set('Content-Type', 'image/png')
+            response.headers.set(
+                'Content-Disposition', 'attachment')
+            return response
+        else:
+            return send_from_directory(url, image)        
 
     
             
