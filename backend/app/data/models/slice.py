@@ -1,6 +1,7 @@
 from app import db
 from flask import current_app, url_for
 import re
+from app.data.models.display_options import DisplayOptionsModel
 
 class PaginatedAPIMixin(object):
     @staticmethod
@@ -59,7 +60,7 @@ class SliceModel(PaginatedAPIMixin, db.Model):
     experiment = db.relationship("ExperimentModel", back_populates="slices")
     orientation = db.Column(db.String(200), nullable=True)
     combined_data = db.Column(db.String(800), unique=True)
-
+    display_options = db.relationship("DisplayOptionsModel", back_populates='slice', uselist=False)
     
 
     def __init__(self, uberon, orientation, slide_number, slice_id,

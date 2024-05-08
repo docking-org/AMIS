@@ -432,11 +432,12 @@ function ImageRenderer(props) {
       dataSrc: "items",
     }).then((response) => {
       var res = response.data;
+      console.log(res);
       updateOptions({
         brightness: parseInt(res.brightness),
         contrast: Math.round((parseFloat(res.contrast) / 3) * 100),
-        min: res.min,
-        max: res.max,
+        min: parseInt(res.min),
+        max: parseInt(res.max),
         blend: options.blend,
         opacityThreshold: options.opacityThreshold,
       });
@@ -515,7 +516,9 @@ function ImageRenderer(props) {
           if (organs.length == 0 || !organs.includes(filter.organ)) {
             organs.push(filter.organ);
           }
+
           if (
+            sampleTypes[filter.sample_type].genes[filter.gene].organs &&
             !sampleTypes[filter.sample_type].genes[filter.gene].organs[
               filter.organ
             ]
@@ -1027,7 +1030,7 @@ function ImageRenderer(props) {
                     min={0}
                     max={255}
                     delta={10}
-                    maxValue={65535}
+                    maxValue={65534}
                   />
                   <Slider
                     icon="sun"
@@ -1036,11 +1039,11 @@ function ImageRenderer(props) {
                     defaultValue={options["brightness"]}
                     onChange={() => console.log()}
                     tooltip="Adjust Brightness"
-                    min={-100}
-                    max={100}
+                    min={-98}
+                    max={98}
                     delta={10}
-                    maxValue={65535}
-                    minValue={-65535}
+                    maxValue={65534}
+                    minValue={-65534}
                   />
                   <Slider
                     icon="adjust"
@@ -1049,11 +1052,11 @@ function ImageRenderer(props) {
                     defaultValue={options["contrast"]}
                     onChange={() => console.log()}
                     tooltip="Adjust Contrast"
-                    min={-100}
-                    max={100}
+                    min={-98}
+                    max={98}
                     delta={10}
-                    maxValue={65535}
-                    minValue={-65535}
+                    maxValue={65525}
+                    minValue={-65525}
                   />
                   <br></br>
                   <Button size="sm" onClick={() => resetValues()}>
@@ -1243,10 +1246,10 @@ function ImageRenderer(props) {
                                 }}
                               >
                                 <img
-                                  src={slice.img_no_ext + ".png"}
+                                  src={slice.img_no_ext + ".webp"}
                                   onError={(e) => {
                                     e.target.onerror = null;
-                                    e.target.src = `${slice.img_no_ext}.webp`;
+                                    e.target.src = `${slice.img_no_ext}.png`;
                                   }}
                                   style={{
                                     filter: `brightness(${
@@ -1347,7 +1350,7 @@ function ImageRenderer(props) {
                                 <BSTooltip>Select Slice Viewer Layer</BSTooltip>
                               }
                             >
-                              <Dropdown>
+                              <Dropdown style={{ zIndex: 1000 }}>
                                 <Dropdown.Toggle>
                                   {selectedWavelength}
                                 </Dropdown.Toggle>

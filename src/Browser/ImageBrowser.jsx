@@ -42,6 +42,7 @@ function ImageBrowser() {
       tdTomato: "red",
       DAPI: "blue",
       GFP: "green",
+      CY5: "green",
     },
     activeLayers: [],
     layers: [],

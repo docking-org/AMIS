@@ -14,6 +14,7 @@ from app.data.models.gene_name import GeneNameModel
 from app.data.models.organ import OrganModel
 from app.data.models.experiment import ExperimentModel
 from app.data.models.feedback import FeedbackModel
+from app.data.models.display_options import DisplayOptionsModel
 from app import db
 
 # @application.route('/', methods=['GET'])
@@ -122,26 +123,9 @@ def img_browser():
     
     # return a json  of 
     return  jsonify({'genes': genes, "organs": organs, "experiments":experiments})
-    # return render_template('img_browser_split.html', genes=genes, experiments=experiments, organs=organs,
-    #                        gene=gene, organ=organ, experiment=experiment, sample_type=sample_type,
-    #                        pos_mouse_number=pos_mouse_number, neg_mouse_number=neg_mouse_number, wavelength=wavelength, selected_slice=selected_slice,
-    #                        imgType=imgType)
 
 @application.route('/getAutoValues', methods=['GET'])
 def getAutoValues(clip_hist_percent=2):
-    # url = toPath(request.args.get('url')) + '/0/0/0.png'
-    # print(url)
-    # reader = png.Reader(url )
-    # pngdata = reader.read()
-    # px_array = np.array( map( np.uint16, pngdata[2] ))
-    # print( px_array.dtype )
-
-    # #open image as 16 bit
-    # img = cv2.imread(url, cv2.IMREAD_UNCHANGED).astype(np.uint16)
-    # img = img*16
-    # print(img)
-    
-    
     return jsonify({'min': int(0), "max": int(img.max()), "contrast":str(3), "brightness": str(3)})
 
 
@@ -153,79 +137,137 @@ def lut(z,x,y):
     lut = request.args.get("lut")
     url = toPath(request.args.get('url'))
  
-
     url = url + "/{}/{}/{}".format(z,x,y)
     
     autobrightness = request.args.get("autobrightness")
+    
+    img = cv2.imread(url, cv2.COLOR_BGR2GRAY)
+    
+
+    # # opacityThreshold = float(request.args.get("opacityThreshold"))* 65535 / 100
+    
+    if img is not None:
    
-    # for local testing    
-    # req = urllib.request.urlopen(url)
-    # if req.getcode() != 200:
-    #     return make_response(jsonify({'error': 'Could not download image'}), 400)
-    # arr = np.asarray(bytearray(req.read()), dtype=np.uint8)  
-    # img = cv2.imdecode(arr, -1).astype(np.uint8)
+        # base_img = '/'.join(url.split("/")[0:6]) + ".png"
     
-    
-    # for production
-    # url = url.replace("https://files.docking.org/", "/nfs/ex9/")
-    
-    img = cv2.imread(url, -1)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    img = img.astype(np.uint16)
-    img = img * 257
-    
-    opacityThreshold = float(request.args.get("opacityThreshold"))* 65535 / 100
-    
-    img[img < opacityThreshold] = 0
-    
-    if autobrightness != "true":
+        # im = cv2.imread(base_img, cv2.COLOR_BGR2GRAY)     
         
-        cliplow = float(request.args.get("cliplow"))  * 65535 / 100
-        cliphigh = float(request.args.get("cliphigh"))    * 65535 / 100
-        print(cliplow)
-        print(cliphigh)
-      
-        #brightness is a number from -65535 to 65535
-        #contrast is a number from 0 to 32767. 0 being no contrast, 32767 being max contrast
-           
-        img = np.where(img < cliplow, 0, img)
-        img = np.where(img > cliphigh, 65535, img)
-        brightness =(float(request.args.get("brightness")))
-        contrast = 1 + (float(request.args.get("contrast")) / 65535 * 2)
-        img = cv2.addWeighted(img, contrast, img, 0 , brightness)
+        
+        # im = cv2.normalize(im, None, -1 +(int(request.args.get("contrast"))*256/100), 255, cv2.NORM_MINMAX, cv2.CV_8U)
+        
+        # stacked = im
+        # #raise min value by int(request.args.get("brightness"))
+        
+        
+        # im_type = stacked.dtype
+        # # minimum and maximum of image
+        # im_min = np.min(stacked)
+        # if int(request.args.get("brightness")) < 0:
+        #     stacked = stacked - (int(request.args.get("brightness"))*256/100)
+        #     im_max = np.max(stacked)
 
-    
+        # else:
+        #     im_max = np.max(stacked)-(int(request.args.get("brightness"))*256/100)
+       
+        # hist_min = im_min
+        # hist_max = im_max
+        
+        # # compute histogram
+        # if hist_min >= hist_max:
+        #     hist_min = hist_max - 1
+        # histogram = np.histogram(stacked, bins=256, range=(hist_min, hist_max))[0]
+        # bin_size = (hist_max - hist_min)/256
 
+        # # compute output min and max bins =================================================================================
 
+        # # various algorithm parameters
+        # h, w = stacked.shape[:2]
+        # pixel_count = h * w
+        # # the following values are taken directly from the ImageJ file.
+        # limit = pixel_count/10
+        # const_auto_threshold = 5000
+        # auto_threshold = 0
+
+        # auto_threshold = const_auto_threshold if auto_threshold <= 10 else auto_threshold/2
+        # threshold = int(pixel_count/auto_threshold)
+
+        # # setting the output min bin
+        # i = -1
+        # found = False
+        # # going through all bins of the histogram in increasing order until you reach one where the count if more than
+        # # pixel_count/auto_threshold
+        # while not found and i <= 254:
+        #     i += 1
+        #     count = histogram[i]
+        #     if count > limit:
+        #         count = 0
+        #     found = count > threshold
+        # hmin = i
+        # found = False
+
+        # # setting the output max bin : same thing but starting from the highest bin.
+        # i = 256
+        # while not found and i > 0:
+        #     i -= 1
+        #     count = histogram[i]
+        #     if count > limit:
+        #         count = 0
+        #     found = count > threshold
+        # hmax = i
+
+        # # compute output min and max pixel values from output min and max bins ===============================================
+        # if hmax >= hmin:
+        #     min_ = hist_min + hmin * bin_size
+        #     max_ = hist_min + hmax * bin_size
+        #     # bad case number one, just return the min and max of the histogram
+        #     if min_ == max_:
+        #         min_ = hist_min
+        #         max_ = hist_max
+        # # bad case number two, same
+        # else:
+        #     min_ = hist_min
+        #     max_ = hist_max
+
+        # # apply the contrast, relative to img   
+        check = url.split(".")[0].split("_")[-1].split("/")[0]
+        slice = SliceModel.query.filter_by(checksum=check).first()
+        display_options = DisplayOptionsModel.query.filter_by(slice_fk=slice.id).first()
     
-   
+        if display_options:
+            img = (img-display_options.contrast_min)/(display_options.contrast_max-display_options.contrast_min) * 255
     
-    img = img.astype(np.uint8)
-    if lut == "inverted":
-        img = cv2.bitwise_not(img)
-    elif lut == "grayscale":
-        pass
-    else: 
-        try:
-           
-            img = cv2.LUT(img, lookuptables[lut])
-        except e:
-            print(e)
+        if lut == "inverted":
+            img = cv2.bitwise_not(img)
+        elif lut == "grayscale":
             pass
-
-    
-    
-    #make all black pixels transparent
-    img = cv2.cvtColor(img, cv2.COLOR_RGB2RGBA)
-    img[np.all(img == [0, 0, 0, 255], axis=2)] = [0, 0, 0, 0]
-    
-
-    retval, buffer = cv2.imencode('.png', img)
-    response = make_response(buffer.tobytes())
-    response.headers.set('Content-Type', 'image/png')
-    response.headers.set(
-        'Content-Disposition', 'attachment')
-    return response
+        else: 
+            try:
+                img = img.astype(np.uint8)
+                max = np.max(img)
+                img[img >= max] = 0
+                img = cv2.LUT(img, lookuptables[lut])
+            except Exception as e:
+                print(e)
+                pass
+        
+        #this does contrast
+        min = np.min(img)
+        max = np.max(img)
+        contrast = int(request.args.get("contrast"))/100 * 256
+        brightness = int(request.args.get("brightness"))/100 * 256
+        print(brightness)
+        #add brightnes to each pixel, except for the max value
+        img = img + brightness
+        img[img !=min ] = img[img !=min] - contrast
+        
+        retval, buffer = cv2.imencode('.png', img)
+        response = make_response(buffer.tobytes())
+        response.headers.set('Content-Type', 'image/png')
+        response.headers.set(
+            'Content-Disposition', 'attachment')
+        return response
+    else:
+        return make_response(jsonify({'error': 'Could not download image'}), 400)
 
 @application.route('/images/<path>/<number>/<image>/<x>/<y>/<z>.png', methods=['GET'])
 def send_slice(path,number,image, x, y, z):
@@ -240,13 +282,14 @@ def send_slice(path,number,image, x, y, z):
     
 @application.route('/images/<path>/<number>/<image>', methods=['GET'])
 def send_image(path,number,image):
-    if image.split(".")[1] == "webp" and not os.path.exists(current_app.config['URL_MAP'][path] + "/" + number + "/" + image):
-        image = image.split(".")[0] + ".png"
-        
+    # if image.split(".")[1] == "webp" and not os.path.exists(current_app.config['URL_MAP'][path] + "/" + number + "/" + image):
+    #     image = image.split(".")[0] + ".png"
+    
         
     if path not in current_app.config['URL_MAP']:
         return make_response(jsonify({'error': 'Invalid path'}), 400)
     else:
+        
         url = current_app.config['URL_MAP'][path] + "/" + number
 
         if not os.path.exists(url + "/" + image):
@@ -254,29 +297,117 @@ def send_image(path,number,image):
                 if os.path.exists(current_app.config['URL_MAP'][path] + "/" + number + "/" + image):
                     url = current_app.config['URL_MAP'][path] + "/" + number
                     break
-
-        img = cv2.imread(url + "/" + image, -1)
-        #if single channel, convert to 3 channel
         
-        if len(img.shape) == 2:
-            img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            img = img.astype(np.uint8)
-            retval, buffer = cv2.imencode('.png', img)
+        if image.split(".")[1] == "webp":
+            img = cv2.imread(url + "/" + image.replace(".webp", ".png"), cv2.IMREAD_UNCHANGED)
+            stacked = img
+
+            im_type = stacked.dtype
+            # minimum and maximum of image
+            im_min = np.min(stacked)
+            im_max = np.max(stacked)
+
+            if im_type == np.uint8:
+                hist_min = 0
+                hist_max = 256
+            elif im_type in (np.uint16, np.int32):
+                hist_min = im_min
+                hist_max = im_max
+            else:
+                raise NotImplementedError(f"Not implemented for dtype {im_type}")
+
+            # compute histogram
+            histogram = np.histogram(stacked, bins=256, range=(hist_min, hist_max))[0]
+            bin_size = (hist_max - hist_min)/256
+
+            # compute output min and max bins =================================================================================
+
+            # various algorithm parameters
+            h, w = stacked.shape[:2]
+            pixel_count = h * w
+            # the following values are taken directly from the ImageJ file.
+            limit = pixel_count/10
+            const_auto_threshold = 5000
+            auto_threshold = 0
+
+            auto_threshold = const_auto_threshold if auto_threshold <= 10 else auto_threshold/2
+            threshold = int(pixel_count/auto_threshold)
+
+            # setting the output min bin
+            i = -1
+            found = False
+            # going through all bins of the histogram in increasing order until you reach one where the count if more than
+            # pixel_count/auto_threshold
+            while not found and i <= 255:
+                i += 1
+                count = histogram[i]
+                if count > limit:
+                    count = 0
+                found = count > threshold
+            hmin = i
+            found = False
+
+            # setting the output max bin : same thing but starting from the highest bin.
+            i = 256
+            while not found and i > 0:
+                i -= 1
+                count = histogram[i]
+                if count > limit:
+                    count = 0
+                found = count > threshold
+            hmax = i
+
+            # compute output min and max pixel values from output min and max bins ===============================================
+            if hmax >= hmin:
+                min_ = hist_min + hmin * bin_size
+                max_ = hist_min + hmax * bin_size
+                # bad case number one, just return the min and max of the histogram
+                if min_ == max_:
+                    min_ = hist_min
+                    max_ = hist_max
+            # bad case number two, same
+            else:
+                min_ = hist_min
+                max_ = hist_max
+
+
+            # apply the contrast, relative to img
+            old_max = np.max(img)
+            img = (img-min_)/(max_-min_) * 255
+            new_max = np.max(img)
             
+            #get adjusted contrast value
+            contrast = (max_-min_)
+            print(contrast)
+            #gett adjusted brightness value
+            print(old_max, new_max)
+            brightness = (old_max - new_max)
+            print(brightness)
+
+            # if not os.path.exists(url + "/" + image.split(".")[0] + ".webp"):
+            checksum = image.split(".")[0].split("_")[-1]
+            slice = SliceModel.query.filter_by(checksum=checksum).first()
+            display_options = DisplayOptionsModel.query.filter_by(slice_fk=slice.id).first()
+            if display_options:
+                display_options.min = min_/256
+                display_options.max = max_/256
+                display_options.brightness = brightness
+                display_options.contrast_min = min_/256
+                display_options.contrast_max = max_/256
+            else:
+                new_options = DisplayOptionsModel(slice_fk=slice.id, min=min_/256, max=max_/256, brightness=brightness, contrast_min=min_/256, contrast_max=max_/256)
+                db.session.add(new_options)
+            db.session.commit()
+
             cv2.imwrite(url + "/" + image.split(".")[0] + ".webp", img)
-            
-
-            response = make_response(buffer.tobytes())
-            response.headers.set('Content-Type', 'image/png')
-            response.headers.set(
-                'Content-Disposition', 'attachment')
-            return response
+            return send_from_directory(url, image.split(".")[0] + ".webp")
         else:
-            return send_from_directory(url, image)        
+            print(url, image)
+            return send_from_directory(url, image)
+        
 
-    
-            
+
+       
     
 def toPath(url):
     path = url.split("/")[2]
@@ -301,3 +432,4 @@ def submitFeedback():
         db.session.commit()
         return make_response(jsonify({'success': 'Feedback submitted'}), 200)
         
+
