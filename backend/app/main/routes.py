@@ -233,9 +233,7 @@ def lut(z,x,y):
         slice = SliceModel.query.filter_by(checksum=check).first()
         display_options = DisplayOptionsModel.query.filter_by(slice_fk=slice.id).first()
     
-        if display_options:
-            img = (img-display_options.contrast_min)/(display_options.contrast_max-display_options.contrast_min) * 255
-    
+
         if lut == "inverted":
             img = cv2.bitwise_not(img)
         elif lut == "grayscale":
@@ -244,11 +242,15 @@ def lut(z,x,y):
             try:
                 img = img.astype(np.uint8)
                 max = np.max(img)
-                img[img >= max] = 0
+                # img[img >= max] = 0
                 img = cv2.LUT(img, lookuptables[lut])
             except Exception as e:
                 print(e)
                 pass
+        if display_options:
+            img = (img-display_options.contrast_min)/(display_options.contrast_max-display_options.contrast_min) * 255
+    
+      
         
         #this does contrast
         min = np.min(img)
