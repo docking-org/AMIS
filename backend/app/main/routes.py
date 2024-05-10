@@ -232,8 +232,8 @@ def lut(z,x,y):
         check = url.split(".")[0].split("_")[-1].split("/")[0]
         slice = SliceModel.query.filter_by(checksum=check).first()
         display_options = DisplayOptionsModel.query.filter_by(slice_fk=slice.id).first()
-    
-
+       
+        
         if lut == "inverted":
             img = cv2.bitwise_not(img)
         elif lut == "grayscale":
@@ -248,20 +248,26 @@ def lut(z,x,y):
                 print(e)
                 pass
         if display_options:
-            img = (img-display_options.contrast_min)/(display_options.contrast_max-display_options.contrast_min) * 255
-    
-      
-        
-        #this does contrast
+            
+            img = (img-display_options.contrast_min)/(display_options.contrast_max-display_options.contrast_min) * 200
+
+            #if newimg is too bright, do nothing. else, set img to newimg
+            # if np.max(newimg) < 255:
+                
         min = np.min(img)
         max = np.max(img)
         contrast = int(request.args.get("contrast"))/100 * 256
         brightness = int(request.args.get("brightness"))/100 * 256
         print(brightness)
-        #add brightnes to each pixel, except for the max value
         img = img + brightness
         img[img !=min ] = img[img !=min] - contrast
+      
+        #this does contrast
+      
         
+        print(brightness)
+        #add brightnes to each pixel, except for the max value
+       
         retval, buffer = cv2.imencode('.png', img)
         response = make_response(buffer.tobytes())
         response.headers.set('Content-Type', 'image/png')
