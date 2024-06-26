@@ -16,20 +16,18 @@ from tqdm import tqdm
 def generate_base_layer(image_path, output_path):
     img = cv2.imread(image_path, cv2.IMREAD_UNCHANGED)
     img = cv2.resize(img, (512, 512))
-    max = np.max(img)
-    min = np.min(img)
-    print(f'Max: {max}, Min: {min}')
-    img = cv2.normalize(img, None, min, max, cv2.NORM_MINMAX)
+    # max = np.max(img)
+    # min = np.min(img)
+    # print(f'Max: {max}, Min: {min}')
+    # img = cv2.normalize(img, None, min, max, cv2.NORM_MINMAX)
     cv2.imwrite(output_path, img)
 
 #generate pyramid images at various zoom levels
 def generate_pyramid(image_path, output_folder):
     img = cv2.imread(image_path, -1)
-    
-    max = np.max(img)
-    min = np.min(img)
-
-    img = cv2.normalize(img, None, min, max, cv2.NORM_MINMAX)
+    # max = np.max(img)
+    # min = np.min(img)
+    # img = cv2.normalize(img, None, min, max, cv2.NORM_MINMAX)
     # jobs = []
     # manager = multiprocessing.Manager()
     for zoom in tqdm(range(zoom_levels)):
@@ -66,10 +64,13 @@ def process(image_path):
                         os.rename(os.path.join(output_folder, str(i)), os.path.join(output_folder, f'{i}.old'))
                     
             os.makedirs(output_folder, exist_ok=True)
-            
-            generate_base_layer(os.path.join(image_path, img), os.path.join(output_folder, 'base.png'))
-            generate_pyramid(os.path.join(image_path, img), output_folder)
-            print(f'Generated pyramid for {img}')
+            try:
+                generate_base_layer(os.path.join(image_path, img), os.path.join(output_folder, 'base.png'))
+                generate_pyramid(os.path.join(image_path, img), output_folder)
+                print(f'Generated pyramid for {img}')
+            except:
+                pass
+    
 
 if __name__ == '__main__':
     #find all tifs in input folder
@@ -78,4 +79,4 @@ if __name__ == '__main__':
     print(f'Processing {image_paths}')
     
     # for image_path in tqdm(image_paths.split(',')):    
-    map = process_map(process, image_paths.split(','), max_workers=6)
+    map = process_map(process, image_paths.split(','), max_workers=12)

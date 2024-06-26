@@ -143,8 +143,8 @@ def lut(z,x,y):
         return make_response(jsonify({'error': 'Could not download image'}), 400)
 
     if img is not None:
-        brightness = int(int(request.args.get("brightness"))/100 * 65535)
-        img = np.clip(img + brightness, 0, 65535)
+        # brightness = int(int(request.args.get("brightness"))/100 * 65535)
+        # img = np.clip(img + brightness, 0, 65535)
         img = np.asarray(img, dtype=np.uint16)
         if lut == "inverted":
             img = cv2.bitwise_not(img)

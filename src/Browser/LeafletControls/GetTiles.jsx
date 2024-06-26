@@ -6,6 +6,7 @@ import { useEffect } from "react";
 function CustomLayers(props) {
   function TiledSlice() {
     const createTiledSlice = L.TileLayer.extend({
+
       options: {
         minZoom: 0,
         maxZoom: 4,
@@ -15,7 +16,10 @@ function CustomLayers(props) {
           [500, 500],
         ],
         tms: true,
+
       },
+
+
 
       getTileUrl: function (tilePoint, tile) {
         //enable tms
@@ -51,6 +55,12 @@ function CustomLayers(props) {
       },
       createTile: function (coords, done) {
         const tile = document.createElement("img");
+        tile.style = "filter: brightness(" + props.brightness + "%) contrast(" + props.contrast + "%)";
+        // style={{
+        //   filter: `brightness(${brightnessBoost ? 20 : 1
+        //     })`,
+        // }}
+        tile.class = "leaflet-tile";
         console.log("y axis", coords.y);
         tile.id =
           "tile" +
@@ -70,6 +80,7 @@ function CustomLayers(props) {
         this.getTileUrl(coords, tile);
         return tile;
       },
+
     });
 
     return new createTiledSlice();
@@ -82,6 +93,7 @@ function CustomLayers(props) {
       props.map.removeControl(menu);
     };
   });
+
 }
 
 function withMap(Component) {

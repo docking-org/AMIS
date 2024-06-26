@@ -31,8 +31,8 @@ function ImageBrowser() {
     selectedWavelength: "tdTomato",
     colorAccordion: false,
     options: {
-      brightness: 0,
-      contrast: 0,
+      brightness: 100,
+      contrast: 100,
       min: 0,
       max: 100,
       blend: 50,
