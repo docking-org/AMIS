@@ -34,6 +34,7 @@ import Sly from "sly-scroll";
 import LUTSelector from "./LeafletControls/LUTSelector";
 import Slider from "./LeafletControls/Slider";
 import SliderMenu from "./LeafletControls/SliderMenu";
+import GetTiles from "./LeafletControls/GetTiles";
 import "leaflet-fullscreen/dist/Leaflet.fullscreen.js";
 import "leaflet-fullscreen/dist/leaflet.fullscreen.css";
 import OpenPopup from "./LeafletControls/OpenPopup";
@@ -43,6 +44,8 @@ import Scale from "./LeafletControls/Scale";
 import SliceToggle from "./LeafletControls/SliceToggle";
 import Rotate from "./LeafletControls/Rotate";
 import { useLayoutEffect } from "react";
+import KittenLayer from "./LeafletControls/GetTiles";
+import TiledSlice from "./LeafletControls/GetTiles";
 
 const DropdownIndicator = (props) => {
   return <div></div>;
@@ -50,6 +53,7 @@ const DropdownIndicator = (props) => {
 
 function ImageRenderer(props) {
   const [rotation, setRotation] = useState(0);
+  const [auto, setAuto] = useState(false);
   const lutRef = createRef(null);
   const colorRef = createRef(null);
   const [windowOpen, setWindowOpen] = useState(false);
@@ -415,7 +419,7 @@ function ImageRenderer(props) {
       contrast: 0,
       min: 0,
       max: 100,
-      blend: 50,
+      blend: 100,
       opacityThreshold: 2,
     });
   }
@@ -466,11 +470,6 @@ function ImageRenderer(props) {
       //sample line in res {"experiment":"Ai9","gene":"GPR85","organ":"kidney","sample_type":"Cleared","unique":"GPR85Ai9kidneyCleared"},
       var sampleTypes = {};
       res.forEach((filter) => {
-        //convert res to format
-        //[{sampleType: "Histological", genes: {"GPR68": {organs: {"heart" : {'mice': []}}}}}]
-        // or if subtype exists
-        //[{sampleType: "Histological", genes: {"GPR68": {Subtypes: {"Subtype1": {organs: {"heart" : {'mice': []}}}}}}}]
-
         if (!sampleTypes[filter.sample_type]) {
           sampleTypes[filter.sample_type] = { genes: [] };
         }
@@ -648,41 +647,20 @@ function ImageRenderer(props) {
         let active = activeLayers.includes(wavelength);
         if (active) {
           layers.push(
-            <TileLayer
-              opacity={activeLayers.length > 1 ? options.blend / 100 : 1}
-              tms={true}
-              minZoom={2}
-              maxZoom={7}
-              noWrap={true}
-              crs={CRS.Simple}
-              bounds={[
-                [-200, -200],
-                [500, 180],
-              ]}
-              url={
-                selectedMouse
-                  ? "/lut" +
-                    "/{z}/{x}/{y}.png" +
-                    "?lut=" +
-                    lut[wavelength] +
-                    "&url=" +
-                    encodeURIComponent(
-                      slices[wavelength][selectedSlice]
-                        ? slices[wavelength][selectedSlice].img_no_ext
-                        : null
-                    ) +
-                    "&brightness=" +
-                    options.brightness +
-                    "&contrast=" +
-                    options.contrast +
-                    "&opacityThreshold=" +
-                    options.opacityThreshold +
-                    "&cliplow=" +
-                    options.min +
-                    "&cliphigh=" +
-                    options.max
-                  : ""
-              }
+            <TiledSlice
+              wavelength={wavelength}
+              lut={lut[wavelength]}
+              url={encodeURIComponent(
+                slices[wavelength][selectedSlice]
+                  ? slices[wavelength][selectedSlice].img_no_ext
+                  : null
+              )}
+              brightness={options.brightness}
+              contrast={options.contrast}
+              opacityThreshold={options.opacityThreshold}
+              clipLow={options.min}
+              clipHigh={options.max}
+              autoBrightness={auto}
             />
           );
         }
@@ -697,6 +675,7 @@ function ImageRenderer(props) {
     options,
     lut,
     activeLayers,
+    auto,
   ]);
   function InitMap() {
     const map = useMap();
@@ -727,12 +706,19 @@ function ImageRenderer(props) {
                   ? "sidebar-right"
                   : "sidebar-right open"
               }
-              onMouseEnter={() => setFolded(false)}
-              onMouseLeave={() =>
-                selectedMouse ? setFolded(true) : setFolded(false)
-              }
+              // onMouseEnter={() => setFolded(false)}
+              // onMouseLeave={() =>
+              //   selectedMouse ? setFolded(true) : setFolded(false)
+              // }
             >
-              <div className="select-card">
+              <div
+                className="select-card"
+                onClick={() => {
+                  if (folded) {
+                    setFolded(false);
+                  }
+                }}
+              >
                 {optionsLoaded ? (
                   <div>
                     <label className="col-sm-4 col-form-label">Gene</label>
@@ -879,6 +865,9 @@ function ImageRenderer(props) {
                       }
                     />
                     <br />
+                    <Button onClick={() => setFolded(!folded)}>
+                      {folded ? "Show" : "Hide"} Filters
+                    </Button>
                     {/* 
                                             {props.main ?
                                                 (
@@ -904,7 +893,14 @@ function ImageRenderer(props) {
                 )}
               </div>
               {selectedMouse ? (
-                <div className="select-card">
+                <div
+                  className="select-card"
+                  onClick={() => {
+                    if (folded) {
+                      setFolded(false);
+                    }
+                  }}
+                >
                   <b>Experiment</b>
                   <br></br>
                   <br></br>
@@ -945,7 +941,16 @@ function ImageRenderer(props) {
 
                         } */}
 
-            <Col lg={12} style={{ height: controlsHidden ? "90vh" : "65vh" }}>
+            <Col
+              lg={
+                // if folded and the render size is 6, then size is 12
+                // if folded and the render size is 12, then size is 10
+                // if not folded and the render size is 6, then size is 12
+                // if not folded and the render size is 12, then size is 12
+                props.renderSize === 6 ? 12 : folded ? 12 : 10
+              }
+              style={{ height: controlsHidden ? "90vh" : "65vh" }}
+            >
               <MapContainer
                 whenReady={(mapInstance) => {
                   mapRef.current = mapInstance;
@@ -961,11 +966,10 @@ function ImageRenderer(props) {
                 style={{ height: "100%" }}
                 attributionControl={false}
                 fullscreenControl={true}
-                center={[-50, -50]}
-                maxBoundsViscosity={1.0}
-                nowrap={true}
+                center={[-250, 250]}
+                crs={CRS.Simple}
                 scrollWheelZoom
-                zoom={2}
+                zoom={1}
               >
                 {/* <OpenPopup position="topright"
                                     setWindowOpen={setWindowOpen}
@@ -976,6 +980,7 @@ function ImageRenderer(props) {
                                 </OpenPopup> */}
 
                 <InitMap />
+
                 <SliderMenu
                   position="bottomleft"
                   active={colorAccordion}
@@ -1008,7 +1013,7 @@ function ImageRenderer(props) {
                     delta={15}
                     maxValue={65535}
                   />
-                  <Slider
+                  {/* <Slider
                     icon="tint"
                     value="blend"
                     updateOption={updateOption}
@@ -1019,8 +1024,8 @@ function ImageRenderer(props) {
                     max={100}
                     delta={15}
                     maxValue={100}
-                  />
-                  <Slider
+                  /> */}
+                  {/* <Slider
                     icon="tint"
                     value="opacityThreshold"
                     updateOption={updateOption}
@@ -1031,7 +1036,7 @@ function ImageRenderer(props) {
                     max={255}
                     delta={10}
                     maxValue={65534}
-                  />
+                  /> */}
                   <Slider
                     icon="sun"
                     value="brightness"
@@ -1064,7 +1069,11 @@ function ImageRenderer(props) {
                     Reset Values
                   </Button>
                   &nbsp;
-                  <Button size="sm" onClick={() => getAutoValues()}>
+                  <Button
+                    size="sm"
+                    onClick={() => setAuto(!auto)}
+                    variant={auto ? "primary" : "outline-secondary"}
+                  >
                     {" "}
                     Auto
                   </Button>
@@ -1350,37 +1359,34 @@ function ImageRenderer(props) {
                                 <BSTooltip>Select Slice Viewer Layer</BSTooltip>
                               }
                             >
-                              <Dropdown style={{ zIndex: 1000 }}>
-                                <Dropdown.Toggle>
-                                  {selectedWavelength}
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                  {Object.keys(slices).length >= 1
-                                    ? Object.keys(slices)
-                                        .sort()
-                                        .reverse()
-                                        .map((wavelength, index) => {
-                                          return (
-                                            <Dropdown.Item
-                                              onClick={() => {
-                                                updateselectedWavelength(
-                                                  wavelength
-                                                );
-                                              }}
-                                              active={
-                                                selectedWavelength ===
+                              <DropdownButton
+                                drop="start"
+                                title={selectedWavelength}
+                              >
+                                {Object.keys(slices).length >= 1
+                                  ? Object.keys(slices)
+                                      .sort()
+                                      .reverse()
+                                      .map((wavelength, index) => {
+                                        return (
+                                          <Dropdown.Item
+                                            onClick={() => {
+                                              updateselectedWavelength(
                                                 wavelength
-                                                  ? true
-                                                  : false
-                                              }
-                                            >
-                                              {wavelength}
-                                            </Dropdown.Item>
-                                          );
-                                        })
-                                    : ""}
-                                </Dropdown.Menu>
-                              </Dropdown>
+                                              );
+                                            }}
+                                            active={
+                                              selectedWavelength === wavelength
+                                                ? true
+                                                : false
+                                            }
+                                          >
+                                            {wavelength}
+                                          </Dropdown.Item>
+                                        );
+                                      })
+                                  : ""}
+                              </DropdownButton>
                             </OverlayTrigger>
                             &nbsp;
                             <OverlayTrigger

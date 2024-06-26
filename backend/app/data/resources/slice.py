@@ -94,6 +94,7 @@ class Slices(Resource):
             'slices')
 
         
+        
         if file_type == 'json':
 
             return Response(str(data),
