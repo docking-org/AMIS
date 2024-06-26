@@ -55,7 +55,7 @@ function CustomLayers(props) {
       },
       createTile: function (coords, done) {
         const tile = document.createElement("img");
-        tile.style = "filter: brightness(" + props.brightness + "%) contrast(" + props.contrast + "%)";
+        // tile.style = "filter: brightness(" + props.brightness + "%) contrast(" + props.contrast + "%)";
         // style={{
         //   filter: `brightness(${brightnessBoost ? 20 : 1
         //     })`,
