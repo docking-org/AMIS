@@ -316,7 +316,7 @@ def send_image(path,number,image):
     #         return send_file(io.BytesIO(cv2.imencode('.png', img)[1].tobytes()), mimetype='image/png')
 
     #     else:
-    return send_from_directory(url+ "/"+base+".png")
+    return send_from_directory(url+ "/", base + ".png")
 
         
         # if image.split(".")[1] == "webp":
