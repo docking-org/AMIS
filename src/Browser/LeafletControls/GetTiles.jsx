@@ -45,9 +45,18 @@ function CustomLayers(props) {
               return response.json();
             })
             .then((data) => {
-              document.getElementById(
+
+              let element = document.getElementById(
                 "tile" + x + "-" + y + "-" + zoom + "-" + props.wavelength
-              ).src = data.image;
+              );
+
+              element.src = data.image;
+              element.style.filter = "brightness(" + props.brightness + "%) contrast(" + props.contrast + "%)";
+              // element.style = "filter: brightness(" + props.brightness + "%) contrast(" + props.contrast + "%)";
+              // document.getElementById(
+              //   "tile" + x + "-" + y + "-" + zoom + "-" + props.wavelength
+              // ).style = "filter: brightness(" + props.brightness + "%) contrast(" + props.contrast + "%)";
+
             });
         } else {
           return "";
@@ -55,11 +64,7 @@ function CustomLayers(props) {
       },
       createTile: function (coords, done) {
         const tile = document.createElement("img");
-        // tile.style = "filter: brightness(" + props.brightness + "%) contrast(" + props.contrast + "%)";
-        // style={{
-        //   filter: `brightness(${brightnessBoost ? 20 : 1
-        //     })`,
-        // }}
+
         tile.class = "leaflet-tile";
         console.log("y axis", coords.y);
         tile.id =

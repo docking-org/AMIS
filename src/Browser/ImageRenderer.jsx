@@ -672,19 +672,19 @@ function ImageRenderer(props) {
     selectedSlice,
     slices,
     selectedMouse,
-    // options,
+    options,
     lut,
     activeLayers,
     auto,
   ]);
 
-  useEffect(() => {
-    let tiles = document.getElementsByClassName("leaflet-tile");
-    for (let i = 0; i < tiles.length; i++) {
-      tiles[i].style.filter = `brightness(${options.brightness}%) contrast(${options.contrast
-        }%)`;
-    }
-  }, [options]);
+  // useEffect(() => {
+  //   let tiles = document.getElementsByClassName("leaflet-tile");
+  //   for (let i = 0; i < tiles.length; i++) {
+  //     tiles[i].style.filter = `brightness(${options.brightness}%) contrast(${options.contrast
+  //       }%)`;
+  //   }
+  // }, [options]);
 
 
   function InitMap() {
