@@ -28,7 +28,7 @@ ENV JPG_FOLDER $JPG_FOLDER
 RUN apt-get update
 RUN apt-get install -y gcc
 RUN apt-get install -y libpq-dev 
-RUN apt-get install -y python-dev 
+RUN apt-get install -y python-dev-is-python3
 RUN apt-get install -y vim
 
 RUN pip install -r ./requirements.txt
