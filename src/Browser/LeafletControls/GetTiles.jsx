@@ -6,20 +6,16 @@ import { useEffect } from "react";
 function CustomLayers(props) {
   function TiledSlice() {
     const createTiledSlice = L.TileLayer.extend({
-
       options: {
         minZoom: 0,
         maxZoom: 4,
         noWrap: true,
         bounds: [
-          [-500, -500],
-          [500, 500],
+          [-10000, -10000],
+          [10000, 10000],
         ],
         tms: true,
-
       },
-
-
 
       getTileUrl: function (tilePoint, tile) {
         //enable tms
@@ -33,6 +29,8 @@ function CustomLayers(props) {
           console.log(props);
           url += "?lut=" + props.lut;
           url += "&url=" + props.url;
+          url += "&min=" + props.min;
+          url += "&max=" + props.max;
           url += "&brightness=" + props.brightness;
           url += "&contrast=" + props.contrast;
           url += "&opacityThreshold=" + props.opacityThreshold;
@@ -45,18 +43,21 @@ function CustomLayers(props) {
               return response.json();
             })
             .then((data) => {
-
               let element = document.getElementById(
                 "tile" + x + "-" + y + "-" + zoom + "-" + props.wavelength
               );
 
               element.src = data.image;
-              element.style.filter = "brightness(" + props.brightness + "%) contrast(" + props.contrast + "%)";
+              element.style.filter =
+                "brightness(" +
+                props.brightness +
+                "%) contrast(" +
+                props.contrast +
+                "%)";
               // element.style = "filter: brightness(" + props.brightness + "%) contrast(" + props.contrast + "%)";
               // document.getElementById(
               //   "tile" + x + "-" + y + "-" + zoom + "-" + props.wavelength
               // ).style = "filter: brightness(" + props.brightness + "%) contrast(" + props.contrast + "%)";
-
             });
         } else {
           return "";
@@ -85,7 +86,6 @@ function CustomLayers(props) {
         this.getTileUrl(coords, tile);
         return tile;
       },
-
     });
 
     return new createTiledSlice();
@@ -98,7 +98,6 @@ function CustomLayers(props) {
       props.map.removeControl(menu);
     };
   });
-
 }
 
 function withMap(Component) {

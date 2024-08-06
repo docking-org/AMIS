@@ -486,7 +486,7 @@ function ImageRenderer(props) {
           }
           if (
             !sampleTypes[filter.sample_type].genes[filter.gene].subtypes[
-            filter.subtype
+              filter.subtype
             ]
           ) {
             sampleTypes[filter.sample_type].genes[filter.gene].subtypes[
@@ -519,7 +519,7 @@ function ImageRenderer(props) {
           if (
             sampleTypes[filter.sample_type].genes[filter.gene].organs &&
             !sampleTypes[filter.sample_type].genes[filter.gene].organs[
-            filter.organ
+              filter.organ
             ]
           ) {
             sampleTypes[filter.sample_type].genes[filter.gene].organs[
@@ -658,8 +658,8 @@ function ImageRenderer(props) {
               brightness={options.brightness}
               contrast={options.contrast}
               opacityThreshold={options.opacityThreshold}
-              clipLow={options.min}
-              clipHigh={options.max}
+              min={options.min}
+              max={options.max}
               autoBrightness={auto}
             />
           );
@@ -685,7 +685,6 @@ function ImageRenderer(props) {
   //       }%)`;
   //   }
   // }, [options]);
-
 
   function InitMap() {
     const map = useMap();
@@ -713,13 +712,13 @@ function ImageRenderer(props) {
                     ? "sidebar-left"
                     : "sidebar-left open"
                   : folded
-                    ? "sidebar-right"
-                    : "sidebar-right open"
+                  ? "sidebar-right"
+                  : "sidebar-right open"
               }
-            // onMouseEnter={() => setFolded(false)}
-            // onMouseLeave={() =>
-            //   selectedMouse ? setFolded(true) : setFolded(false)
-            // }
+              // onMouseEnter={() => setFolded(false)}
+              // onMouseLeave={() =>
+              //   selectedMouse ? setFolded(true) : setFolded(false)
+              // }
             >
               <div
                 className="select-card"
@@ -741,10 +740,10 @@ function ImageRenderer(props) {
                       options={
                         selectedSampleType
                           ? Object.keys(
-                            selections[selectedSampleType["value"]].genes
-                          )
-                            .sort()
-                            .map((gene) => ({ value: gene, label: gene }))
+                              selections[selectedSampleType["value"]].genes
+                            )
+                              .sort()
+                              .map((gene) => ({ value: gene, label: gene }))
                           : []
                       }
                       onChange={(option) =>
@@ -752,9 +751,9 @@ function ImageRenderer(props) {
                       }
                     />
                     {selectedGene &&
-                      selections[selectedSampleType["value"]].genes[
-                        selectedGene["value"]
-                      ].subtypes ? (
+                    selections[selectedSampleType["value"]].genes[
+                      selectedGene["value"]
+                    ].subtypes ? (
                       <div>
                         <label className="col-sm-4 col-form-label">
                           Subtype
@@ -770,19 +769,19 @@ function ImageRenderer(props) {
                             //if selectedGene and gene has subtypes, return subtypes, else return empty array
 
                             selectedGene &&
-                              selections[selectedSampleType["value"]].genes[
-                                selectedGene["value"]
-                              ].subtypes
+                            selections[selectedSampleType["value"]].genes[
+                              selectedGene["value"]
+                            ].subtypes
                               ? Object.keys(
-                                selections[selectedSampleType["value"]].genes[
-                                  selectedGene["value"]
-                                ].subtypes
-                              )
-                                .sort()
-                                .map((subtype) => ({
-                                  value: subtype,
-                                  label: subtype,
-                                }))
+                                  selections[selectedSampleType["value"]].genes[
+                                    selectedGene["value"]
+                                  ].subtypes
+                                )
+                                  .sort()
+                                  .map((subtype) => ({
+                                    value: subtype,
+                                    label: subtype,
+                                  }))
                               : []
                           }
                           onChange={(option) => {
@@ -813,26 +812,26 @@ function ImageRenderer(props) {
                             ].subtypes
                             ? selectedSubtype
                               ? Object.keys(
+                                  selections[selectedSampleType["value"]].genes[
+                                    selectedGene["value"]
+                                  ].subtypes[selectedSubtype["value"]].organs
+                                )
+                                  .sort()
+                                  .map((organ) => ({
+                                    value: organ,
+                                    label: organ,
+                                  }))
+                              : []
+                            : Object.keys(
                                 selections[selectedSampleType["value"]].genes[
                                   selectedGene["value"]
-                                ].subtypes[selectedSubtype["value"]].organs
+                                ].organs
                               )
                                 .sort()
                                 .map((organ) => ({
                                   value: organ,
                                   label: organ,
                                 }))
-                              : []
-                            : Object.keys(
-                              selections[selectedSampleType["value"]].genes[
-                                selectedGene["value"]
-                              ].organs
-                            )
-                              .sort()
-                              .map((organ) => ({
-                                value: organ,
-                                label: organ,
-                              }))
                           : []
 
                         // Object.keys(selections[selectedSampleType['value']].genes[selectedGene['value']].subtypes[selectedSubtype['value']].organs).sort().map(organ => ({"value": organ, "label": organ }))
@@ -852,22 +851,22 @@ function ImageRenderer(props) {
                       options={
                         selectedOrgan
                           ? mice
-                            .sort((a, b) => {
-                              return a.spec < b.spec
-                                ? -1
-                                : a.spec > b.spec
+                              .sort((a, b) => {
+                                return a.spec < b.spec
+                                  ? -1
+                                  : a.spec > b.spec
                                   ? 1
                                   : 0;
-                            })
-                            .map((mouse) => ({
-                              value: mouse.number,
-                              label:
-                                (mouse.sex !== true ? "♀" : "♂") +
-                                "  " +
-                                mouse.number +
-                                "  " +
-                                (mouse.spec === "+" ? "pos" : "neg"),
-                            }))
+                              })
+                              .map((mouse) => ({
+                                value: mouse.number,
+                                label:
+                                  (mouse.sex !== true ? "♀" : "♂") +
+                                  "  " +
+                                  mouse.number +
+                                  "  " +
+                                  (mouse.spec === "+" ? "pos" : "neg"),
+                              }))
                           : []
                       }
                       onChange={(option) =>
@@ -1185,41 +1184,41 @@ function ImageRenderer(props) {
                       <div className="">
                         {Object.keys(slices).length >= 1
                           ? Object.keys(slices)
-                            .sort()
-                            .reverse()
-                            .map((wavelength, index) => {
-                              return (
-                                <div className="mb-2">
-                                  <Form.Check
-                                    type="checkbox"
-                                    label={wavelength}
-                                    checked={activeLayers.includes(
-                                      wavelength
-                                    )}
-                                    onChange={() => {
-                                      if (activeLayers.includes(wavelength)) {
-                                        updateActiveLayers(
-                                          activeLayers.filter(
-                                            (item) => item !== wavelength
-                                          )
-                                        );
-                                      } else {
-                                        updateActiveLayers(
-                                          activeLayers.concat(wavelength)
-                                        );
-                                      }
-                                      console.log(activeLayers);
-                                    }}
-                                  />
+                              .sort()
+                              .reverse()
+                              .map((wavelength, index) => {
+                                return (
+                                  <div className="mb-2">
+                                    <Form.Check
+                                      type="checkbox"
+                                      label={wavelength}
+                                      checked={activeLayers.includes(
+                                        wavelength
+                                      )}
+                                      onChange={() => {
+                                        if (activeLayers.includes(wavelength)) {
+                                          updateActiveLayers(
+                                            activeLayers.filter(
+                                              (item) => item !== wavelength
+                                            )
+                                          );
+                                        } else {
+                                          updateActiveLayers(
+                                            activeLayers.concat(wavelength)
+                                          );
+                                        }
+                                        console.log(activeLayers);
+                                      }}
+                                    />
 
-                                  <LUTSelector
-                                    layer={wavelength}
-                                    changeLut={changeLut}
-                                    option={lut[wavelength]}
-                                  />
-                                </div>
-                              );
-                            })
+                                    <LUTSelector
+                                      layer={wavelength}
+                                      changeLut={changeLut}
+                                      option={lut[wavelength]}
+                                    />
+                                  </div>
+                                );
+                              })
                           : ""}
 
                         {/* <ButtonGroup aria-label="Basic example">
@@ -1271,8 +1270,9 @@ function ImageRenderer(props) {
                                     e.target.src = `${slice.img_no_ext}.png`;
                                   }}
                                   style={{
-                                    filter: `brightness(${brightnessBoost ? 20 : 1
-                                      })`,
+                                    filter: `brightness(${
+                                      brightnessBoost ? 20 : 1
+                                    })`,
                                   }}
                                   className="slice"
                                 />
@@ -1327,7 +1327,7 @@ function ImageRenderer(props) {
                                     } else if (
                                       e.target.value &&
                                       e.target.value <=
-                                      slices[selectedWavelength].length &&
+                                        slices[selectedWavelength].length &&
                                       e.target.value > 0
                                     ) {
                                       selectImage(
@@ -1374,26 +1374,26 @@ function ImageRenderer(props) {
                               >
                                 {Object.keys(slices).length >= 1
                                   ? Object.keys(slices)
-                                    .sort()
-                                    .reverse()
-                                    .map((wavelength, index) => {
-                                      return (
-                                        <Dropdown.Item
-                                          onClick={() => {
-                                            updateselectedWavelength(
-                                              wavelength
-                                            );
-                                          }}
-                                          active={
-                                            selectedWavelength === wavelength
-                                              ? true
-                                              : false
-                                          }
-                                        >
-                                          {wavelength}
-                                        </Dropdown.Item>
-                                      );
-                                    })
+                                      .sort()
+                                      .reverse()
+                                      .map((wavelength, index) => {
+                                        return (
+                                          <Dropdown.Item
+                                            onClick={() => {
+                                              updateselectedWavelength(
+                                                wavelength
+                                              );
+                                            }}
+                                            active={
+                                              selectedWavelength === wavelength
+                                                ? true
+                                                : false
+                                            }
+                                          >
+                                            {wavelength}
+                                          </Dropdown.Item>
+                                        );
+                                      })
                                   : ""}
                               </DropdownButton>
                             </OverlayTrigger>

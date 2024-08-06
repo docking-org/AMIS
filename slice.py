@@ -19,7 +19,7 @@ def generate_base_layer(image_path, output_path):
     # max = np.max(img)
     # min = np.min(img)
     # print(f'Max: {max}, Min: {min}')
-    # img = cv2.normalize(img, None, min, max, cv2.NORM_MINMAX)
+    img = cv2.normalize(img, None, min, max, cv2.NORM_MINMAX)
     cv2.imwrite(output_path, img)
 
 #generate pyramid images at various zoom levels
@@ -27,7 +27,7 @@ def generate_pyramid(image_path, output_folder):
     img = cv2.imread(image_path, -1)
     # max = np.max(img)
     # min = np.min(img)
-    # img = cv2.normalize(img, None, min, max, cv2.NORM_MINMAX)
+    img = cv2.normalize(img, None, min, max, cv2.NORM_MINMAX)
     # jobs = []
     # manager = multiprocessing.Manager()
     for zoom in tqdm(range(zoom_levels)):

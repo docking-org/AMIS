@@ -90,7 +90,7 @@ def interest():
 def image_load(path = None, folder = None):
     if path and folder:
         url = current_app.config['URL_MAP'][path] + "/" + folder
-        print(url)
+        
         return load_images(url)
     else:
         return make_response(jsonify({'error': 'Could not download image'}), 400)
@@ -130,11 +130,11 @@ def lut(z,x,y):
     if int(z) < 0 or int(x) < 0 or int(ycord) < 0:
         return make_response(jsonify({'error': 'Invalid coordinates'}), 400)
     lut = request.args.get("lut")
-    print(request.args.get("url"))
+    
     url = toPath(request.args.get('url'))
     # url = "/nfs/mammoth/idg-images/2408-test/TAS2R4_Ai9_1_1_2408_f_p30_reporter-gene-cross_brain_955_c_1_00001_10x_Olympus_tdTomato_d780d2692a50d4c96c78c49c4c7ddb4e"
     url = url + "/{}/{}/{}".format(z,x,y)
-    print(url)
+    
     autobrightness = request.args.get("autobrightness")
     #if file exists
     if os.path.exists(url):
@@ -144,7 +144,9 @@ def lut(z,x,y):
 
     if img is not None:
         # brightness = int(int(request.args.get("brightness"))/100 * 65535)
-        # img = np.clip(img + brightness, 0, 65535)
+        print(request.args.get("min"), request.args.get("max"))
+
+        img = np.clip(img, int(request.args.get("min"))*655.35, int(request.args.get("max"))*655.35)
         img = np.asarray(img, dtype=np.uint16)
         if lut == "inverted":
             img = cv2.bitwise_not(img)
@@ -288,7 +290,7 @@ def send_slice(path,number,image, x, y, z):
         
         #convert from 0 based to 1 based
         
-        return send_from_directory(url, '0.png')
+        return send_from_directory(url, 'base.png')
     
 @application.route('/images/<path>/<number>/<image>', methods=['GET'])
 def send_image(path,number,image):
@@ -309,16 +311,15 @@ def send_image(path,number,image):
     #                 break
         
     base = image.split(".")[0]
-    print(url + base)
+    
     #     if not os.path.exists(url + "/" + base + ".png"):
     #         #make blank image
     #         img = np.zeros((512, 512, 3), dtype=np.uint8)
     #         return send_file(io.BytesIO(cv2.imencode('.png', img)[1].tobytes()), mimetype='image/png')
 
     #     else:
-    return send_from_directory(url+ "/", base + ".png")
+    return send_from_directory(url+ "/"+base, "base.png")
 
-        
         # if image.split(".")[1] == "webp":
         #     # img = cv2.imread(url + "/" + image.replace(".webp", ".png"), cv2.IMREAD_UNCHANGED)
         #     # stacked = img
@@ -425,13 +426,9 @@ def send_image(path,number,image):
         # else:
         #     print(url, image)
         #     return send_from_directory(url, image)
-        
-
-
        
     
 def toPath(url):
-
     path = url.split("/")[2]
     new = current_app.config['URL_MAP'][path] 
     path = url.replace("/images/" + path, new)
@@ -440,9 +437,7 @@ def toPath(url):
 
 @application.route('/submitFeedback', methods=['POST'])
 def submitFeedback():
-
     data = request.get_json()
-    
     feedback = data["feedback"]
     contact_info = data["contactInfo"]
     
@@ -453,5 +448,9 @@ def submitFeedback():
         db.session.add(fb)
         db.session.commit()
         return make_response(jsonify({'success': 'Feedback submitted'}), 200)
-        
 
+@application.route('/getVideos', methods=['GET'])
+def getVideos():    
+    videos = os.listdir("/nfs/mammoth/idg-images/vid/")
+    videos = [video.split(".")[0] for video in videos if video.endswith(".mp4")]
+    return make_response(jsonify({'videos': videos}), 200)
