@@ -2,34 +2,51 @@
 variables:
     CI_PROJECT_NAME: amis
 
-services:
-  - redis:latest
-
 deploy-dev job:
     only:
         - dev
     stage: deploy
-    services:
-        - redis:latest
     tags:
         - amis-dev
     script:
         - docker build -t "${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}-0.1.${CI_JOB_ID}" .
-        - docker stop ${CI_PROJECT_NAME}
-        - docker rm ${CI_PROJECT_NAME}
-        - docker run --name ${CI_PROJECT_NAME} -d -p 0.0.0.0:5066:5000 ${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}-0.1.${CI_JOB_ID}
+        - docker stop ${CI_PROJECT_NAME} || true
+        - docker rm ${CI_PROJECT_NAME} || true
+        - docker run --name ${CI_PROJECT_NAME} -d -p 0.0.0.0:5066:5000 
+          -e SECRET_KEY=${SECRET_KEY} 
+          -e SQLALCHEMY_DATABASE_URI=${SQLALCHEMY_DATABASE_URI} 
+          -e UPLOAD_FOLDER=${UPLOAD_FOLDER} 
+          -e IMAGE_LOAD_FOLDER=${IMAGE_LOAD_FOLDER} 
+          -e IMG_UPLOAD_FOLDER_URL=${IMG_UPLOAD_FOLDER_URL} 
+          -e JPEG_FOLDER=${JPEG_FOLDER} 
+          -e JPG_FOLDER=${JPG_FOLDER} 
+          -v /nfs/ex9/:/nfs/ex9/
+          -v /nfs/mammoth/:/nfs/mammoth/ 
+          -v /nfs/exj/:/nfs/exj/ 
+          ${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}-0.1.${CI_JOB_ID}
        
-deploy-live job:
-    only:
-        - master
-    stage: deploy
-    services:
-        - redis:latest
-    tags:
-        - amis
-    script:
-        - sudo docker image prune -a -f
-        - docker build -t "${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}-0.1.${CI_JOB_ID}" .
-        - docker stop ${CI_PROJECT_NAME}
-        - docker rm ${CI_PROJECT_NAME}
-        - docker run --name ${CI_PROJECT_NAME} -d -p 0.0.0.0:5066:5000 ${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}-0.1.${CI_JOB_ID}
+# deploy-live job:
+#     only:
+#         - master
+#     stage: deploy
+#     services:
+#         - redis:latest
+#     tags:
+#         - amis
+#     script:
+#         - docker image prune -a -f
+#         - docker build -t "${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}-0.1.${CI_JOB_ID}" .
+#         - docker stop ${CI_PROJECT_NAME} 
+#         - docker rm ${CI_PROJECT_NAME}
+#         - docker run --name ${CI_PROJECT_NAME} -d -p 0.0.0.0:5066:5000 
+#           -e SECRET_KEY=${SECRET_KEY} 
+#           -e SQLALCHEMY_DATABASE_URI=${SQLALCHEMY_DATABASE_URI} 
+#           -e UPLOAD_FOLDER=${UPLOAD_FOLDER} 
+#           -e IMAGE_LOAD_FOLDER=${IMAGE_LOAD_FOLDER} 
+#           -e IMG_UPLOAD_FOLDER_URL=${IMG_UPLOAD_FOLDER_URL} 
+#           -e JPEG_FOLDER=${JPEG_FOLDER} 
+#           -e JPG_FOLDER=${JPG_FOLDER} 
+#           -v /nfs/ex9/:/nfs/ex9/ 
+#           -v /nfs/mammoth/:/nfs/mammoth/ 
+#           -v /nfs/exj/:/nfs/exj/ 
+#           ${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}-0.1.${CI_JOB_ID}

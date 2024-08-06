@@ -1,0 +1,188 @@
+.App {
+  text-align: center;
+}
+
+Body{
+  min-height: 100vh;
+  background-color:black;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.leaflet-control-rotate-arrow{
+  padding-left: 30px;
+  position: relative;
+}
+
+.leaflet-control-rotate-arrow:before{
+  content: "\f2f1";
+  position: absolute;
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900; 
+  top: 0;
+  color: black;
+  left: 30%;
+}
+
+.slice{
+  max-height: 150px;
+  width: auto;
+  filter: brightness(600%);
+}
+
+.scrollbar .handle .mousearea {
+  position: absolute;
+  top: -9px;
+  left: 0;
+  width: 80%;
+  height: 20px;
+}
+
+.scrollbar .handle {
+  height: 100%;
+  background: #0aaaf1;
+  cursor: pointer;
+  transform: translateZ(0px) translateX(0px); 
+  width: 190px;
+}
+
+.scrollbar {
+  margin: 0 0 1em 0;
+  height: 2px;
+  background: #ccc;
+  line-height: 0;
+}
+
+.imageBrowser{
+  background: black;
+  width: 100%;
+} 
+
+
+.leaflet-container {
+  background: black;
+  outline: 0;
+}
+
+.col-form-label{
+  margin-left: 5px;  
+  color:black
+}
+
+.slider {
+  padding: 2px;
+  display: flex;
+  margin: auto;
+}
+.select-card{
+  margin: 5px;
+  padding: 10px;
+  border-radius: 10px;
+
+  background-color: white;
+}
+
+.sidebar-left {
+  position: fixed;
+  left: -15vw;
+  z-index: 1000000;
+  height: 60vh;
+  width: 17%;
+  transition: left 0.3s ease-in-out;
+  background-color: none;
+}
+
+.sidebar-left.open {
+  left: 0;
+  z-index: 10000001;
+}
+
+.sidebar-right {
+
+  position: fixed;
+  right: -15vw;
+  width: 17%;
+  height: 180px;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  display: block;
+  z-index: 100000001;
+}
+
+.sidebar-right.open {
+  margin-right: -1vw;
+  right: 0;
+  z-index: 1000001;
+}
+
+.leaflet-center {
+  z-index: 20000 !important;
+
+  left: 58.5% !important;
+  transform: translate(-50%, 0%) !important;
+}
+
+.leaflet-middle {
+  top: 50% !important;
+  position: absolute !important;
+
+transform: translate(0%, -50%) !important;
+
+}
+
+.leaflet-center.leaflet-middle {
+transform: translate(-50%, -50%) !important;
+}
+
+.nav-renderer{
+  -webkit-filter: brightness(0.3);
+  pointer-events: none;
+}
+
+.nav-renderer-active{
+  -webkit-filter: brightness(1);
+  pointer-events: none;
+}
+
+.nav-guide-icon{
+    color: 'white';
+  
+}
+
+.nav-guide-icon:hover{
+    color: 'white';
+    opacity: 1;
+}
