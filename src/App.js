@@ -10,7 +10,6 @@ const file_list = [
   "Bose.PNG",
   "Bruegel.PNG",
   "Cezanne.PNG",
-  "Dali.tif",
   "DaVinci.PNG",
   "Disney.PNG",
   "Escher.PNG",
