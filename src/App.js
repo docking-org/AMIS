@@ -27,7 +27,7 @@ const file_list = [
   "Renoir.PNG",
   "Rothko.PNG",
   "Taikan.PNG",
-  "Vangogh.PNG",
+  "Van Gogh.PNG",
   "Vermeer.PNG",
   "Warhol.PNG",
   "Whistler.PNG",

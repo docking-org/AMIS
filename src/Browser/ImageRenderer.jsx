@@ -188,6 +188,34 @@ function ImageRenderer(props) {
     }
   });
 
+  function changeSettings(type, value) {
+    let new_min;
+    let new_max;
+    if (type === "brightness") {
+      if (value <= 0) {
+        new_min = options.min + value;
+        new_max = options.max + value;
+        if (new_max > 65535) {
+          new_max = 65535;
+        }
+      } else {
+        new_max = options.max - value;
+        new_min = options.min - value;
+        if (new_min < 0) {
+          new_min = 0;
+        }
+      }
+      updateOptions({
+        brightness: options.brightness + value,
+        contrast: options.contrast,
+        min: new_min,
+        max: new_max,
+        blend: options.blend,
+        opacityThreshold: options.opacityThreshold,
+      });
+    }
+  }
+
   function loadSlices() {
     if (selectedMouse) {
       var url = "/slices?per_page=-1&order_by=slice_id";
