@@ -18,7 +18,6 @@ function BasicExample() {
                             <Nav.Link href="/3d_browser">3D Browser</Nav.Link>
                             <Nav.Link href="/help">Help</Nav.Link>
                             <Nav.Link href='/feedback'>Feedback</Nav.Link>
-
                             <Nav.Link target="_blank" href="https://druggablegenome.net/DRGC_GPCR">IDG Program</Nav.Link>
                         </Nav>
                     </Navbar.Collapse>

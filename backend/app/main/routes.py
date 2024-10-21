@@ -292,6 +292,11 @@ def send_slice(path,number,image, x, y, z):
         
         return send_from_directory(url, 'base.png')
     
+@application.route("/download/images/<path>/<number>/<image>", methods=['GET'])
+def download_image(path, number, image):
+    url = current_app.config['URL_MAP'][path] + "/" + number + "/" + image
+    return send_file(url, as_attachment=True)
+
 @application.route('/images/<path>/<number>/<image>', methods=['GET'])
 def send_image(path,number,image):
     # if image.split(".")[1] == "webp" and not os.path.exists(current_app.config['URL_MAP'][path] + "/" + number + "/" + image):
@@ -311,6 +316,10 @@ def send_image(path,number,image):
     #                 break
         
     base = image.split(".")[0]
+
+    if not os.path.exists(url + "/"+base+ "/base.png"):
+        print(url + "/"+base+".png")
+        return send_from_directory(url + "/", base+".png")
     
     #     if not os.path.exists(url + "/" + base + ".png"):
     #         #make blank image

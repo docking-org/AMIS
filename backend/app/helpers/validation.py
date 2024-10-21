@@ -121,6 +121,7 @@ def load_images(url):
             dest_file_with_jpeg = "{}{}.jpg".format(destination, file_name)
             
             skipped += 1
+            print(file_name)
             print("_______________Skipped the file: {}".format(
                 file_name_with_ext))
             continue
@@ -200,9 +201,9 @@ def load_images(url):
             print("Please check the file name: {}/{}\n Exception {}\n".format(
                 file_sub_folder, file_name, str(e)))
 
-    with open(path + '/missing_jpeg_paths.txt', 'w') as file_handler:
-        for item in missing_jpegs:
-            file_handler.write("{}\n".format(item))
+    # with open(path + '/missing_jpeg_paths.txt', 'w') as file_handler:
+    #     for item in missing_jpegs:
+    #         file_handler.write("{}\n".format(item))
 
     return "<h1>Status:</h1> <br/> <h3>Skipped old files:{}</h3> <br/>" \
            "<h3>Added new files:{}</h3> <br/> " \
