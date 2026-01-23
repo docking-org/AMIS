@@ -128,7 +128,7 @@ function App() {
               <br />
               <br />
               <b>
-                Mar Castanon</b>, Chinzo Dakar, Khanh Tang
+                Mar Castanon</b>, Chinzorig Dandarchuluun, Khanh Tang
 
 
               <br />
